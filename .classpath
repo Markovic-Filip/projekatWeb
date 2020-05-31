@@ -25,5 +25,10 @@
 	<classpathentry kind="lib" path="lib/slf4j-api-1.7.21.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-simple-1.7.21.jar"/>
 	<classpathentry kind="lib" path="lib/spark-core-2.5.5.jar"/>
+	<classpathentry kind="lib" path="lib/websocket-api-9.3.6.v20151106.jar"/>
+	<classpathentry kind="lib" path="lib/websocket-client-9.3.6.v20151106.jar"/>
+	<classpathentry kind="lib" path="lib/websocket-common-9.3.6.v20151106.jar"/>
+	<classpathentry kind="lib" path="lib/websocket-server-9.3.6.v20151106.jar"/>
+	<classpathentry kind="lib" path="lib/websocket-servlet-9.3.6.v20151106.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

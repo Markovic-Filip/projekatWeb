@@ -4,8 +4,8 @@
         <meta charset="utf-8">
         <title>Naslov sajta</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-        <link rel="stylesheet" href="../css/main.css">
-        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js" ></script>
+        <link rel="stylesheet" href="./css/main.css">
+        <!--script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js" ></script-->
     </head>
 
     <body>
@@ -26,28 +26,28 @@
             <form id="registForma">
                 <div class="form-group">
                     <label for="ime">Ime</label>
-                    <input v-bind:value="ime" type="text" id="ime" class="form-control">
+                    <input v-model:value="ime" type="text" id="ime" ref="ime" class="form-control">
                     <div class="invalid-feedback">Unesite Vaše ime.</div>
                 </div>
                 
                 <div class="form-group">
                     <label for="prezime">Prezime</label>
-                    <input v-bind:value="prezime" type="text" id="prezime" class="form-control">
+                    <input v-model:value="prezime" type="text" id="prezime" ref="prezime" class="form-control">
                     <div class="invalid-feedback">Unesite Vaše prezime.</div>
                 </div>
 
                 <div class="form-group">
                     <label for="korisnickoIme">Korisničko ime</label>
-                    <input v-bind:value="korisnicko" type="text" id="korisnickoIme" class="form-control">
+                    <input v-model:value="korisnicko" type="text" id="korisnickoIme" ref="korisnickoIme" class="form-control">
                     <div class="invalid-feedback">Unesite Vaše korisničko ime.</div>
                 </div>
 
                 <div class="form-group">
                     <label for="lozinka">Lozinka</label>
-                    <input v-bind:value="lozinka" type="text" id="lozinka" class="form-control">
+                    <input v-model:value="lozinka" type="password" id="lozinka" ref="lozinka" class="form-control">
                     <div class="invalid-feedback">Lozinke moraju da se poklapaju.</div>
                     <label for="potvrdaLozinke">Potvrdite lozinku</label>
-                    <input v-bind:value="potvrdaLozinke" type="text" id="potvrdaLozinke" class="form-control">
+                    <input v-model:value="potvrdaLozinke" type="password" id="potvrdaLozinke" ref="potvrdaLozinke" class="form-control">
                     <div class="invalid-feedback">Lozinke moraju da se poklapaju.</div>
                 </div>
 
@@ -56,10 +56,11 @@
                     <div class="col">
                         <div class="form-group">
                             <label for="pol">Pol</label>
-                            <select id="pol" class="form-control">
-                                <option value="musko">Muško</option>
-                                <option value="zensko">Žensko</option>
-                                <option value="ostalo">Ostalo</option>
+                            <select id="pol" ref="pol" class="form-control" v-model:value="pol">
+                                <option value="" selected disabled hidden>Izaberite pol</option>
+                                <option value="0">Muško</option>
+                                <option value="1">Žensko</option>
+                                <option value="2">Ostalo</option>
                             </select>
                         </div>
                     </div>
@@ -67,18 +68,21 @@
                     <div class="col">
                         <div class="form-group">
                             <label for="uloga">Uloga</label>
-                            <select id="uloga" class="form-control">
-                                <option value="gost">Gost</option>
-                                <option value="domacin">Domaćin</option>
+                            <select id="uloga" ref="uloga" class="form-control" v-model:value="uloga">
+                                <option value="" selected disabled hidden>Izaberite ulogu</option>
+                                <option value="2">Gost</option>
+                                <option value="1">Domaćin</option>
                             </select>
                         </div>
                     </div>
                 </div>
-                <button v-on:click="check">Submit</button>
 
+                <button v-on:click.prevent="validacija">Submit</button>
             </form>
         </div>
 
-        <script src="../js/registration.js"></script>
+        <script src="./js/vue.js"></script>
+        <script src="./js/axios.js"></script>
+        <script src="./js/registration.js"></script>
     </body>
 </html>
