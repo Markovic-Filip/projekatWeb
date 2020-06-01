@@ -111,6 +111,7 @@ new Vue({
 
             var putanja = 'app/registracija/' + (this.uloga == 1 ? 'domacin' : 'gost');
 
+            // TODO: ukoliko registracija nije uspesna...
             axios
                 .post(putanja, korisnik, {
                     headers: {

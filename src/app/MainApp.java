@@ -7,7 +7,7 @@ import static spark.Spark.staticFiles;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.google.gson.Gson;
 
@@ -18,7 +18,7 @@ import beans.Korisnik;
 public class MainApp {
 
 	private static Gson gson = new Gson();
-	private static ArrayList<Korisnik> korisnici = new ArrayList<Korisnik>();
+	private static HashMap<String, Korisnik> korisnici = new HashMap<String, Korisnik>();
 	
 	public static void main(String[] args) throws IOException {
 
@@ -30,29 +30,60 @@ public class MainApp {
 			res.type("application/json");
 			String payload = req.body();
 			Domacin noviDomacin = gson.fromJson(payload, Domacin.class);
-			if (noviDomacin != null)
-				korisnici.add(noviDomacin);
-			else
-				return "{'ime': 'GRESKA'}";
-			return gson.toJson(noviDomacin);
+			if (noviDomacin != null)	{
+				System.out.println(noviDomacin.getIme() + ", " + noviDomacin.getKorisnickoIme());
+				if (dodajNovogKorisnika(noviDomacin))	{
+					System.out.println("Domacin " + noviDomacin.getKorisnickoIme() + " uspesno registrovan.");
+					return gson.toJson(noviDomacin);
+				} else	{
+					// TODO: Ovo treba nekako handleovati
+					// Error 400: Bad Request - vec postoji korisnik sa datim korisnickim imenom
+					res.status(400);
+					return null;
+				}
+			} else	{
+				System.out.println("Objekat korisnika ne moze da se kreira.");
+				// TODO: Ovo treba nekako handleovati
+				// Error 500: Internal Server Error - iz nekog razloga ne moze da parsira JSON objekat
+				res.status(500);
+				return null;
+			}
 		});
 		
 		post("/app/registracija/gost", (req, res) -> {
 			res.type("application/json");
 			String payload = req.body();
-			//System.out.println(payload);
 			Gost noviGost = gson.fromJson(payload, Gost.class);
 			if (noviGost != null)	{
-				//System.out.println(noviGost.getIme() + ", " + noviGost.getPrezime() + ", " + noviGost.getLozinka());
-				// TODO: da li postoji korisnik sa istim korisnickim imenom?
-				korisnici.add(noviGost);
+				System.out.println(noviGost.getIme() + ", " + noviGost.getKorisnickoIme());
+				if (dodajNovogKorisnika(noviGost))	{
+					System.out.println("Gost " + noviGost.getKorisnickoIme() + " uspesno registrovan.");
+					return gson.toJson(noviGost);
+				} else	{
+					// TODO: Ovo treba nekako handleovati
+					// Error 400: Bad Request - vec postoji korisnik sa datim korisnickim imenom
+					res.status(400);
+					return null;
+				}
+			} else	{
+				System.out.println("Objekat korisnika ne moze da se kreira.");
+				// TODO: Ovo treba nekako handleovati
+				// Error 500: Internal Server Error - iz nekog razloga ne moze da parsira JSON objekat
+				res.status(500);
+				return null;
 			}
-			else
-				// TODO: ovo ne valja, mozda return null pa catch error u axios pozivu?
-				return "{'ime': 'GRESKA'}";
-			//return gson.toJson(noviGost);
-			return noviGost;
 		});
 	}
 
+	private static boolean dodajNovogKorisnika(Korisnik noviKorisnik)	{
+		
+		if (!korisnici.containsKey(noviKorisnik.getKorisnickoIme()))	{
+			korisnici.put(noviKorisnik.getKorisnickoIme(), noviKorisnik);
+			return true;
+		}
+		else	{
+			System.out.println("Korisnicko ime " + noviKorisnik.getKorisnickoIme() + " je vec zauzeto.");
+			return false;
+		}
+	}
 }
