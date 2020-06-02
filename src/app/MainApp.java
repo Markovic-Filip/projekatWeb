@@ -14,6 +14,7 @@ import com.google.gson.Gson;
 import beans.Domacin;
 import beans.Gost;
 import beans.Korisnik;
+import beans.Odgovor;
 
 public class MainApp {
 
@@ -36,10 +37,8 @@ public class MainApp {
 					System.out.println("Domacin " + noviDomacin.getKorisnickoIme() + " uspesno registrovan.");
 					return gson.toJson(noviDomacin);
 				} else	{
-					// TODO: Ovo treba nekako handleovati
-					// Error 400: Bad Request - vec postoji korisnik sa datim korisnickim imenom
-					res.status(400);
-					return null;
+					System.out.println("Korisničko ime " + noviDomacin.getKorisnickoIme() + " je zauzeto. Pokušajte ponovo.");
+					return gson.toJson(new Odgovor("Korisničko ime " + noviDomacin.getKorisnickoIme() + " je zauzeto. Pokušajte ponovo."));
 				}
 			} else	{
 				System.out.println("Objekat korisnika ne moze da se kreira.");
@@ -60,10 +59,8 @@ public class MainApp {
 					System.out.println("Gost " + noviGost.getKorisnickoIme() + " uspesno registrovan.");
 					return gson.toJson(noviGost);
 				} else	{
-					// TODO: Ovo treba nekako handleovati
-					// Error 400: Bad Request - vec postoji korisnik sa datim korisnickim imenom
-					res.status(400);
-					return null;
+					System.out.println("Korisničko ime " + noviGost.getKorisnickoIme() + " je zauzeto. Pokušajte ponovo.");
+					return gson.toJson(new Odgovor("Korisničko ime " + noviGost.getKorisnickoIme() + " je zauzeto. Pokušajte ponovo."));
 				}
 			} else	{
 				System.out.println("Objekat korisnika ne moze da se kreira.");

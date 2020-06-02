@@ -23,8 +23,10 @@ new Vue({
                 this.$refs.ime.classList.add("is-invalid");
                 valid = false;
             } else  {
-                this.$refs.ime.classList.remove("is-invalid");
-                this.$refs.ime.classList.add("is-valid");
+                if (this.$refs.ime.classList.contains('is-invalid'))    {
+                    this.$refs.ime.classList.remove("is-invalid");
+                    this.$refs.ime.classList.add("is-valid");
+                }
             }
 
             // proveri prezime
@@ -33,8 +35,10 @@ new Vue({
                 this.$refs.prezime.classList.add("is-invalid");
                 valid = false;
             } else  {
-                this.$refs.prezime.classList.remove("is-invalid");
-                this.$refs.prezime.classList.add("is-valid");
+                if (this.$refs.prezime.classList.contains('is-invalid'))    {
+                    this.$refs.prezime.classList.remove("is-invalid");
+                    this.$refs.prezime.classList.add("is-valid");
+                }
             }
 
             // proveri korisnicko ime
@@ -43,8 +47,10 @@ new Vue({
                 this.$refs.korisnickoIme.classList.add("is-invalid");
                 valid = false;
             } else  {
-                this.$refs.korisnickoIme.classList.remove("is-invalid");
-                this.$refs.korisnickoIme.classList.add("is-valid");
+                if (this.$refs.korisnickoIme.classList.contains('is-invalid'))    {
+                    this.$refs.korisnickoIme.classList.remove("is-invalid");
+                    this.$refs.korisnickoIme.classList.add("is-valid");
+                }
             }
 
             // provera lozinke
@@ -55,10 +61,14 @@ new Vue({
                 this.$refs.potvrdaLozinke.classList.add("is-invalid");
                 valid = false;
             } else  {
-                this.$refs.lozinka.classList.remove("is-invalid");
-                this.$refs.lozinka.classList.add("is-valid");
-                this.$refs.potvrdaLozinke.classList.remove("is-invalid");
-                this.$refs.potvrdaLozinke.classList.add("is-valid");
+                if (this.$refs.lozinka.classList.contains('is-invalid'))    {
+                    this.$refs.lozinka.classList.remove("is-invalid");
+                    this.$refs.lozinka.classList.add("is-valid");
+                }
+                if (this.$refs.potvrdaLozinke.classList.contains('is-invalid'))    {
+                    this.$refs.potvrdaLozinke.classList.remove("is-invalid");
+                    this.$refs.potvrdaLozinke.classList.add("is-valid");
+                }
             }
 
             // provera combo box-eva
@@ -67,8 +77,10 @@ new Vue({
                 this.$refs.pol.classList.add("is-invalid");
                 valid = false;
             } else {
-                this.$refs.pol.classList.remove("is-invalid");
-                this.$refs.pol.classList.add("is-valid");
+                if (this.$refs.pol.classList.contains('is-invalid'))    {
+                    this.$refs.pol.classList.remove("is-invalid");
+                    this.$refs.pol.classList.add("is-valid");
+                }
             }
 
             if (this.$refs.uloga.value == "")   {
@@ -76,8 +88,10 @@ new Vue({
                 this.$refs.uloga.classList.add("is-invalid");
                 valid = false;
             } else {
-                this.$refs.uloga.classList.remove("is-invalid");
-                this.$refs.uloga.classList.add("is-valid");
+                if (this.$refs.uloga.classList.contains('is-invalid'))    {
+                    this.$refs.uloga.classList.remove("is-invalid");
+                    this.$refs.uloga.classList.add("is-valid");
+                }
             }
 
             if (valid)  {
@@ -111,14 +125,22 @@ new Vue({
 
             var putanja = 'app/registracija/' + (this.uloga == 1 ? 'domacin' : 'gost');
 
-            // TODO: ukoliko registracija nije uspesna...
             axios
                 .post(putanja, korisnik, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 })
-                .then(response => (alert('Korisnik ' + response.data.korisnickoIme + ' je uspešno registrovan!')))
+                .then(response => {
+                    if (response.data.hasOwnProperty('korisnickoIme'))  {
+                        alert('Korisnik ' + response.data.korisnickoIme + ' uspešno registrovan!');
+                        document.getElementById('registForma').reset();
+                    } else  {
+                        alert(response.data.sadrzaj);
+                        this.$refs.korisnickoIme.classList.remove("is-valid");
+                        this.$refs.korisnickoIme.classList.add("is-invalid");
+                    }
+                })
                 .catch(error => (console.log(error)))
         }
     }
