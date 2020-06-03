@@ -5,7 +5,7 @@
         <title>Naslov sajta</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
         <link rel="stylesheet" href="./css/main.css">
-        <!--script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js" ></script-->
+        <!--script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js" ></script--><!--Ubacen vue.js pa ne treba cdn-->
     </head>
 
     <body>
@@ -27,25 +27,25 @@
                 <div class="form-group">
                     <label for="ime">Ime</label>
                     <input v-model:value="ime" type="text" id="ime" ref="ime" class="form-control">
-                    <div class="invalid-feedback">Unesite Vaše ime.</div>
+                    <div class="invalid-feedback">Unesite Vaše ime. Samo mala i velika slova!</div>
                 </div>
                 
                 <div class="form-group">
                     <label for="prezime">Prezime</label>
                     <input v-model:value="prezime" type="text" id="prezime" ref="prezime" class="form-control">
-                    <div class="invalid-feedback">Unesite Vaše prezime.</div>
+                    <div class="invalid-feedback">Unesite Vaše prezime. Samo mala i velika slova!</div>
                 </div>
 
                 <div class="form-group">
                     <label for="korisnickoIme">Korisničko ime</label>
                     <input v-model:value="korisnicko" type="text" id="korisnickoIme" ref="korisnickoIme" class="form-control">
-                    <div class="invalid-feedback">Unesite Vaše korisničko ime.</div>
+                    <div class="invalid-feedback">Unesite Vaše korisničko ime. Dozvoljena su slova, brojevi i povlaka!</div>
                 </div>
 
                 <div class="form-group">
                     <label for="lozinka">Lozinka</label>
                     <input v-model:value="lozinka" type="password" id="lozinka" ref="lozinka" class="form-control">
-                    <div class="invalid-feedback">Lozinke moraju da se poklapaju.</div>
+                    <div class="invalid-feedback">Lozinke moraju da se poklapaju. Dozvoljena su slova, brojevi i povlaka!</div>
                     <label for="potvrdaLozinke">Potvrdite lozinku</label>
                     <input v-model:value="potvrdaLozinke" type="password" id="potvrdaLozinke" ref="potvrdaLozinke" class="form-control">
                     <div class="invalid-feedback">Lozinke moraju da se poklapaju.</div>
