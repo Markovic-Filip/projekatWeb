@@ -18,7 +18,7 @@ new Vue({
             valid = true;
 
             // proveri ime
-            if (this.$refs.ime.value.length <= 1)   {
+            if (this.$refs.ime.value.length <= 1 || !/^[a-zA-Z]+$/.test(this.$refs.ime.value))   {
                 this.$refs.ime.classList.remove("is-valid");
                 this.$refs.ime.classList.add("is-invalid");
                 valid = false;
@@ -30,7 +30,7 @@ new Vue({
             }
 
             // proveri prezime
-            if (this.$refs.prezime.value.length <= 1)   {
+            if (this.$refs.prezime.value.length <= 1 || !/^[a-zA-Z]+$/.test(this.$refs.prezime.value))   {
                 this.$refs.prezime.classList.remove("is-valid");
                 this.$refs.prezime.classList.add("is-invalid");
                 valid = false;
@@ -42,7 +42,8 @@ new Vue({
             }
 
             // proveri korisnicko ime
-            if (this.$refs.korisnickoIme.value.length <= 1)   {
+            // /\W/ znaci sve osim slova, brojeva i underscore-a
+            if (this.$refs.korisnickoIme.value.length <= 1 || /\W/.test(this.$refs.korisnickoIme.value))   {
                 this.$refs.korisnickoIme.classList.remove("is-valid");
                 this.$refs.korisnickoIme.classList.add("is-invalid");
                 valid = false;
@@ -54,7 +55,7 @@ new Vue({
             }
 
             // provera lozinke
-            if (this.$refs.lozinka.value.length < 8 || !this.uporediLozinke())   {
+            if (this.$refs.lozinka.value.length < 8 || !this.uporediLozinke() || !/^[0-9a-zA-Z]+$/.test(this.$refs.lozinka.value))   {
                 this.$refs.lozinka.classList.remove("is-valid");
                 this.$refs.lozinka.classList.add("is-invalid");
                 this.$refs.potvrdaLozinke.classList.remove("is-valid");
