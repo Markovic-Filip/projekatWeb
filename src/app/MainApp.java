@@ -5,16 +5,21 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.Spark.staticFiles;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 
 import com.google.gson.Gson;
 
+import beans.Administrator;
 import beans.Domacin;
 import beans.Gost;
 import beans.Korisnik;
 import beans.Odgovor;
+import enums.Pol;
+import enums.Uloga;
 
 public class MainApp {
 
@@ -23,9 +28,17 @@ public class MainApp {
 	
 	public static void main(String[] args) throws IOException {
 
+		// Inicijalizacija
+		
 		port(8080);
 		
 		staticFiles.externalLocation(new File("./static").getCanonicalPath());
+		
+		ucitajKorisnike("./static/baza/gosti.txt", Uloga.GOST);
+		ucitajKorisnike("./static/baza/domacini.txt", Uloga.DOMACIN);
+		ucitajKorisnike("./static/baza/admini.txt", Uloga.ADMINISTRATOR);
+		
+		// Obrada HTTP zahteva
 		
 		post("/app/registracija/domacin", (req, res) ->	{
 			res.type("application/json");
@@ -81,6 +94,29 @@ public class MainApp {
 		else	{
 			System.out.println("Korisnicko ime " + noviKorisnik.getKorisnickoIme() + " je vec zauzeto.");
 			return false;
+		}
+	}
+	
+	private static void ucitajKorisnike(String putanja, Uloga uloga)	{
+		BufferedReader br;
+		try	{
+			br = new BufferedReader(new FileReader(putanja));
+			String red;
+			while ((red = br.readLine()) != null)	{
+				String[] tokeni = red.split(";");
+				if (uloga == Uloga.GOST)	{
+					korisnici.put(tokeni[0], new Gost(tokeni[0], tokeni[1], tokeni[2], tokeni[3], Pol.valueOf(tokeni[4])));
+				} else if (uloga == Uloga.DOMACIN)	{
+					korisnici.put(tokeni[0], new Domacin(tokeni[0], tokeni[1], tokeni[2], tokeni[3], Pol.valueOf(tokeni[4])));
+				} else if (uloga == Uloga.ADMINISTRATOR)	{
+					korisnici.put(tokeni[0], new Administrator(tokeni[0], tokeni[1], tokeni[2], tokeni[3], Pol.valueOf(tokeni[4])));
+				}
+				// TODO: dijagnostika, moze se obrisati kasnije
+				System.out.println(korisnici.get(tokeni[0]).getLozinka() + ", " + korisnici.get(tokeni[0]).getPrezime() + ", " + korisnici.get(tokeni[0]).getPol());
+			}
+		} catch (Exception e)	{
+			e.printStackTrace();
+			System.out.println("Fajl " + putanja + " nije pronadjen.");
 		}
 	}
 }
