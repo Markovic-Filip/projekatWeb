@@ -84,6 +84,7 @@ new Vue({
                 }
             }
 
+            /*
             if (this.$refs.uloga.value == "")   {
                 this.$refs.uloga.classList.remove("is-valid");
                 this.$refs.uloga.classList.add("is-invalid");
@@ -94,6 +95,7 @@ new Vue({
                     this.$refs.uloga.classList.add("is-valid");
                 }
             }
+            */
 
             if (valid)  {
                 this.registruj();
@@ -124,7 +126,8 @@ new Vue({
                 'pol': this.pol
             };
 
-            var putanja = 'app/registracija/' + (this.uloga == 1 ? 'domacin' : 'gost');
+            //var putanja = 'app/registracija/' + (this.uloga == 1 ? 'domacin' : 'gost');
+            var putanja = 'app/registracija/gost';
 
             axios
                 .post(putanja, korisnik, {
