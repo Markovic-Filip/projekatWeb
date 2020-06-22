@@ -60,4 +60,9 @@ public class Korisnik {
 	public void setPol(Pol pol) {
 		this.pol = pol;
 	}
+	
+	@Override
+	public String toString() {
+		return this.korisnickoIme + ";" + this.lozinka + ";" + this.ime + ";" + this.prezime + ";" + this.pol.name() + "\n";
+	}
 }
