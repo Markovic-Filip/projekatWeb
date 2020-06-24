@@ -4,8 +4,6 @@ import enums.Pol;
 import enums.Uloga;
 
 public class Administrator extends Korisnik {
-
-	private final Uloga uloga;
 	
 	public Administrator() {
 		super();
@@ -17,10 +15,6 @@ public class Administrator extends Korisnik {
 		this.uloga = Uloga.ADMINISTRATOR;
 	}
 
-	public Uloga getUloga() {
-		return uloga;
-	}
-	
 	//public static void main(String[] args) {
 	//	Administrator ad = new Administrator("admin", "admin", "admin", "admin", Pol.MUSKO);
 	//	System.out.println(ad.getLozinka());
