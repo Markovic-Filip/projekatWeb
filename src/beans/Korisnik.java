@@ -1,6 +1,7 @@
 package beans;
 
 import enums.Pol;
+import enums.Uloga;
 
 public class Korisnik {
 
@@ -9,6 +10,7 @@ public class Korisnik {
 	protected String ime;
 	protected String prezime;
 	protected Pol pol;
+	protected Uloga uloga;
 	
 	public Korisnik() {	}
 	
@@ -59,6 +61,10 @@ public class Korisnik {
 
 	public void setPol(Pol pol) {
 		this.pol = pol;
+	}
+	
+	public Uloga getUloga()	{
+		return uloga;
 	}
 	
 	@Override

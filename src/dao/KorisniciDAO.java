@@ -37,7 +37,7 @@ public class KorisniciDAO {
 	public boolean dodajNovogKorisnika(Korisnik noviKorisnik, Uloga uloga)	{
 		if (!korisnici.containsKey(noviKorisnik.getKorisnickoIme()))	{
 			korisnici.put(noviKorisnik.getKorisnickoIme(), noviKorisnik);
-			upisiNovogKorisnika(noviKorisnik, uloga);
+			upisiNovogKorisnika(noviKorisnik);
 			return true;
 		}
 		else	{
@@ -61,7 +61,7 @@ public class KorisniciDAO {
 					korisnici.put(tokeni[0], new Administrator(tokeni[0], tokeni[1], tokeni[2], tokeni[3], Pol.valueOf(tokeni[4])));
 				}
 				// TODO: dijagnostika, moze se obrisati kasnije
-				System.out.println(korisnici.get(tokeni[0]).getLozinka() + ", " + korisnici.get(tokeni[0]).getPrezime() + ", " + korisnici.get(tokeni[0]).getPol());
+				System.out.println(korisnici.get(tokeni[0]).toString());
 			}
 		} catch (Exception e)	{
 			e.printStackTrace();
@@ -69,9 +69,9 @@ public class KorisniciDAO {
 		}
 	}
 	
-	private void upisiNovogKorisnika(Korisnik noviKorisnik, Uloga uloga) {
+	private void upisiNovogKorisnika(Korisnik noviKorisnik) {
 		String putanja = "./static/baza/";
-		switch (uloga) {
+		switch (noviKorisnik.getUloga()) {
 		case DOMACIN:
 			putanja += "domacini.txt";
 			break;
