@@ -46,6 +46,10 @@ public class KorisniciDAO {
 		}
 	}
 	
+	public Korisnik dobaviKorisnika(String korisnickoIme)	{
+		return korisnici.get(korisnickoIme);
+	}
+	
 	private void ucitajKorisnike(String putanja, Uloga uloga)	{
 		BufferedReader bafer;
 		try	{

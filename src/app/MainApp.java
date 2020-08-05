@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 
 import beans.Domacin;
 import beans.Gost;
+import beans.Korisnik;
 import beans.Odgovor;
 import dao.KorisniciDAO;
 
@@ -57,6 +58,7 @@ public class MainApp {
 		post("/app/registracija/gost", (req, res) -> {
 			res.type("application/json");
 			String payload = req.body();
+			System.out.println(payload);
 			Gost noviGost = gson.fromJson(payload, Gost.class);
 			if (noviGost != null)	{
 				System.out.println(noviGost.getIme() + ", " + noviGost.getKorisnickoIme());
@@ -74,6 +76,30 @@ public class MainApp {
 				res.status(500);
 				return null;
 			}
+		});
+		
+		post("/app/login", (req, res) -> {
+			String payload = req.body();
+			System.out.println(payload);
+			
+			String[] tokeni = payload.split("&");
+			
+			String korisnickoIme = tokeni[0];
+			String lozinka = tokeni[1];
+			
+			Korisnik korisnik = korisnici.dobaviKorisnika(korisnickoIme);
+			
+			if (korisnik != null)	{
+				if (korisnik.getLozinka().equals(lozinka))	{
+					// TODO: uspesno logovanje
+				} else	{
+					// TODO: neuspesno logovanje
+				}
+			} else	{
+				// TODO: korisnik ne postoji
+			}
+			
+			return payload;
 		});
 	}
 }
