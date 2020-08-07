@@ -140,12 +140,13 @@ new Vue({
                         alert('Korisnik ' + response.data.korisnickoIme + ' uspešno registrovan!');
                         document.getElementById('registForma').reset();
                     } else  {
-                        alert(response.data.sadrzaj);
-                        this.$refs.korisnickoIme.classList.remove("is-valid");
-                        this.$refs.korisnickoIme.classList.add("is-invalid");
+                        console.log(response);
                     }
                 })
-                .catch(error => (console.log(error)))
+                .catch(error => {
+                    console.log(error);
+                    alert(error.response.data.sadrzaj);
+                });
         }
     }
 });

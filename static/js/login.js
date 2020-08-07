@@ -50,9 +50,18 @@ new Vue({
                     // }
                 })
                 .then(response => {
-                    
+                    // TODO:
+                    if (response.data.hasOwnProperty('JWTToken'))   {
+                        window.localStorage.setItem('jwt', response.data.JWTToken);
+                        //alert(response.data.JWTToken);
+                    } else  {
+                        console.log(response);
+                    }
                 })
-                .catch(error => (console.log(error)))
+                .catch(error => {
+                    console.log(error);
+                    alert(error.response.data.sadrzaj);
+                });
         }
     }
 })

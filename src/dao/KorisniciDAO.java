@@ -41,7 +41,7 @@ public class KorisniciDAO {
 			return true;
 		}
 		else	{
-			System.out.println("Korisnicko ime " + noviKorisnik.getKorisnickoIme() + " je vec zauzeto.");
+			System.out.println("KorisniciDAO: Korisnicko ime " + noviKorisnik.getKorisnickoIme() + " je vec zauzeto.");
 			return false;
 		}
 	}

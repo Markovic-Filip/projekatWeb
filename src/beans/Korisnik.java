@@ -11,6 +11,7 @@ public class Korisnik {
 	protected String prezime;
 	protected Pol pol;
 	protected Uloga uloga;
+	protected String JWTToken;
 	
 	public Korisnik() {	}
 	
@@ -67,6 +68,14 @@ public class Korisnik {
 		return uloga;
 	}
 	
+	public String getJWTToken() {
+		return JWTToken;
+	}
+
+	public void setJWTToken(String jWTToken) {
+		JWTToken = jWTToken;
+	}
+
 	@Override
 	public String toString() {
 		return this.korisnickoIme + ";" + this.lozinka + ";" + this.ime + ";" + this.prezime + ";" + this.pol.name() + "\n";
