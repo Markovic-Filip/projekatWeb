@@ -47,18 +47,16 @@ public class MainApp {
 			if (noviDomacin != null)	{
 				System.out.println("REGISTRACIJA DOMACINA: " + noviDomacin.getIme() + ", " + noviDomacin.getKorisnickoIme());
 				if (korisnici.dodajNovogKorisnika(noviDomacin, noviDomacin.getUloga()))	{
-					System.out.println("REGISTRACIJA DOMACINA: Domacin " + noviDomacin.getKorisnickoIme() + " uspesno registrovan.");
+					System.out.println("REGISTRACIJA DOMACINA: Domacin " + noviDomacin.getKorisnickoIme() + " uspesno registrovan.\r\n");
 					return gson.toJson(noviDomacin);
 				} else	{
 					res.status(400);	// Status 400 Bad Request
-					System.out.println("REGISTRACIJA DOMACINA: Korisničko ime " + noviDomacin.getKorisnickoIme() + " je zauzeto. Pokušajte ponovo.");
-					return gson.toJson(new Odgovor("Korisničko ime " + noviDomacin.getKorisnickoIme() + " je zauzeto. Pokušajte ponovo."));
+					System.out.println("REGISTRACIJA DOMACINA: Korisničko ime " + noviDomacin.getKorisnickoIme() + " je zauzeto.\r\n");
+					return gson.toJson(new Odgovor("Korisničko ime " + noviDomacin.getKorisnickoIme() + " je zauzeto. Pokušajte drugo korisničko ime."));
 				}
 			} else	{
-				System.out.println("REGISTRACIJA DOMACINA: Objekat korisnika ne moze da se kreira.");
-				// TODO: Ovo treba nekako handleovati
-				// Error 500: Internal Server Error - iz nekog razloga ne moze da parsira JSON objekat
-				res.status(500);
+				System.out.println("REGISTRACIJA DOMACINA: Objekat korisnika ne moze da se kreira.\r\n");
+				res.status(500);	// Error 500: Internal Server Error - iz nekog razloga ne moze da parsira JSON objekat
 				return gson.toJson(new Odgovor("Greška prilikom registracije korisnika. Pokušajte ponovo."));
 			}
 		});
@@ -70,19 +68,20 @@ public class MainApp {
 			Gost noviGost = gson.fromJson(payload, Gost.class);
 			if (noviGost != null)	{
 				System.out.println("REGISTRACIJA GOSTA: " + noviGost.getIme() + ", " + noviGost.getKorisnickoIme());
+				// TODO: ne znam cemu drugi argument za dodajNovogKorisnika, vise u KorisniciDAO
 				if (korisnici.dodajNovogKorisnika(noviGost, noviGost.getUloga()))	{
 					System.out.println("REGISTRACIJA GOSTA: Gost " + noviGost.getKorisnickoIme() + " uspesno registrovan.");
+					ulogujKorisnika(noviGost);
+					System.out.println("REGISTRACIJA GOSTA: JWT novog gosta: " + noviGost.getJWTToken() + "\r\n");
 					return gson.toJson(noviGost);
 				} else	{
 					res.status(400);	// Status 400 Bad Request
-					System.out.println("REGISTRACIJA GOSTA: Korisničko ime " + noviGost.getKorisnickoIme() + " je zauzeto. Pokušajte ponovo.");
-					return gson.toJson(new Odgovor("Korisničko ime " + noviGost.getKorisnickoIme() + " je zauzeto. Pokušajte ponovo."));
+					System.out.println("REGISTRACIJA GOSTA: Korisničko ime " + noviGost.getKorisnickoIme() + " je zauzeto.\r\n");
+					return gson.toJson(new Odgovor("Korisničko ime " + noviGost.getKorisnickoIme() + " je zauzeto. Pokušajte drugo korisničko ime."));
 				}
 			} else	{
-				System.out.println("REGISTRACIJA GOSTA: Objekat korisnika ne moze da se kreira.");
-				// TODO: Ovo treba nekako handleovati
-				// Error 500: Internal Server Error - iz nekog razloga ne moze da parsira JSON objekat
-				res.status(500);
+				System.out.println("REGISTRACIJA GOSTA: Objekat korisnika ne moze da se kreira.\r\n");
+				res.status(500);	// Error 500: Internal Server Error - iz nekog razloga ne moze da parsira JSON objekat
 				return gson.toJson(new Odgovor("Greška prilikom registracije korisnika. Pokušajte ponovo."));
 			}
 		});
@@ -101,21 +100,29 @@ public class MainApp {
 			if (korisnik != null)	{
 				if (korisnik.getLozinka().equals(lozinka))	{
 					// Uspesno logovanje
-					String jws = Jwts.builder().setSubject(korisnik.getKorisnickoIme()).setIssuedAt(new Date()).signWith(key).compact();
-					korisnik.setJWTToken(jws);
+					ulogujKorisnika(korisnik);
+					
+					//String jwt = Jwts.builder().setSubject(korisnik.getKorisnickoIme()).setIssuedAt(new Date()).signWith(key).compact();
+					//korisnik.setJWTToken(jwt);
+					
 					return gson.toJson(korisnik);
 				} else	{
 					// Neuspesno logovanje
 					res.status(400);	// Status 400 Bad Request
-					System.out.println("LOGIN: Pogresna lozinka za korisnicko ime " + korisnik.getKorisnickoIme());
+					System.out.println("LOGIN: Pogresna lozinka za korisnicko ime " + korisnik.getKorisnickoIme() + "\r\n");
 					return gson.toJson(new Odgovor("Lozinka za nalog " + korisnik.getKorisnickoIme() + " nije ispravna. Pokušajte ponovo."));
 				}
 			} else	{
 				// Korisnik ne postoji
 				res.status(400);	// Status 400 Bad Request
-				System.out.println("LOGIN: Korisnik " + korisnickoIme + " nije pronadjen u bazi.");
+				System.out.println("LOGIN: Korisnik " + korisnickoIme + " nije pronadjen u bazi.\r\n");
 				return gson.toJson(new Odgovor("Ne postoji registrovan korisnik sa korisnickim imenom: " + korisnickoIme));
 			}
 		});
+	}
+
+	private static void ulogujKorisnika(Korisnik korisnik) {
+		String jwt = Jwts.builder().setSubject(korisnik.getKorisnickoIme()).setIssuedAt(new Date()).signWith(key).compact();
+		korisnik.setJWTToken(jwt);
 	}
 }
