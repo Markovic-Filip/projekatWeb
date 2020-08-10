@@ -15,3 +15,12 @@
     margin: auto;
     margin-top: 150px;
 }
+.error-msg  {
+    padding-top: 2em;
+    color: orangered;
+}
+
+.ok-msg {
+    padding-top: 2em;
+    color: lightgreen;
+}

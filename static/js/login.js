@@ -44,23 +44,22 @@ new Vue({
             let payload = this.korisnicko + '&' + this.lozinka;
 
             axios
-                .post(putanja, payload, {
-                    // headers: {
-                    //     'Content-Type': 'application/json'
-                    // }
-                })
+                .post(putanja, payload)
                 .then(response => {
-                    // TODO:
                     if (response.data.hasOwnProperty('JWTToken'))   {
-                        window.localStorage.setItem('jwt', response.data.JWTToken);
+                        //this.$refs.msg.classList.remove("error-msg");
                         //alert(response.data.JWTToken);
+                        window.localStorage.setItem('jwt', response.data.JWTToken);
+                        window.location = "index.html";
                     } else  {
                         console.log(response);
                     }
                 })
                 .catch(error => {
                     console.log(error);
-                    alert(error.response.data.sadrzaj);
+                    //alert(error.response.data.sadrzaj);
+                    this.$refs.msg.classList.add("error-msg");
+                    this.$refs.msg.innerHTML = error.response.data.sadrzaj;
                 });
         }
     }

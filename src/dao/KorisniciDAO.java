@@ -34,6 +34,7 @@ public class KorisniciDAO {
 		return (ArrayList<Korisnik>) korisnici.values();
 	}
 	
+	// TODO: Ovo uloga je mozda suvisno, ne secam se zasto sam stavio
 	public boolean dodajNovogKorisnika(Korisnik noviKorisnik, Uloga uloga)	{
 		if (!korisnici.containsKey(noviKorisnik.getKorisnickoIme()))	{
 			korisnici.put(noviKorisnik.getKorisnickoIme(), noviKorisnik);
@@ -64,8 +65,7 @@ public class KorisniciDAO {
 				} else if (uloga == Uloga.ADMINISTRATOR)	{
 					korisnici.put(tokeni[0], new Administrator(tokeni[0], tokeni[1], tokeni[2], tokeni[3], Pol.valueOf(tokeni[4])));
 				}
-				// TODO: dijagnostika, moze se obrisati kasnije
-				System.out.println(korisnici.get(tokeni[0]).toString());
+				System.out.println("KorisniciDAO: " + korisnici.get(tokeni[0]).toString());
 			}
 		} catch (Exception e)	{
 			e.printStackTrace();
@@ -76,14 +76,14 @@ public class KorisniciDAO {
 	private void upisiNovogKorisnika(Korisnik noviKorisnik) {
 		String putanja = "./static/baza/";
 		switch (noviKorisnik.getUloga()) {
-		case DOMACIN:
-			putanja += "domacini.txt";
-			break;
-		case GOST:
-			putanja += "gosti.txt";
-			break;
-		default:
-			break;
+			case DOMACIN:
+				putanja += "domacini.txt";
+				break;
+			case GOST:
+				putanja += "gosti.txt";
+				break;
+			default:
+				break;
 		}
 		
 		try {
