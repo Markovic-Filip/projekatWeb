@@ -17,6 +17,9 @@ import beans.Gost;
 import beans.Korisnik;
 import beans.Odgovor;
 import dao.KorisniciDAO;
+import enums.Uloga;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -117,6 +120,29 @@ public class MainApp {
 				res.status(400);	// Status 400 Bad Request
 				System.out.println("LOGIN: Korisnik " + korisnickoIme + " nije pronadjen u bazi.\r\n");
 				return gson.toJson(new Odgovor("Ne postoji registrovan korisnik sa korisnickim imenom: " + korisnickoIme));
+			}
+		});
+		
+		get("/app/preuzmi_ulogu", (req, res) -> {
+			System.out.println("GET ULOGA: " + req.headers());
+			String autorizacija = req.headers("Authorization");
+			System.out.println("GET ULOGA: " + autorizacija);
+			if (autorizacija != null && autorizacija.contains("Bearer ")) {	
+				String jwt = autorizacija.substring(autorizacija.indexOf("Bearer ") + 7);
+				try {
+					Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt);
+					String korisnickoIme = claims.getBody().getSubject();
+					Korisnik korisnik = korisnici.dobaviKorisnika(korisnickoIme);
+					return gson.toJson(new Odgovor(korisnik.getUloga().name()));
+				} catch (Exception e) {
+					res.status(500);
+					System.out.println("GET ULOGA: Ne moze da parsira JWT.");
+					return gson.toJson(new Odgovor("Ne moze da parsira JWT."));
+				}
+			} else	{
+				res.status(400);
+				System.out.println("GET ULOGA: Autentikacija nije validna.");
+				return gson.toJson(new Odgovor("Autentikacija nije validna."));
 			}
 		});
 	}

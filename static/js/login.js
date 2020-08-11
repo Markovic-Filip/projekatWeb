@@ -50,7 +50,8 @@ new Vue({
                         //this.$refs.msg.classList.remove("error-msg");
                         //alert(response.data.JWTToken);
                         window.localStorage.setItem('jwt', response.data.JWTToken);
-                        window.location = "index.html";
+                        //window.location = "index.html";
+                        window.location = "user_page.html";
                     } else  {
                         console.log(response);
                     }

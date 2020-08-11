@@ -17,7 +17,7 @@
 }
 .error-msg  {
     padding-top: 2em;
-    color: orangered;
+    color: orangered !important;
 }
 
 .ok-msg {
