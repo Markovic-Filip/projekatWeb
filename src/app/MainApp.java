@@ -250,6 +250,7 @@ public class MainApp {
 		} else	{
 			res.status(400);
 			System.out.println("PROVERA OVLASCENJA: Korisnik nije ulogovan.");
+			// TODO: obrisati
 			//return gson.toJson(new Odgovor("Ovlascenje nije validno."));
 			return null;
 		}
