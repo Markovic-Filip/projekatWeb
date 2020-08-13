@@ -84,6 +84,8 @@ public class KorisniciDAO {
 				}
 				System.out.println("KorisniciDAO: " + korisnici.get(tokeni[0]).toString() + "\r\n");
 			}
+			
+			bafer.close();
 		} catch (Exception e)	{
 			e.printStackTrace();
 			System.out.println("Fajl " + putanja + " nije pronadjen.\r\n");
@@ -105,8 +107,18 @@ public class KorisniciDAO {
 	
 	private void azurirajBazu(Uloga uloga) {
 		String putanja = napraviPutanju(uloga);
-		
-		// TODO: obrisati korisnika iz spiska korisnika
+		try {
+			FileWriter writer = new FileWriter(putanja, false);
+			for (Korisnik korisnik : korisnici.values())	{
+				if (korisnik.getUloga().equals(uloga))	{
+					writer.write(korisnik.toString());
+				}
+			}
+			writer.close();
+		} catch (IOException e)	{
+			e.printStackTrace();
+			System.out.println("Fajl " + putanja + " nije pronadjen!\r\n");
+		}
 	}
 	
 	private String napraviPutanju(Uloga uloga)	{

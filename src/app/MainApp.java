@@ -201,6 +201,7 @@ public class MainApp {
 			if (korisnik != null)	{
 				if (korisnik.getUloga().equals(Uloga.ADMINISTRATOR))	{
 					String payload = req.body();
+					System.out.println("OBRISI KORISNIKA: " + payload + "\r\n");
 					Korisnik korisnikZaBrisanje = gson.fromJson(payload, Korisnik.class);
 					if (korisnici.obrisiKorisnika(korisnikZaBrisanje.getKorisnickoIme()))	{
 						System.out.println("OBRISI KORISNIKA: Korisnik " + korisnikZaBrisanje.getKorisnickoIme() + " uspesno obrisan iz baze.\r\n");
@@ -249,6 +250,7 @@ public class MainApp {
 		} else	{
 			res.status(400);
 			System.out.println("PROVERA OVLASCENJA: Korisnik nije ulogovan.");
+			// TODO: obrisati
 			//return gson.toJson(new Odgovor("Ovlascenje nije validno."));
 			return null;
 		}

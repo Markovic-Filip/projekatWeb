@@ -39,33 +39,38 @@ new Vue({
                     window.location = 'login.html';
                 }, 5000);
             });
+
+        // TODO: isti poziv za apartmane i mozda rezervacije
     },
     methods:    {
         obrisiKorisnika: function(korisnik) {
-            axios
-                .delete('app/obrisi_korisnika', {
-                    headers: {
-                        'Authorization': 'Bearer ' + window.localStorage.getItem('jwt');
-                    }
-                })
-                .then(response => {
-                    this.korisnici = response.data;
-                    //location.reload();
-                })
-                .catch(error => {
-                    console.log(error);
-                    alert(error.response.data.sadrzaj);
-                    if (error.response.status == 400 || error.response.status == 500)   {
-                        setTimeout(() => {
-                            window.localStorage.removeItem('jwt');
-                            window.location = 'login.html';
-                        }, 5000);
-                    } else  {
-                        setTimeout(() => {
-                            location.reload();
-                        })
-                    }
-                });
+            if (confirm("Obriši korisnika " + korisnik.korisnickoIme + "?"))  {
+                axios
+                    .delete('app/obirsi_korisnika', {
+                        headers: {
+                            'Authorization': 'Bearer ' + window.localStorage.getItem('jwt')
+                        },
+                        data: korisnik
+                    })
+                    .then(response => {
+                        this.korisnici = response.data;
+                        //location.reload(); // nema potrebe za ovim, tabela se sama azurira
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        alert(error.response.data.sadrzaj);
+                        if (error.response.status == 400 || error.response.status == 500)   {
+                            setTimeout(() => {
+                                window.localStorage.removeItem('jwt');
+                                window.location = 'login.html';
+                            }, 5000);
+                        } else  {
+                            setTimeout(() => {
+                                location.reload();
+                            }, 5000);
+                        }
+                    });
+            }
         }
     }
 });
