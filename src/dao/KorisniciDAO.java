@@ -107,8 +107,6 @@ public class KorisniciDAO {
 	
 	private void azurirajBazu(Uloga uloga) {
 		String putanja = napraviPutanju(uloga);
-		
-		// TODO: obrisati korisnika iz spiska korisnika
 		try {
 			FileWriter writer = new FileWriter(putanja, false);
 			for (Korisnik korisnik : korisnici.values())	{
