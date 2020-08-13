@@ -3,6 +3,7 @@ package app;
 import static spark.Spark.port;
 import static spark.Spark.get;
 import static spark.Spark.post;
+import static spark.Spark.delete;
 import static spark.Spark.staticFiles;
 
 import java.io.File;
@@ -23,6 +24,8 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import spark.Request;
+import spark.Response;
 
 public class MainApp {
 
@@ -74,7 +77,7 @@ public class MainApp {
 				// TODO: ne znam cemu drugi argument za dodajNovogKorisnika, vise u KorisniciDAO
 				if (korisnici.dodajNovogKorisnika(noviGost, noviGost.getUloga()))	{
 					System.out.println("REGISTRACIJA GOSTA: Gost " + noviGost.getKorisnickoIme() + " uspesno registrovan.");
-					ulogujKorisnika(noviGost);
+					logovanjeKorisnika(noviGost);
 					System.out.println("REGISTRACIJA GOSTA: JWT novog gosta: " + noviGost.getJWTToken() + "\r\n");
 					return gson.toJson(noviGost);
 				} else	{
@@ -103,7 +106,7 @@ public class MainApp {
 			if (korisnik != null)	{
 				if (korisnik.getLozinka().equals(lozinka))	{
 					// Uspesno logovanje
-					ulogujKorisnika(korisnik);
+					logovanjeKorisnika(korisnik);
 					
 					//String jwt = Jwts.builder().setSubject(korisnik.getKorisnickoIme()).setIssuedAt(new Date()).signWith(key).compact();
 					//korisnik.setJWTToken(jwt);
@@ -124,7 +127,26 @@ public class MainApp {
 		});
 		
 		get("/app/preuzmi_ulogu", (req, res) -> {
-			System.out.println("GET ULOGA: " + req.headers());
+			Korisnik korisnik = proveraOvlascenja(req, res);
+			
+			if (korisnik != null) {
+				return gson.toJson(new Odgovor(korisnik.getUloga().name()));
+			} else	{
+				if (res.status() == 400)	{
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				}
+				else if (res.status() == 500)	{
+					// TODO: error 500 ne treba da log outuje, samo da javi da pokusa ponovo, ili eventualno da se ponovo uloguje
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				}
+			}
+			
+			// TODO:
+			res.status(500);
+			return gson.toJson(new Odgovor("Bas HC greska."));
+			
+			
+			/*System.out.println("GET ULOGA: " + req.headers());
 			String autorizacija = req.headers("Authorization");
 			System.out.println("GET ULOGA: " + autorizacija);
 			if (autorizacija != null && autorizacija.contains("Bearer ")) {	
@@ -143,12 +165,92 @@ public class MainApp {
 				res.status(400);
 				System.out.println("GET ULOGA: Autentikacija nije validna.");
 				return gson.toJson(new Odgovor("Autentikacija nije validna."));
+			}*/
+		});
+		
+		get("/app/dobavi_korisnike", (req, res) -> {
+			Korisnik korisnik = proveraOvlascenja(req, res);
+			
+			if (korisnik != null) {
+				if (korisnik.getUloga().equals(Uloga.ADMINISTRATOR))	{
+					return gson.toJson(korisnici.sviKorisnici());
+				}
+				else	{
+					System.out.println("DOBAVI KORISNIKE: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ove podatke.\r\n");
+					res.status(403); // Error 403: Forbidden
+					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
+				}
+			} else	{
+				if (res.status() == 400)	{
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				}
+				else if (res.status() == 500)	{
+					// TODO: error 500 ne treba da log outuje, samo da javi da pokusa ponovo, ili eventualno da se ponovo uloguje 
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				}
+			}
+			
+			// TODO:
+			res.status(500);
+			return gson.toJson(new Odgovor("Bas HC greska."));
+		});
+		
+		delete("/app/obirsi_korisnika", (req, res) -> {
+			Korisnik korisnik = proveraOvlascenja(req, res);
+			
+			if (korisnik != null)	{
+				if (korisnik.getUloga().equals(Uloga.ADMINISTRATOR))	{
+					String payload = req.body();
+					Korisnik korisnikZaBrisanje = gson.fromJson(payload, Korisnik.class);
+					if (korisnici.obrisiKorisnika(korisnikZaBrisanje.getKorisnickoIme()))	{
+						System.out.println("OBRISI KORISNIKA: Korisnik " + korisnikZaBrisanje.getKorisnickoIme() + " uspesno obrisan iz baze.\r\n");
+						return gson.toJson(korisnici.sviKorisnici());
+					} else	{
+						System.out.println("OBRISI KORISNIKA: " + korisnikZaBrisanje.getKorisnickoIme() + " nije pronadjen u bazi.\r\n");
+						res.status(404); // Error 404: Not Found
+						return gson.toJson(new Odgovor("Traženi resurs nije pronađen."));
+					}
+				} else	{
+					System.out.println("OBRISI KORISNIKA: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ovu metodu.\r\n");
+					res.status(403); // Error 403: Forbidden
+					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
+				}
+			} else	{
+				System.out.println("OBRISI KORISNIKA: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
+				res.status(400);
+				return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
 			}
 		});
 	}
 
-	private static void ulogujKorisnika(Korisnik korisnik) {
+	private static void logovanjeKorisnika(Korisnik korisnik) {
 		String jwt = Jwts.builder().setSubject(korisnik.getKorisnickoIme()).setIssuedAt(new Date()).signWith(key).compact();
 		korisnik.setJWTToken(jwt);
+	}
+	
+	private static Korisnik proveraOvlascenja(Request req, Response res) {
+		System.out.println("PROVERA OVLASCENJA: " + req.headers());
+		String autorizacija = req.headers("Authorization");
+		System.out.println("PROVERA OVLASCENJA: " + autorizacija);
+		if (autorizacija != null && autorizacija.contains("Bearer ")) {	
+			String jwt = autorizacija.substring(autorizacija.indexOf("Bearer ") + 7);
+			try {
+				Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt);
+				String korisnickoIme = claims.getBody().getSubject();
+				Korisnik korisnik = korisnici.dobaviKorisnika(korisnickoIme);
+				//return gson.toJson(new Odgovor(korisnik.getUloga().name()));
+				return korisnik;
+			} catch (Exception e) {
+				res.status(500);
+				System.out.println("PROVERA OVLASCENJA: Ne moze da parsira JWT.");
+				//return gson.toJson(new Odgovor("Ne moze da parsira JWT."));
+				return null;
+			}
+		} else	{
+			res.status(400);
+			System.out.println("PROVERA OVLASCENJA: Korisnik nije ulogovan.");
+			//return gson.toJson(new Odgovor("Ovlascenje nije validno."));
+			return null;
+		}
 	}
 }
