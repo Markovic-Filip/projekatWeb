@@ -51,7 +51,12 @@ new Vue({
                         //alert(response.data.JWTToken);
                         window.localStorage.setItem('jwt', response.data.JWTToken);
                         //window.location = "index.html";
-                        window.location = "user_page.html";
+                        let uloga = response.data.uloga;
+                        if (uloga == 0) {
+                            window.location = "admin_page.html";
+                        } else {
+                            window.location = "index.html";
+                        }
                     } else  {
                         console.log(response);
                     }
