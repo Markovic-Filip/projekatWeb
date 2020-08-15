@@ -15,18 +15,29 @@
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item"><a href="#" class="nav-link">Home</a></li>
                         <li class="nav-item"><a href="#" class="nav-link">Apartmani</a></li>
+                    <!-- Pre sam napravio da se posle logovanja prebacuje na ovu stranicu, ali sam promenio tako da je ovo suvisno
+
                         <li v-if="ulogovan()" class="nav-item"><a href="#" class="nav-link">Moj profil</a></li>
                         <li v-else class="nav-item"><a href="login.html" class="nav-link">Uloguj se</a></li>
-                        <!--<li v-if="ulogovan()" class="nav-item"><a href="javascript:window.localStorage.removeItem('jwt'); location.reload();" class="nav-link">Odjavi se</a></li>-->
+                        <li v-if="ulogovan()" class="nav-item"><a href="javascript:window.localStorage.removeItem('jwt'); location.reload();" class="nav-link">Odjavi se</a></li>
                         <li v-if="ulogovan()" class="nav-item"><a href="javascript:window.localStorage.removeItem('jwt'); window.location = 'login.html';" class="nav-link">Odjavi se</a></li>
                         <li v-else class="nav-item"><a href="registration.html" class="nav-link">Registruj se</a></li>
+                    -->
+                        <li class="nav-item"><a href="login.html" class="nav-link">Uloguj se</a></li>
+                        <li class="nav-item"><a href="registration.html" class="nav-link">Registruj se</a></li>
                     </ul>
                 </div>
             </nav>
+
+            <!-- TODO: ovde bi mogla npr. biti lista/tabela 5 najpopularniji apartmana ili lokacija
+                       ili lista/tabela svih apartmana pa bez linka 'Apartmani' u nav-baru -->
         </div>
+
+    <!-- Zasad nema potrebe za JS aplikacijom
 
         <script src="./js/vue.js"></script>
         <script src="./js/axios.js"></script>
         <script src="./js/index.js"></script>
+    -->
     </body>
 </html>
