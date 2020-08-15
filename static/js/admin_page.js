@@ -32,7 +32,7 @@ new Vue({
             })
             .catch(error => {
                 console.log(error);
-                // TODO: Zakasni prelazak na login stranicu par sekundi da se poruka lepo vidi (ukoliko dodje do greske)
+                // Zakasni prelazak na login stranicu par sekundi da se poruka lepo vidi (ukoliko dodje do greske)
                 alert(error.response.data.sadrzaj);
                 setTimeout(() => {
                     window.localStorage.removeItem('jwt');

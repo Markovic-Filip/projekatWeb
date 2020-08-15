@@ -54,8 +54,10 @@ new Vue({
                         let uloga = response.data.uloga;
                         if (uloga == 0) {
                             window.location = "admin_page.html";
-                        } else {
-                            window.location = "index.html";
+                        } else if (uloga == 1) {
+                            window.location = "domacin_page.html";
+                        } else if (uloga == 2)  {
+                            window.location = "gost_page.html";
                         }
                     } else  {
                         console.log(response);

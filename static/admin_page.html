@@ -48,7 +48,7 @@
                             <td>{{ korisnik.korisnickoIme }}</td>
                             <td>{{ korisnik.uloga == 0 ? 'Administrator' : (korisnik.uloga == 1 ? 'Domaćin' : 'Gost') }}</td>
                             <td>{{ korisnik.pol == 0 ? 'Muško' : (korisnik.pol == 1 ? 'Žensko' : 'Ostalo') }}</td>
-                            <td><button v-on:click="obrisiKorisnika(korisnik)">Obriši</button></td>
+                            <td><button v-if="korisnik.uloga != 0" v-on:click="obrisiKorisnika(korisnik)">Obriši korisnika</button></td>
                         </tr>
                     </tbody>
                 </table>
