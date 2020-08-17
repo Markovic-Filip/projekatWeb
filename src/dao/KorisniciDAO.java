@@ -31,9 +31,15 @@ public class KorisniciDAO {
 	}
 	
 	public ArrayList<Korisnik> sviKorisnici()	{
-		return (ArrayList<Korisnik>) korisnici.values();
+		ArrayList<Korisnik> retVal = new ArrayList<Korisnik>();
+		for (Korisnik korisnik : korisnici.values())	{
+			retVal.add(korisnik);
+		}
+		//return (ArrayList<Korisnik>) korisnici.values();
+		return retVal;
 	}
 	
+	// TODO: Ovo uloga je mozda suvisno, ne secam se zasto sam stavio
 	public boolean dodajNovogKorisnika(Korisnik noviKorisnik, Uloga uloga)	{
 		if (!korisnici.containsKey(noviKorisnik.getKorisnickoIme()))	{
 			korisnici.put(noviKorisnik.getKorisnickoIme(), noviKorisnik);
@@ -41,7 +47,23 @@ public class KorisniciDAO {
 			return true;
 		}
 		else	{
-			System.out.println("Korisnicko ime " + noviKorisnik.getKorisnickoIme() + " je vec zauzeto.");
+			System.out.println("KorisniciDAO: Korisnicko ime " + noviKorisnik.getKorisnickoIme() + " je vec zauzeto.\r\n");
+			return false;
+		}
+	}
+	
+	public Korisnik dobaviKorisnika(String korisnickoIme)	{
+		return korisnici.get(korisnickoIme);
+	}
+	
+	public boolean obrisiKorisnika(String korisnickoIme)	{
+		Korisnik obrisaniKorisnik =  korisnici.remove(korisnickoIme);
+		if (obrisaniKorisnik != null) {
+			System.out.println("KorisniciDAO: Korisnik " + obrisaniKorisnik.getKorisnickoIme() + " uspesno obrisan iz base.\r\n");
+			azurirajBazu(obrisaniKorisnik.getUloga());
+			return true;
+		} else	{
+			System.out.println("KorisniciDAO: " + korisnickoIme + " nije pronadjen u bazi.\r\n");
 			return false;
 		}
 	}
@@ -60,27 +82,18 @@ public class KorisniciDAO {
 				} else if (uloga == Uloga.ADMINISTRATOR)	{
 					korisnici.put(tokeni[0], new Administrator(tokeni[0], tokeni[1], tokeni[2], tokeni[3], Pol.valueOf(tokeni[4])));
 				}
-				// TODO: dijagnostika, moze se obrisati kasnije
-				System.out.println(korisnici.get(tokeni[0]).toString());
+				System.out.println("KorisniciDAO: " + korisnici.get(tokeni[0]).toString() + "\r\n");
 			}
+			
+			bafer.close();
 		} catch (Exception e)	{
 			e.printStackTrace();
-			System.out.println("Fajl " + putanja + " nije pronadjen.");
+			System.out.println("Fajl " + putanja + " nije pronadjen.\r\n");
 		}
 	}
 	
 	private void upisiNovogKorisnika(Korisnik noviKorisnik) {
-		String putanja = "./static/baza/";
-		switch (noviKorisnik.getUloga()) {
-		case DOMACIN:
-			putanja += "domacini.txt";
-			break;
-		case GOST:
-			putanja += "gosti.txt";
-			break;
-		default:
-			break;
-		}
+		String putanja = napraviPutanju(noviKorisnik.getUloga());
 		
 		try {
 			FileWriter writer = new FileWriter(putanja, true);
@@ -88,7 +101,40 @@ public class KorisniciDAO {
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("Fajl " + putanja + " nije pronadjen!");
+			System.out.println("Fajl " + putanja + " nije pronadjen!\r\n");
 		}
+	}
+	
+	private void azurirajBazu(Uloga uloga) {
+		String putanja = napraviPutanju(uloga);
+		try {
+			FileWriter writer = new FileWriter(putanja, false);
+			for (Korisnik korisnik : korisnici.values())	{
+				if (korisnik.getUloga().equals(uloga))	{
+					writer.write(korisnik.toString());
+				}
+			}
+			writer.close();
+		} catch (IOException e)	{
+			e.printStackTrace();
+			System.out.println("Fajl " + putanja + " nije pronadjen!\r\n");
+		}
+	}
+	
+	private String napraviPutanju(Uloga uloga)	{
+		String putanja = "./static/baza/";
+		switch(uloga)	{
+		case ADMINISTRATOR:
+			putanja += "admini.txt";
+			break;
+		case DOMACIN:
+			putanja += "domacini.txt";
+			break;
+		case GOST:
+			putanja += "gosti.txt";
+			break;
+		}
+		
+		return putanja;
 	}
 }

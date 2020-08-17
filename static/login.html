@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Login</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <link rel="stylesheet" href="./css/main.css">
+    </head>
+
+    <body>
+        <nav class="navbar navbar-expand navbar-dark bg-dark">
+            <h1><a href="index.html" class="navbar-brand">Ovde treba ime sajta</a></h1>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Apartmani</a></li>
+                    <li class="nav-item"><a href="login.html" class="nav-link">Uloguj se</a></li>
+                    <li class="nav-item"><a href="registration.html" class="nav-link">Registruj se</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <div id="login-app">
+            <form id="loginForma">
+                <div class="form-group">
+                    <label for="korisnickoIme">Korisničko ime</label>
+                    <input v-model:value="korisnicko" type="text" id="korisnickoIme" ref="korisnickoIme" class="form-control">
+                    <div class="invalid-feedback">Unesite Vaše korisničko ime.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="lozinka">Lozinka</label>
+                    <input v-model:value="lozinka" type="password" id="lozinka" ref="lozinka" class="form-control">
+                    <div class="invalid-feedback">Unesite lozinku!</div>
+                </div>
+
+                <button v-on:click.prevent="validacija">Uloguj se</button>
+            </form>
+
+            <div class="row">
+                <div class="col" align="center">
+                    <p id="msg" ref="msg"></p>
+                </div>
+            </div>
+        </div>
+
+        <script src="./js/vue.js"></script>
+        <script src="./js/axios.js"></script>
+        <script src="./js/login.js"></script>
+    </body>
+</html>

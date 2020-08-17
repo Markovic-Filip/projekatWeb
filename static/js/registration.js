@@ -9,12 +9,9 @@ new Vue({
         pol: -1,
         uloga: -1,
         valid: true
-        //korisnik: {}
     },
     methods: {
         validacija: function()   {
-            //alert(this.ime + ', ' + this.prezime + ', ' + this.korisnicko + ', ' + this.lozinka);
-
             valid = true;
 
             // proveri ime
@@ -117,7 +114,6 @@ new Vue({
         },
 
         registruj: function()   {
-            //this.korisnik = {
         	var korisnik = {
                 'ime': this.ime,
                 'prezime': this.prezime,
@@ -126,26 +122,56 @@ new Vue({
                 'pol': this.pol
             };
 
-            //var putanja = 'app/registracija/' + (this.uloga == 1 ? 'domacin' : 'gost');
-            var putanja = 'app/registracija/gost';
+            if (window.localStorage.getItem('jwt') == null) {
 
-            axios
-                .post(putanja, korisnik, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (response.data.hasOwnProperty('korisnickoIme'))  {
-                        alert('Korisnik ' + response.data.korisnickoIme + ' uspešno registrovan!');
-                        document.getElementById('registForma').reset();
-                    } else  {
-                        alert(response.data.sadrzaj);
-                        this.$refs.korisnickoIme.classList.remove("is-valid");
-                        this.$refs.korisnickoIme.classList.add("is-invalid");
-                    }
-                })
-                .catch(error => (console.log(error)))
+                //var putanja = 'app/registracija/' + (this.uloga == 1 ? 'domacin' : 'gost');
+                let putanja = 'app/registracija/gost';
+
+                axios
+                    .post(putanja, korisnik, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                        if (response.data.hasOwnProperty('korisnickoIme'))  {
+                            //this.$refs.msg.classList.remove("error-msg");
+                            //this.$refs.msg.classList.add("ok-msg");
+                            //this.$refs.msg.innerHTML = 'Korisnik ' + response.data.korisnickoIme + ' uspešno registrovan!';
+                            //document.getElementById('registForma').reset();
+                            window.localStorage.setItem('jwt', response.data.JWTToken);
+                            window.location = "index.html";
+                        } else  {
+                            console.log(response);
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        //alert(error.response.data.sadrzaj);
+                        this.$refs.msg.classList.add("error-msg");
+                        this.$refs.msg.innerHTML = error.response.data.sadrzaj;
+                    });
+            } else  {
+                let putanja = 'app/registracija/domacin';
+
+                axios
+                    .post(putanja, korisnik, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                        if (response.data.hasOwnProperty('korisnickoIme'))  {
+                            this.$refs.msg.classList.add("ok-msg");
+                            this.$refs.msg.innerHTML = "Domaćin " + response.data.korisnickoIme + " uspešno registrovan!";
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        this.$refs.msg.classList.add("error-msg");
+                        this.$refs.msg.innerHTML = error.response.data.sadrzaj;
+                    });
+            }
         }
     }
 });
