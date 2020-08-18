@@ -126,6 +126,7 @@ public class MainApp {
 			}
 		});
 		
+		// TODO: Zasad nigde ne koristim ovo, mozda treba obrisati kasnije
 		get("/app/preuzmi_ulogu", (req, res) -> {
 			Korisnik korisnik = proveraOvlascenja(req, res);
 			

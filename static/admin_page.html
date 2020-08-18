@@ -28,7 +28,40 @@
             </nav>
             
             <div class="container">
-                <h2>Pregled svih korisnika</h1>
+                <h2>Pregled svih korisnika</h2>
+
+                <div class="row">
+                    <div class="col">
+                        <p>Pretraga po korisničkom imenu:</p>
+                        <input v-on:keyup="filter()" v-model:value="pretraga_kor_ime" class="form-control" type="text"/>
+                        <br/>
+                    </div>
+            
+                    <div class="col">
+                        <p>Pretraga po ulozi:</p>
+                        <select v-model:value="pretraga_uloga" class="form-control" @change="filter()">
+                            <option disabled hidden value="">Pretraga po ulozi</option>
+                            <option value="5" selected>Sve uloge</option>
+                            <option value="0">Administrator</option>
+                            <option value="1">Domaćin</option>
+                            <option value="2">Gost</option>
+                        </select>
+                        <br/>
+                    </div>
+
+                    <div class="col">
+                        <p>Pretraga po polu:</p>
+                        <select v-model:value="pretraga_pol" class="form-control" @change="filter()">
+                            <option disabled hidden value="">Pretraga po polu</option>
+                            <option value="5" selected>Svi polovi</option>
+                            <option value="0">Muško</option>
+                            <option value="1">Žensko</option>
+                            <option value="2">Ostalo</option>
+                        </select>
+                        <br/>
+                    </div>
+                </div>
+                
                 <table class="table table-hover">
                     <!--thead class="table-dark"--><!--Ovo sam morao da izbacim jer ukoliko ostane hover radi i na <th> elemente sto ne izgleda lepo-->
                     <thead>
@@ -38,6 +71,7 @@
                             <th>Korisničko ime</th>
                             <th>Uloga</th>
                             <th>Pol</th>
+                            <th></th>
                         </tr>
                     </thead>
 
