@@ -134,17 +134,19 @@ public class MainApp {
 				return gson.toJson(new Odgovor(korisnik.getUloga().name()));
 			} else	{
 				if (res.status() == 400)	{
+					System.out.println("PREUZMI ULOGU: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
 					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
 				}
 				else if (res.status() == 500)	{
 					// TODO: error 500 ne treba da log outuje, samo da javi da pokusa ponovo, ili eventualno da se ponovo uloguje
-					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+					System.out.println("PREUZMI ULOGU: Ne moze da parsira JWT.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
 				}
+				
+				// TODO:
+				res.status(500);
+				return gson.toJson(new Odgovor("Bas HC greska."));
 			}
-			
-			// TODO:
-			res.status(500);
-			return gson.toJson(new Odgovor("Bas HC greska."));
 			
 			
 			/*System.out.println("GET ULOGA: " + req.headers());
@@ -183,17 +185,19 @@ public class MainApp {
 				}
 			} else	{
 				if (res.status() == 400)	{
+					System.out.println("DOBAVI KORISNIKE: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
 					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
 				}
 				else if (res.status() == 500)	{
-					// TODO: error 500 ne treba da log outuje, samo da javi da pokusa ponovo, ili eventualno da se ponovo uloguje 
-					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+					// TODO: error 500 ne treba da log outuje, samo da javi da pokusa ponovo, ili eventualno da se ponovo uloguje
+					System.out.println("DOBAVI KORISNIKE: Ne moze da parsira JWT.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
 				}
+				
+				// TODO:
+				res.status(500);
+				return gson.toJson(new Odgovor("Bas HC greska."));
 			}
-			
-			// TODO:
-			res.status(500);
-			return gson.toJson(new Odgovor("Bas HC greska."));
 		});
 		
 		delete("/app/obirsi_korisnika", (req, res) -> {
@@ -218,9 +222,20 @@ public class MainApp {
 					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
 				}
 			} else	{
-				System.out.println("OBRISI KORISNIKA: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
-				res.status(400);
-				return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				//return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				if (res.status() == 400)	{
+					System.out.println("OBRISI KORISNIKA: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				}
+				else if (res.status() == 500)	{
+					// TODO: error 500 ne treba da log outuje, samo da javi da pokusa ponovo, ili eventualno da se ponovo uloguje 
+					System.out.println("OBIRIS KORISNIKA: Ne moze da parsira JWT.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				}
+				
+				// TODO:
+				res.status(500);
+				return gson.toJson(new Odgovor("Bas HC greska."));
 			}
 		});
 	}
