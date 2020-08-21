@@ -40,12 +40,15 @@ new Vue({
             })
             .catch(error => {
                 console.log(error);
-                // Zakasni prelazak na login stranicu par sekundi da se poruka lepo vidi (ukoliko dodje do greske)
                 alert(error.response.data.sadrzaj);
-                setTimeout(() => {
-                    window.localStorage.removeItem('jwt');
-                    window.location = 'login.html';
-                }, 5000);
+                if (error.response.status == 400 || error.response.status == 403)   {
+                    // Zakasni prelazak na login stranicu par sekundi da se poruka lepo vidi (ukoliko dodje do greske)
+                    // UPDATE: Nema potrebe za kasnjenjem jer nece preci na login.html dokle god korisnik ne pritisne ok na alert poruci
+                    //setTimeout(() => {
+                        window.localStorage.removeItem('jwt');
+                        window.location = 'login.html';
+                    //}, 5000);
+                }
             });
 
         // TODO: isti poziv za apartmane i mozda rezervacije
@@ -67,15 +70,13 @@ new Vue({
                     .catch(error => {
                         console.log(error);
                         alert(error.response.data.sadrzaj);
-                        if (error.response.status == 400 || error.response.status == 500)   {
-                            setTimeout(() => {
+                        if (error.response.status == 400 || error.response.status == 403)   {
+                            // Zakasni prelazak na login stranicu par sekundi da se poruka lepo vidi (ukoliko dodje do greske)
+                            // UPDATE: Nema potrebe za kasnjenjem jer nece preci na login.html dokle god korisnik ne pritisne ok na alert poruci
+                            //setTimeout(() => {
                                 window.localStorage.removeItem('jwt');
                                 window.location = 'login.html';
-                            }, 5000);
-                        } else  {
-                            setTimeout(() => {
-                                location.reload();
-                            }, 5000);
+                            //}, 5000);
                         }
                     });
             }
