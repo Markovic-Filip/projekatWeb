@@ -18,6 +18,7 @@ import beans.Gost;
 import beans.Korisnik;
 import beans.Odgovor;
 import dao.KorisniciDAO;
+import dao.RezervacijeDAO;
 import enums.Uloga;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -31,6 +32,7 @@ public class MainApp {
 
 	private static Gson gson = new Gson();
 	private static KorisniciDAO korisnici = null;
+	private static RezervacijeDAO rezervacije = null;
 	private static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 	
 	public static void main(String[] args) throws IOException {
@@ -42,6 +44,8 @@ public class MainApp {
 		staticFiles.externalLocation(new File("./static").getCanonicalPath());
 		
 		korisnici = new KorisniciDAO("./static/baza/");
+		
+		rezervacije = new RezervacijeDAO("./static/baza/rezervacije.txt");
 		
 		// Obrada HTTP zahteva
 		

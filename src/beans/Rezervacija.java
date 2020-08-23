@@ -6,34 +6,47 @@ import enums.StatusRezervacije;
 
 public class Rezervacija {
 
-	private Apartman apartman;
+	private int id;
+	//private Apartman apartman;
+	private int apartmanId;
 	//@JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
 	private Date pocetniDatum;
 	private int brojNocenja;
 	private double cena;
 	private String poruka;
-	private Gost gost;
+	private String korisnickoImeGosta;
 	private StatusRezervacije status;
 	
-	public Rezervacija()	{}
+	public Rezervacija()	{
+		pocetniDatum = new Date();
+	}
 
-	public Rezervacija(Apartman apartman, Date pocetniDatum, int brojNocenja, double cena, String poruka, Gost gost, StatusRezervacije status) {
+	public Rezervacija(int id, int apartmanId, Date pocetniDatum, int brojNocenja, double cena, String poruka, String korisnickoImeGosta, StatusRezervacije status) {
 		super();
-		this.apartman = apartman;
+		this.id = id;
+		this.apartmanId = apartmanId;
 		this.pocetniDatum = pocetniDatum;
 		this.brojNocenja = brojNocenja;
 		this.cena = cena;
 		this.poruka = poruka;
-		this.gost = gost;
+		this.korisnickoImeGosta = korisnickoImeGosta;
 		this.status = status;
 	}
 
-	public Apartman getApartman() {
-		return apartman;
+	public int getId()	{
+		return id;
+	}
+	
+	public void setId(int id)	{
+		this.id = id;
+	}
+	
+	public int getApartmanId() {
+		return apartmanId;
 	}
 
-	public void setApartman(Apartman apartman) {
-		this.apartman = apartman;
+	public void setApartman(int apartmanId) {
+		this.apartmanId = apartmanId;
 	}
 
 	public Date getPocetniDatum() {
@@ -68,12 +81,12 @@ public class Rezervacija {
 		this.poruka = poruka;
 	}
 
-	public Gost getGost() {
-		return gost;
+	public String getKorisnickoImeGosta() {
+		return korisnickoImeGosta;
 	}
 
-	public void setGost(Gost gost) {
-		this.gost = gost;
+	public void setGost(String korisnickoImeGosta) {
+		this.korisnickoImeGosta = korisnickoImeGosta;
 	}
 
 	public StatusRezervacije getStatus() {
@@ -82,5 +95,10 @@ public class Rezervacija {
 
 	public void setStatus(StatusRezervacije status) {
 		this.status = status;
+	}
+
+	@Override
+	public String toString() {
+		return this.id + ";" + this.apartmanId + ";" + this.pocetniDatum.getTime() + ";" + this.brojNocenja + ";" + this.cena + ";" + this.poruka + ";" + this.korisnickoImeGosta + ";" + this.status.name() + "\n";
 	}
 }
