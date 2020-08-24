@@ -6,7 +6,9 @@ new Vue({
         backup_korisnici: [],
         pretraga_kor_ime: "",
         pretraga_uloga: 5,
-        pretraga_pol: 5
+        pretraga_pol: 5,
+
+        rezervacije: []
     },
     mounted()   {
         /*
@@ -52,6 +54,23 @@ new Vue({
             });
 
         // TODO: isti poziv za apartmane i mozda rezervacije
+        axios
+            .get('app/dobavi_rezervacije', {
+                headers: {
+                    'Authorization': 'Bearer ' + window.localStorage.getItem('jwt')
+                }
+            })
+            .then(response => {
+                this.rezervacije = response.data;
+            })
+            .catch(error => {
+                console.log(error);
+                alert(error.response.data.sadrzaj);
+                if (error.response.status == 400 || error.response.status == 403)   {
+                    window.localStorage.removeItem('jwt');
+                    window.location = 'login.html';
+                }
+            });
     },
     methods:    {
         obrisiKorisnika: function(korisnik) {
@@ -93,6 +112,28 @@ new Vue({
             }
 
             this.korisnici = filtrirani_korisnici;
+        },
+
+        prikaziStatus: function(status)   {
+            switch (status) {
+                case '0':
+                    return 'Kreirana';
+                case '1':
+                    return 'Odbijena';
+                case '2':
+                    return 'Odustanak';
+                case '3':
+                    return 'Prihvaćena';
+                case '4':
+                    return 'Završena';
+                default:
+                    return 'Invalid status';
+            }
+        },
+
+        prikaziPoruku: function(poruka) {
+            // TODO: mozda dodati neki fiksan textbox ili dodatan red u tabeli u kom ce se prikazati poruka umesto alert
+            alert(poruka);
         }
     }
 });

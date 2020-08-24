@@ -181,8 +181,7 @@ public class MainApp {
 			if (korisnik != null) {
 				if (korisnik.getUloga().equals(Uloga.ADMINISTRATOR))	{
 					return gson.toJson(korisnici.sviKorisnici());
-				}
-				else	{
+				} else	{
 					System.out.println("DOBAVI KORISNIKE: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ove podatke.\r\n");
 					res.status(403); // Error 403: Forbidden
 					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
@@ -191,10 +190,36 @@ public class MainApp {
 				if (res.status() == 400)	{
 					System.out.println("DOBAVI KORISNIKE: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
 					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
-				}
-				else if (res.status() == 500)	{
+				} else if (res.status() == 500)	{
 					// TODO: error 500 ne treba da log outuje, samo da javi da pokusa ponovo, ili eventualno da se ponovo uloguje
 					System.out.println("DOBAVI KORISNIKE: Ne moze da parsira JWT.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				}
+				
+				// TODO:
+				res.status(500);
+				return gson.toJson(new Odgovor("Bas HC greska."));
+			}
+		});
+		
+		get("/app/dobavi_rezervacije", (req, res) -> {
+			Korisnik korisnik = proveraOvlascenja(req, res);
+			
+			if (korisnik != null)	{
+				if (korisnik.getUloga().equals(Uloga.ADMINISTRATOR))	{
+					return gson.toJson(rezervacije.sveRezervacije());
+				} else	{
+					System.out.println("DOBAVI REZERVACIJE: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ove podatke.\r\n");
+					res.status(403); // Error 403: Forbidden
+					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
+				}
+			} else	{
+				if (res.status() == 400)	{
+					System.out.println("DOBAVI REZERVACIJE: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				} else if (res.status() == 500)	{
+					// TODO: error 500 ne treba da log outuje, samo da javi da pokusa ponovo, ili eventualno da se ponovo uloguje
+					System.out.println("DOBAVI REZERVACIJE: Ne moze da parsira JWT.\r\n");
 					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
 				}
 				

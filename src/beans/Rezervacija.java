@@ -2,6 +2,8 @@ package beans;
 
 import java.util.Date;
 
+import javax.json.bind.annotation.JsonbDateFormat;
+
 import enums.StatusRezervacije;
 
 public class Rezervacija {
@@ -9,7 +11,7 @@ public class Rezervacija {
 	private int id;
 	//private Apartman apartman;
 	private int apartmanId;
-	//@JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+	@JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
 	private Date pocetniDatum;
 	private int brojNocenja;
 	private double cena;
