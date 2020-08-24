@@ -9,11 +9,11 @@
 
     <body>
         <div id="admin-app">
-            <nav class="navbar navbar-expand navbar-dark bg-dark">
+            <nav class="navbar navbar-expand navbar-dark bg-dark fixed-top">
                 <h1><a href="index.html" class="navbar-brand">Ovde treba ime sajta</a></h1>
                 <div class="collapse navbar-collapse">
                     <ul class="navbar-nav ml-auto">
-                        <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                        <li class="nav-item"><a href="index.html" class="nav-link">Početna</a></li>
                         <!--li class="nav-item"><a href="#" class="nav-link">Apartmani</a></li-->
                         <li class="nav-item"><a href="#" class="nav-link">Moj profil</a></li>
                         <!--
@@ -93,8 +93,30 @@
                 </table>
 
                 <h2>Pregled svih rezervacija</h2>
-                <table>
-                    
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID Apartmana</th>
+                            <th>Početni datum</th>
+                            <th>Broj noćenja</th>
+                            <th>Cena</th>
+                            <th>Gost</th>
+                            <th>Status rezervacije</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr v-for="rezervacija in rezervacije">
+                            <td>{{ rezervacija.apartmanId }}</td>
+                            <td>{{ rezervacija.pocetniDatum }}</td>
+                            <td>{{ rezervacija.brojNocenja }}</td>
+                            <td>{{ rezervacija.cena.toFixed(2) }}</td>  <!-- toFixed(2) zaokruzuje broj na 2 decimale -->
+                            <td>{{ rezervacija.korisnickoImeGosta }}</td>
+                            <td>{{ prikaziStatus(rezervacija.status) }}</td>
+                            <td><input type="image" src="slike/msg_bubble.png" width="48" height="48" v-on:click.prevent="prikaziPoruku(rezervacija.poruka)"></td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>

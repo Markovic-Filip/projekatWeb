@@ -43,15 +43,34 @@ public class RezervacijeDAO {
 		inkrementirajIdBrojac();
 		return false;
 	}
+	
+	public void promeniStatusRezervacije(int id, StatusRezervacije noviStatus)	{
+		rezervacije.get(id).setStatus(noviStatus);
+		azurirajBazu();
+	}
 
 	private void upisiNovuRezervaciju(Rezervacija novaRezervacija) {
 		String putanja = "./static/baza/rezervacije.txt";
-		
 		try {
 			FileWriter writer = new FileWriter(putanja, true);
 			writer.append(novaRezervacija.toString());
 			writer.close();
 		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("Fajl " + putanja + " nije pronadjen!\r\n");
+		}
+	}
+	
+	// TODO: thread koji poziva azuriranje na svakih 2min npr. ili posebna funkcija koja prima novi status i id rezervacije i menja status pa poziva azuriranje
+	private void azurirajBazu()	{
+		String putanja = "./static/baza/rezervacije.txt";
+		try {
+			FileWriter writer = new FileWriter(putanja, false);
+			for (Rezervacija rezervacija : rezervacije.values()) {
+				writer.write(rezervacija.toString());
+			}
+			writer.close();
+		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Fajl " + putanja + " nije pronadjen!\r\n");
 		}
@@ -98,8 +117,10 @@ public class RezervacijeDAO {
 		try {
 			FileWriter writer = new FileWriter(putanja, false);
 			writer.write(idBrojac + "\r\n");
+			writer.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.out.println("Fajl " + putanja + " nije pronadjen.\r\n");
 		}
 	}
 }
