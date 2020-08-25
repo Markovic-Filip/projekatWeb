@@ -12,6 +12,7 @@ import beans.Domacin;
 import beans.Gost;
 import beans.Korisnik;
 import enums.Pol;
+import enums.StatusKorisnika;
 import enums.Uloga;
 
 public class KorisniciDAO {
@@ -69,6 +70,25 @@ public class KorisniciDAO {
 		}
 	}
 	
+	// Toggle-uje status korisnika i azurira bazu
+	public void promeniStatusKorisnika(String korisnickoIme)	{
+		Korisnik korisnik = korisnici.get(korisnickoIme);
+		switch (korisnik.getUloga())	{
+			case GOST:
+				Gost gost = (Gost) korisnik;
+				gost.setStatus(gost.getStatus().equals(StatusKorisnika.AKTIVAN) ? StatusKorisnika.BLOKIRAN : StatusKorisnika.AKTIVAN);
+				break;
+			case DOMACIN:
+				Domacin domacin = (Domacin) korisnik;
+				domacin.setStatus(domacin.getStatus().equals(StatusKorisnika.AKTIVAN) ? StatusKorisnika.BLOKIRAN : StatusKorisnika.AKTIVAN);
+				break;
+			default:
+				break;
+		}
+		
+		azurirajBazu(korisnik.getUloga());
+	}
+	
 	private void ucitajKorisnike(String putanja, Uloga uloga)	{
 		BufferedReader bafer;
 		try	{
@@ -77,11 +97,11 @@ public class KorisniciDAO {
 			while ((red = bafer.readLine()) != null)	{
 				String[] tokeni = red.split(";");
 				if (uloga == Uloga.GOST)	{
-					Gost gost = new Gost(tokeni[0], tokeni[1], tokeni[2], tokeni[3], Pol.valueOf(tokeni[4]));
+					Gost gost = new Gost(tokeni[0], tokeni[1], tokeni[2], tokeni[3], Pol.valueOf(tokeni[4]), StatusKorisnika.valueOf(tokeni[5]));
 					ucitajApartmaneIRezervacije(gost);
 					korisnici.put(tokeni[0], gost);
 				} else if (uloga == Uloga.DOMACIN)	{
-					Domacin domacin = new Domacin(tokeni[0], tokeni[1], tokeni[2], tokeni[3], Pol.valueOf(tokeni[4]));
+					Domacin domacin = new Domacin(tokeni[0], tokeni[1], tokeni[2], tokeni[3], Pol.valueOf(tokeni[4]), StatusKorisnika.valueOf(tokeni[5]));
 					ucitajApartmane(domacin);
 					korisnici.put(tokeni[0], domacin);
 				} else if (uloga == Uloga.ADMINISTRATOR)	{

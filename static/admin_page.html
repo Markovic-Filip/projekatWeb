@@ -72,6 +72,7 @@
                             <th>Uloga</th>
                             <th>Pol</th>
                             <th></th>
+                            <th></th>
                         </tr>
                     </thead>
 
@@ -82,6 +83,9 @@
                             <td>{{ korisnik.korisnickoIme }}</td>
                             <td>{{ korisnik.uloga == 0 ? 'Administrator' : (korisnik.uloga == 1 ? 'Domaćin' : 'Gost') }}</td>
                             <td>{{ korisnik.pol == 0 ? 'Muško' : (korisnik.pol == 1 ? 'Žensko' : 'Ostalo') }}</td>
+                            <td v-if="korisnik.status === '0'"><button v-on:click="promeniStatus(korisnik)">Blokiraj</button></td>
+                            <td v-else-if="korisnik.status === '1'"><button v-on:click="promeniStatus(korisnik)">Aktiviraj</button></td>
+                            <td v-else></td>
                             <td><button v-if="korisnik.uloga != 0" v-on:click="obrisiKorisnika(korisnik)">Obriši korisnika</button></td>
                         </tr>
                     </tbody>
