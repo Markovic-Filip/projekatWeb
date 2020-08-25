@@ -101,6 +101,29 @@ new Vue({
             }
         },
 
+        promeniStatus: function(korisnik)   {
+            let poruka = (korisnik.status === '0' ? 'Blokiraj ' : 'Aktiviraj ') + 'korisnika ' + korisnik.korisnickoIme + '?';
+            if (confirm(poruka))    {
+                axios
+                    .put('app/promeni_status_korisnika', korisnik, {
+                        headers: {
+                            'Authorization': 'Bearer ' + window.localStorage.getItem('jwt')
+                        }
+                    })
+                    .then(response => {
+                        this.korisnici = response.data;
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        alert(error.response.data.sadrzaj);
+                        if (error.response.status == 400 || error.response.status == 403)   {
+                            window.localStorage.removeItem('jwt');
+                            window.location = 'login.html';
+                        }
+                    });
+            }
+        },
+
         filter: function()   {
             let vrednost = this.pretraga_kor_ime.toLowerCase();
             let filtrirani_korisnici = [];

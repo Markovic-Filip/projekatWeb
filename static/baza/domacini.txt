@@ -1,3 +1,3 @@
-mima;mimaPass;Mima;Mimic;ZENSKO
-paja_36;pajaPaja;Pavle;Pajic;MUSKO
-djura_74;djuraa974;Djura;Djuric;MUSKO
+mima;mimaPass;Mima;Mimic;ZENSKO;AKTIVAN
+paja_36;pajaPaja;Pavle;Pajic;MUSKO;AKTIVAN
+djura_74;djuraa974;Djura;Djuric;MUSKO;AKTIVAN

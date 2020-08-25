@@ -38,10 +38,11 @@ public class RezervacijeDAO {
 	}
 	
 	// TODO: Proveri da li su datumi ispravni (slobodni) pa kreiraj rezervaciju i stavi u mapu
-	public boolean dodajNovuRezervaciju(Rezervacija novaRezervacija) {
-		upisiNovuRezervaciju(novaRezervacija);
+	public void dodajNovuRezervaciju(Rezervacija novaRezervacija) {
+		novaRezervacija.setId(idBrojac);
+		rezervacije.put(idBrojac, novaRezervacija);
 		inkrementirajIdBrojac();
-		return false;
+		upisiNovuRezervaciju(novaRezervacija);
 	}
 	
 	public void promeniStatusRezervacije(int id, StatusRezervacije noviStatus)	{
