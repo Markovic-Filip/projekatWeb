@@ -155,8 +155,7 @@ new Vue({
         },
 
         prikaziPoruku: function(poruka) {
-            // TODO: mozda dodati neki fiksan textbox ili dodatan red u tabeli u kom ce se prikazati poruka umesto alert
-            alert(poruka);
+            this.$refs.poruka.innerText = "Poruka: \n" + poruka;
         }
     }
 });

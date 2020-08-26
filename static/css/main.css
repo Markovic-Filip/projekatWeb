@@ -28,3 +28,9 @@
 table   {
     empty-cells: show !important;
 }
+
+.reserv-msg {
+    height: 5em;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: larger;
+}

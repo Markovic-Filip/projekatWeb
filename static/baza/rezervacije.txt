@@ -1,3 +1,3 @@
 1;2;1598943600000;10;200.00;dummy_poruka 1;pera52;PRIHVACENA
-2;1;1605020400000;2;90.00;dummy_poruka 2;pera52;KREIRANA
+2;1;1605020400000;2;90.00;dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2;pera52;KREIRANA
 3;3;1592222400000;5;130.00;dummy_poruka 3;mika8834;ZAVRSENA

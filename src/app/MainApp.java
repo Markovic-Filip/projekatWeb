@@ -168,32 +168,9 @@ public class MainApp {
 					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
 				}
 				
-				// TODO:
 				res.status(500);
-				return gson.toJson(new Odgovor("Bas HC greska."));
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
 			}
-			
-			
-			/*System.out.println("GET ULOGA: " + req.headers());
-			String autorizacija = req.headers("Authorization");
-			System.out.println("GET ULOGA: " + autorizacija);
-			if (autorizacija != null && autorizacija.contains("Bearer ")) {	
-				String jwt = autorizacija.substring(autorizacija.indexOf("Bearer ") + 7);
-				try {
-					Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt);
-					String korisnickoIme = claims.getBody().getSubject();
-					Korisnik korisnik = korisnici.dobaviKorisnika(korisnickoIme);
-					return gson.toJson(new Odgovor(korisnik.getUloga().name()));
-				} catch (Exception e) {
-					res.status(500);
-					System.out.println("GET ULOGA: Ne moze da parsira JWT.");
-					return gson.toJson(new Odgovor("Ne moze da parsira JWT."));
-				}
-			} else	{
-				res.status(400);
-				System.out.println("GET ULOGA: Autentikacija nije validna.");
-				return gson.toJson(new Odgovor("Autentikacija nije validna."));
-			}*/
 		});
 		
 		get("/app/dobavi_korisnike", (req, res) -> {
@@ -212,14 +189,12 @@ public class MainApp {
 					System.out.println("DOBAVI KORISNIKE: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
 					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
 				} else if (res.status() == 500)	{
-					// TODO: error 500 ne treba da log outuje, samo da javi da pokusa ponovo, ili eventualno da se ponovo uloguje
 					System.out.println("DOBAVI KORISNIKE: Ne moze da parsira JWT.\r\n");
 					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
 				}
 				
-				// TODO:
 				res.status(500);
-				return gson.toJson(new Odgovor("Bas HC greska."));
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
 			}
 		});
 		
@@ -239,14 +214,12 @@ public class MainApp {
 					System.out.println("DOBAVI REZERVACIJE: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
 					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
 				} else if (res.status() == 500)	{
-					// TODO: error 500 ne treba da log outuje, samo da javi da pokusa ponovo, ili eventualno da se ponovo uloguje
 					System.out.println("DOBAVI REZERVACIJE: Ne moze da parsira JWT.\r\n");
 					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
 				}
 				
-				// TODO:
 				res.status(500);
-				return gson.toJson(new Odgovor("Bas HC greska."));
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
 			}
 		});
 		
@@ -272,20 +245,17 @@ public class MainApp {
 					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
 				}
 			} else	{
-				//return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
 				if (res.status() == 400)	{
 					System.out.println("OBRISI KORISNIKA: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
 					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
 				}
-				else if (res.status() == 500)	{
-					// TODO: error 500 ne treba da log outuje, samo da javi da pokusa ponovo, ili eventualno da se ponovo uloguje 
+				else if (res.status() == 500)	{ 
 					System.out.println("OBIRIS KORISNIKA: Ne moze da parsira JWT.\r\n");
 					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
 				}
 				
-				// TODO:
 				res.status(500);
-				return gson.toJson(new Odgovor("Bas HC greska."));
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
 			}
 		});
 		
@@ -309,15 +279,13 @@ public class MainApp {
 					System.out.println("PROMENI STATUS KORISNIKA: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
 					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
 				}
-				else if (res.status() == 500)	{
-					// TODO: error 500 ne treba da log outuje, samo da javi da pokusa ponovo, ili eventualno da se ponovo uloguje 
+				else if (res.status() == 500)	{ 
 					System.out.println("PROMENI STATUS KORISNIKA: Ne moze da parsira JWT.\r\n");
 					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
 				}
 				
-				// TODO:
 				res.status(500);
-				return gson.toJson(new Odgovor("Bas HC greska."));
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
 			}
 		});
 	}
@@ -337,19 +305,15 @@ public class MainApp {
 				Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt);
 				String korisnickoIme = claims.getBody().getSubject();
 				Korisnik korisnik = korisnici.dobaviKorisnika(korisnickoIme);
-				//return gson.toJson(new Odgovor(korisnik.getUloga().name()));
 				return korisnik;
 			} catch (Exception e) {
 				res.status(500);
 				System.out.println("PROVERA OVLASCENJA: Ne moze da parsira JWT.");
-				//return gson.toJson(new Odgovor("Ne moze da parsira JWT."));
 				return null;
 			}
 		} else	{
 			res.status(400);
 			System.out.println("PROVERA OVLASCENJA: Korisnik nije ulogovan.");
-			// TODO: obrisati
-			//return gson.toJson(new Odgovor("Ovlascenje nije validno."));
 			return null;
 		}
 	}
