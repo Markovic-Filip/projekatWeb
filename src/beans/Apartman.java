@@ -21,6 +21,9 @@ public class Apartman {
 	protected Date vremeZaOdjavu;
 	protected Status status;
 	protected SadrzajApartmana sadrzajApartmana;
+
+	// TODO: predlazem da polje rezervacije bude lista int-ova i da svaki int predstavlja kljuc (odnosno id) rezervacije koja se nalazi u RezervacijeDAO, isto vazi i za polje Domacin
+
 	//protected rezervacije
 	
 	public Apartman() {

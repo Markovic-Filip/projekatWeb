@@ -2,7 +2,13 @@ new Vue({
     el: '#admin-app',
     data:   {
         //uloga: '',
-        korisnici: null
+        korisnici: [],
+        backup_korisnici: [],
+        pretraga_kor_ime: "",
+        pretraga_uloga: 5,
+        pretraga_pol: 5,
+
+        rezervacije: []
     },
     mounted()   {
         /*
@@ -29,18 +35,42 @@ new Vue({
             })
             .then(response => {
                 this.korisnici = response.data;
+                //this.backup_korisnici = response.data; // !!! Ista referenca
+                for (korisnik of this.korisnici) {
+                    this.backup_korisnici.push(korisnik);
+                }
             })
             .catch(error => {
                 console.log(error);
-                // Zakasni prelazak na login stranicu par sekundi da se poruka lepo vidi (ukoliko dodje do greske)
                 alert(error.response.data.sadrzaj);
-                setTimeout(() => {
-                    window.localStorage.removeItem('jwt');
-                    window.location = 'login.html';
-                }, 5000);
+                if (error.response.status == 400 || error.response.status == 403)   {
+                    // Zakasni prelazak na login stranicu par sekundi da se poruka lepo vidi (ukoliko dodje do greske)
+                    // UPDATE: Nema potrebe za kasnjenjem jer nece preci na login.html dokle god korisnik ne pritisne ok na alert poruci
+                    //setTimeout(() => {
+                        window.localStorage.removeItem('jwt');
+                        window.location = 'login.html';
+                    //}, 5000);
+                }
             });
 
         // TODO: isti poziv za apartmane i mozda rezervacije
+        axios
+            .get('app/dobavi_rezervacije', {
+                headers: {
+                    'Authorization': 'Bearer ' + window.localStorage.getItem('jwt')
+                }
+            })
+            .then(response => {
+                this.rezervacije = response.data;
+            })
+            .catch(error => {
+                console.log(error);
+                alert(error.response.data.sadrzaj);
+                if (error.response.status == 400 || error.response.status == 403)   {
+                    window.localStorage.removeItem('jwt');
+                    window.location = 'login.html';
+                }
+            });
     },
     methods:    {
         obrisiKorisnika: function(korisnik) {
@@ -59,18 +89,73 @@ new Vue({
                     .catch(error => {
                         console.log(error);
                         alert(error.response.data.sadrzaj);
-                        if (error.response.status == 400 || error.response.status == 500)   {
-                            setTimeout(() => {
+                        if (error.response.status == 400 || error.response.status == 403)   {
+                            // Zakasni prelazak na login stranicu par sekundi da se poruka lepo vidi (ukoliko dodje do greske)
+                            // UPDATE: Nema potrebe za kasnjenjem jer nece preci na login.html dokle god korisnik ne pritisne ok na alert poruci
+                            //setTimeout(() => {
                                 window.localStorage.removeItem('jwt');
                                 window.location = 'login.html';
-                            }, 5000);
-                        } else  {
-                            setTimeout(() => {
-                                location.reload();
-                            }, 5000);
+                            //}, 5000);
                         }
                     });
             }
+        },
+
+        promeniStatus: function(korisnik)   {
+            let poruka = (korisnik.status === '0' ? 'Blokiraj ' : 'Aktiviraj ') + 'korisnika ' + korisnik.korisnickoIme + '?';
+            if (confirm(poruka))    {
+                axios
+                    .put('app/promeni_status_korisnika', korisnik, {
+                        headers: {
+                            'Authorization': 'Bearer ' + window.localStorage.getItem('jwt')
+                        }
+                    })
+                    .then(response => {
+                        this.korisnici = response.data;
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        alert(error.response.data.sadrzaj);
+                        if (error.response.status == 400 || error.response.status == 403)   {
+                            window.localStorage.removeItem('jwt');
+                            window.location = 'login.html';
+                        }
+                    });
+            }
+        },
+
+        filter: function()   {
+            let vrednost = this.pretraga_kor_ime.toLowerCase();
+            let filtrirani_korisnici = [];
+            for (korisnik of this.backup_korisnici)    {
+                // Ako korisnickoIme sadrzi string iz input polja && (ako se korisnikova uloga poklapa sa trazenom || uloga nije izabrana (dakle uzimaj sve uloge u obzir) && (isto kao za ulogu samo za pol))
+                if (korisnik.korisnickoIme.toLowerCase().includes(vrednost) && (korisnik.uloga === this.pretraga_uloga || this.pretraga_uloga == 5) && (korisnik.pol === this.pretraga_pol || this.pretraga_pol == 5))    {
+                    filtrirani_korisnici.push(korisnik);
+                }
+            }
+
+            this.korisnici = filtrirani_korisnici;
+        },
+
+        prikaziStatus: function(status)   {
+            switch (status) {
+                case '0':
+                    return 'Kreirana';
+                case '1':
+                    return 'Odbijena';
+                case '2':
+                    return 'Odustanak';
+                case '3':
+                    return 'Prihvaćena';
+                case '4':
+                    return 'Završena';
+                default:
+                    return 'Invalid status';
+            }
+        },
+
+        prikaziPoruku: function(poruka) {
+            this.$refs.poruka.innerText = "Poruka: \n" + poruka;
         }
     }
 });

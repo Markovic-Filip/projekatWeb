@@ -12,6 +12,7 @@ import beans.Domacin;
 import beans.Gost;
 import beans.Korisnik;
 import enums.Pol;
+import enums.StatusKorisnika;
 import enums.Uloga;
 
 public class KorisniciDAO {
@@ -44,6 +45,7 @@ public class KorisniciDAO {
 		if (!korisnici.containsKey(noviKorisnik.getKorisnickoIme()))	{
 			korisnici.put(noviKorisnik.getKorisnickoIme(), noviKorisnik);
 			upisiNovogKorisnika(noviKorisnik);
+			System.out.println("KorisniciDAO: Korisnik " + noviKorisnik.getKorisnickoIme() + " dodat u sistem.\r\n");
 			return true;
 		}
 		else	{
@@ -68,6 +70,25 @@ public class KorisniciDAO {
 		}
 	}
 	
+	// Toggle-uje status korisnika i azurira bazu
+	public void promeniStatusKorisnika(String korisnickoIme)	{
+		Korisnik korisnik = korisnici.get(korisnickoIme);
+		switch (korisnik.getUloga())	{
+			case GOST:
+				Gost gost = (Gost) korisnik;
+				gost.setStatus(gost.getStatus().equals(StatusKorisnika.AKTIVAN) ? StatusKorisnika.BLOKIRAN : StatusKorisnika.AKTIVAN);
+				break;
+			case DOMACIN:
+				Domacin domacin = (Domacin) korisnik;
+				domacin.setStatus(domacin.getStatus().equals(StatusKorisnika.AKTIVAN) ? StatusKorisnika.BLOKIRAN : StatusKorisnika.AKTIVAN);
+				break;
+			default:
+				break;
+		}
+		
+		azurirajBazu(korisnik.getUloga());
+	}
+	
 	private void ucitajKorisnike(String putanja, Uloga uloga)	{
 		BufferedReader bafer;
 		try	{
@@ -76,15 +97,18 @@ public class KorisniciDAO {
 			while ((red = bafer.readLine()) != null)	{
 				String[] tokeni = red.split(";");
 				if (uloga == Uloga.GOST)	{
-					korisnici.put(tokeni[0], new Gost(tokeni[0], tokeni[1], tokeni[2], tokeni[3], Pol.valueOf(tokeni[4])));
+					Gost gost = new Gost(tokeni[0], tokeni[1], tokeni[2], tokeni[3], Pol.valueOf(tokeni[4]), StatusKorisnika.valueOf(tokeni[5]));
+					ucitajApartmaneIRezervacije(gost);
+					korisnici.put(tokeni[0], gost);
 				} else if (uloga == Uloga.DOMACIN)	{
-					korisnici.put(tokeni[0], new Domacin(tokeni[0], tokeni[1], tokeni[2], tokeni[3], Pol.valueOf(tokeni[4])));
+					Domacin domacin = new Domacin(tokeni[0], tokeni[1], tokeni[2], tokeni[3], Pol.valueOf(tokeni[4]), StatusKorisnika.valueOf(tokeni[5]));
+					ucitajApartmane(domacin);
+					korisnici.put(tokeni[0], domacin);
 				} else if (uloga == Uloga.ADMINISTRATOR)	{
 					korisnici.put(tokeni[0], new Administrator(tokeni[0], tokeni[1], tokeni[2], tokeni[3], Pol.valueOf(tokeni[4])));
 				}
 				System.out.println("KorisniciDAO: " + korisnici.get(tokeni[0]).toString() + "\r\n");
 			}
-			
 			bafer.close();
 		} catch (Exception e)	{
 			e.printStackTrace();
@@ -92,6 +116,51 @@ public class KorisniciDAO {
 		}
 	}
 	
+	private void ucitajApartmane(Domacin domacin) {
+		String putanja = "./static/baza/korisnici/" + domacin.getKorisnickoIme() + "-Apartmani.txt";
+		BufferedReader bafer;
+		try	{
+			bafer = new BufferedReader(new FileReader(putanja));
+			String red;
+			while ((red = bafer.readLine()) != null)	{
+				domacin.getApartmani().add(Integer.parseInt(red));
+			}
+			bafer.close();
+		} catch (Exception e)	{
+			e.printStackTrace();
+			System.out.println("Fajl " + putanja + " nije pronadjen.\r\n");
+		}
+	}
+
+	private void ucitajApartmaneIRezervacije(Gost gost) {
+		String putanja = "./static/baza/korisnici/" + gost.getKorisnickoIme() + "-IznajmljeniApartmani.txt";
+		BufferedReader bafer;
+		try	{
+			bafer = new BufferedReader(new FileReader(putanja));
+			String red;
+			while ((red = bafer.readLine()) != null)	{
+				gost.getIznajmljeniApartmani().add(Integer.parseInt(red));
+			}
+			bafer.close();
+		} catch (Exception e)	{
+			e.printStackTrace();
+			System.out.println("KorisniciDAO: Fajl " + putanja + " nije pronadjen.\r\n");
+		}
+		
+		putanja = "./static/baza/korisnici/" + gost.getKorisnickoIme() + "-Rezervacije.txt";
+		try	{
+			bafer = new BufferedReader(new FileReader(putanja));
+			String red;
+			while ((red = bafer.readLine()) != null)	{
+				gost.getRezervacije().add(Integer.parseInt(red));
+			}
+			bafer.close();
+		} catch (Exception e)	{
+			e.printStackTrace();
+			System.out.println("KorisniciDAO: Fajl " + putanja + " nije pronadjen.\r\n");
+		}
+	}
+
 	private void upisiNovogKorisnika(Korisnik noviKorisnik) {
 		String putanja = napraviPutanju(noviKorisnik.getUloga());
 		
