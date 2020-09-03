@@ -18,8 +18,10 @@ import beans.Domacin;
 import beans.Gost;
 import beans.Korisnik;
 import beans.Odgovor;
+import dao.ApartmaniDAO;
 import dao.KorisniciDAO;
 import dao.RezervacijeDAO;
+import dao.SadrzajApartmanaDAO;
 import enums.StatusKorisnika;
 import enums.Uloga;
 import io.jsonwebtoken.Claims;
@@ -35,6 +37,8 @@ public class MainApp {
 	private static Gson gson = new Gson();
 	private static KorisniciDAO korisnici = null;
 	private static RezervacijeDAO rezervacije = null;
+	private static ApartmaniDAO apartmani = null;
+	private static SadrzajApartmanaDAO sadrzaji = null;
 	private static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 	
 	public static void main(String[] args) throws IOException {
@@ -48,6 +52,10 @@ public class MainApp {
 		korisnici = new KorisniciDAO("./static/baza/");
 		
 		rezervacije = new RezervacijeDAO("./static/baza/rezervacije.txt");
+		
+		apartmani = new ApartmaniDAO("./static/baza/apartmani.txt");
+		
+		sadrzaji = new SadrzajApartmanaDAO("./static/baza/sadrzajApartmana.txt");
 		
 		// Obrada HTTP zahteva
 		
@@ -63,13 +71,13 @@ public class MainApp {
 					return gson.toJson(noviDomacin);
 				} else	{
 					res.status(400);	// Status 400 Bad Request
-					System.out.println("REGISTRACIJA DOMACINA: Korisničko ime " + noviDomacin.getKorisnickoIme() + " je zauzeto.\r\n");
-					return gson.toJson(new Odgovor("Korisničko ime " + noviDomacin.getKorisnickoIme() + " je zauzeto. Pokušajte drugo korisničko ime."));
+					System.out.println("REGISTRACIJA DOMACINA: KorisniÄ�ko ime " + noviDomacin.getKorisnickoIme() + " je zauzeto.\r\n");
+					return gson.toJson(new Odgovor("KorisniÄ�ko ime " + noviDomacin.getKorisnickoIme() + " je zauzeto. PokuÅ¡ajte drugo korisniÄ�ko ime."));
 				}
 			} else	{
 				System.out.println("REGISTRACIJA DOMACINA: Objekat korisnika ne moze da se kreira.\r\n");
 				res.status(500);	// Error 500: Internal Server Error - iz nekog razloga ne moze da parsira JSON objekat
-				return gson.toJson(new Odgovor("Greška prilikom registracije korisnika. Pokušajte ponovo."));
+				return gson.toJson(new Odgovor("GreÅ¡ka prilikom registracije korisnika. PokuÅ¡ajte ponovo."));
 			}
 		});
 		
@@ -88,13 +96,13 @@ public class MainApp {
 					return gson.toJson(noviGost);
 				} else	{
 					res.status(400);	// Status 400 Bad Request
-					System.out.println("REGISTRACIJA GOSTA: Korisničko ime " + noviGost.getKorisnickoIme() + " je zauzeto.\r\n");
-					return gson.toJson(new Odgovor("Korisničko ime " + noviGost.getKorisnickoIme() + " je zauzeto. Pokušajte drugo korisničko ime."));
+					System.out.println("REGISTRACIJA GOSTA: KorisniÄ�ko ime " + noviGost.getKorisnickoIme() + " je zauzeto.\r\n");
+					return gson.toJson(new Odgovor("KorisniÄ�ko ime " + noviGost.getKorisnickoIme() + " je zauzeto. PokuÅ¡ajte drugo korisniÄ�ko ime."));
 				}
 			} else	{
 				System.out.println("REGISTRACIJA GOSTA: Objekat korisnika ne moze da se kreira.\r\n");
 				res.status(500);	// Error 500: Internal Server Error - iz nekog razloga ne moze da parsira JSON objekat
-				return gson.toJson(new Odgovor("Greška prilikom registracije korisnika. Pokušajte ponovo."));
+				return gson.toJson(new Odgovor("GreÅ¡ka prilikom registracije korisnika. PokuÅ¡ajte ponovo."));
 			}
 		});
 		
@@ -136,7 +144,7 @@ public class MainApp {
 						// Neuspesno logovanje
 						res.status(400);	// Status 400 Bad Request
 						System.out.println("LOGIN: Pogresna lozinka za korisnicko ime " + korisnik.getKorisnickoIme() + "\r\n");
-						return gson.toJson(new Odgovor("Lozinka za nalog " + korisnik.getKorisnickoIme() + " nije ispravna. Pokušajte ponovo."));
+						return gson.toJson(new Odgovor("Lozinka za nalog " + korisnik.getKorisnickoIme() + " nije ispravna. PokuÅ¡ajte ponovo."));
 					}
 				} else	{
 					res.status(400);
@@ -160,16 +168,16 @@ public class MainApp {
 			} else	{
 				if (res.status() == 400)	{
 					System.out.println("PREUZMI ULOGU: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
-					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro Ä‡ete biti prebaÄ�eni na login stranicu."));
 				}
 				else if (res.status() == 500)	{
 					// TODO: error 500 ne treba da log outuje, samo da javi da pokusa ponovo, ili eventualno da se ponovo uloguje
 					System.out.println("PREUZMI ULOGU: Ne moze da parsira JWT.\r\n");
-					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+					return gson.toJson(new Odgovor("DoÅ¡lo je do greÅ¡ke na serveru. PokuÅ¡ajte ponovo."));
 				}
 				
 				res.status(500);
-				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				return gson.toJson(new Odgovor("Došlo je do greÅ¡ke na serveru. PokuÅ¡ajte ponovo."));
 			}
 		});
 		
@@ -182,19 +190,19 @@ public class MainApp {
 				} else	{
 					System.out.println("DOBAVI KORISNIKE: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ove podatke.\r\n");
 					res.status(403); // Error 403: Forbidden
-					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
+					return gson.toJson(new Odgovor("Niste ovlaÅ¡Ä‡eni za traÅ¾eni sadrÅ¾aj."));
 				}
 			} else	{
 				if (res.status() == 400)	{
 					System.out.println("DOBAVI KORISNIKE: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
-					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro Ä‡ete biti prebaÄ�eni na login stranicu."));
 				} else if (res.status() == 500)	{
 					System.out.println("DOBAVI KORISNIKE: Ne moze da parsira JWT.\r\n");
-					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+					return gson.toJson(new Odgovor("DoÅ¡lo je do greÅ¡ke na serveru. PokuÅ¡ajte ponovo."));
 				}
 				
 				res.status(500);
-				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				return gson.toJson(new Odgovor("DoÅ¡lo je do greÅ¡ke na serveru. PokuÅ¡ajte ponovo."));
 			}
 		});
 		
@@ -207,19 +215,19 @@ public class MainApp {
 				} else	{
 					System.out.println("DOBAVI REZERVACIJE: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ove podatke.\r\n");
 					res.status(403); // Error 403: Forbidden
-					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
+					return gson.toJson(new Odgovor("Niste ovlaÅ¡Ä‡eni za traÅ¾eni sadrÅ¾aj."));
 				}
 			} else	{
 				if (res.status() == 400)	{
 					System.out.println("DOBAVI REZERVACIJE: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
-					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro Ä‡ete biti prebaÄ�eni na login stranicu."));
 				} else if (res.status() == 500)	{
 					System.out.println("DOBAVI REZERVACIJE: Ne moze da parsira JWT.\r\n");
-					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+					return gson.toJson(new Odgovor("DoÅ¡lo je do greÅ¡ke na serveru. PokuÅ¡ajte ponovo."));
 				}
 				
 				res.status(500);
-				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				return gson.toJson(new Odgovor("DoÅ¡lo je do greÅ¡ke na serveru. PokuÅ¡ajte ponovo."));
 			}
 		});
 		
@@ -237,25 +245,25 @@ public class MainApp {
 					} else	{
 						System.out.println("OBRISI KORISNIKA: " + korisnikZaBrisanje.getKorisnickoIme() + " nije pronadjen u bazi.\r\n");
 						res.status(404); // Error 404: Not Found
-						return gson.toJson(new Odgovor("Traženi resurs nije pronađen."));
+						return gson.toJson(new Odgovor("TraÅ¾eni resurs nije pronaÄ‘en."));
 					}
 				} else	{
 					System.out.println("OBRISI KORISNIKA: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ovu metodu.\r\n");
 					res.status(403); // Error 403: Forbidden
-					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
+					return gson.toJson(new Odgovor("Niste ovlaÅ¡Ä‡eni za traÅ¾eni sadrÅ¾aj."));
 				}
 			} else	{
 				if (res.status() == 400)	{
 					System.out.println("OBRISI KORISNIKA: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
-					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro Ä‡ete biti prebaÄ�eni na login stranicu."));
 				}
 				else if (res.status() == 500)	{ 
 					System.out.println("OBIRIS KORISNIKA: Ne moze da parsira JWT.\r\n");
-					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+					return gson.toJson(new Odgovor("DoÅ¡lo je do greÅ¡ke na serveru. PokuÅ¡ajte ponovo."));
 				}
 				
 				res.status(500);
-				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				return gson.toJson(new Odgovor("DoÅ¡lo je do greÅ¡ke na serveru. PokuÅ¡ajte ponovo."));
 			}
 		});
 		
@@ -272,20 +280,20 @@ public class MainApp {
 				} else	{
 					System.out.println("PROMENI STATUS KORISNIKA: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ovu metodu.\r\n");
 					res.status(403); // Error 403: Forbidden
-					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
+					return gson.toJson(new Odgovor("Niste ovlaÅ¡Ä‡eni za traÅ¾eni sadrÅ¾aj."));
 				}
 			} else	{
 				if (res.status() == 400)	{
 					System.out.println("PROMENI STATUS KORISNIKA: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
-					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro Ä‡ete biti prebaÄ�eni na login stranicu."));
 				}
 				else if (res.status() == 500)	{ 
 					System.out.println("PROMENI STATUS KORISNIKA: Ne moze da parsira JWT.\r\n");
-					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+					return gson.toJson(new Odgovor("DoÅ¡lo je do greÅ¡ke na serveru. PokuÅ¡ajte ponovo."));
 				}
 				
 				res.status(500);
-				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				return gson.toJson(new Odgovor("DoÅ¡lo je do greÅ¡ke na serveru. PokuÅ¡ajte ponovo."));
 			}
 		});
 	}
