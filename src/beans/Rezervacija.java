@@ -99,6 +99,10 @@ public class Rezervacija {
 		this.status = status;
 	}
 
+	public Date getKrajnjiDatum()	{
+		return new Date(this.pocetniDatum.getTime() + 86400 * 1000 * this.brojNocenja);
+	}
+	
 	@Override
 	public String toString() {
 		return this.id + ";" + this.apartmanId + ";" + this.pocetniDatum.getTime() + ";" + this.brojNocenja + ";" + this.cena + ";" + this.poruka + ";" + this.korisnickoImeGosta + ";" + this.status.name() + "\n";

@@ -1,0 +1,13 @@
+1;parking
+2;kuhinja
+3;pegla
+4;ves masina
+5;televizor
+6;kablovska
+7;Wifi
+8;klima
+9;grejanje
+10;topla voda
+11;lift
+12;frizider
+13;kupatilo
