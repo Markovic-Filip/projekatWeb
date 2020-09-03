@@ -179,5 +179,58 @@ public class ApartmaniDAO {
 		}
 	}
 	
+	public ArrayList<Apartman> dobaviAktivneApartmane()	{
+		ArrayList<Apartman> retVal = new ArrayList<Apartman>();
+		
+		for (Apartman apartman : apartmani.values())	{
+			if (apartman.getStatus().equals(Status.AKTIVNO)) {
+				retVal.add(apartman);
+			}
+		}
+		
+		return retVal;
+	}
+	
+	public ArrayList<Apartman> dobaviNeaktivneApartmane()	{
+		ArrayList<Apartman> retVal = new ArrayList<Apartman>();
+		
+		for (Apartman apartman : apartmani.values())	{
+			if (apartman.getStatus().equals(Status.NEAKTIVNO)) {
+				retVal.add(apartman);
+				}
+		}
+		
+		return retVal;
+	}
+	
+	public ArrayList<Apartman> dobaviAktivneApartmaneZaDomacina(String korisnickoIme)	{
+		ArrayList<Apartman> retVal = new ArrayList<Apartman>();
+		
+		for (Apartman apartman : apartmani.values())	{
+			if(apartman.getKorisnickoImeDomacina().equals(korisnickoIme)) {
+				if (apartman.getStatus().equals(Status.AKTIVNO)) {
+					retVal.add(apartman);
+					}
+			}
+		}
+		
+		return retVal;
+	}
+	
+	public ArrayList<Apartman> dobaviNeaktivneApartmaneZaDomacina(String korisnickoIme)	{
+		ArrayList<Apartman> retVal = new ArrayList<Apartman>();
+		
+		for (Apartman apartman : apartmani.values())	{
+			if(apartman.getKorisnickoImeDomacina().equals(korisnickoIme)) {
+				if (apartman.getStatus().equals(Status.NEAKTIVNO)) {
+					retVal.add(apartman);
+					}
+			}
+		}
+		
+		return retVal;
+	}
+	
+	
 	
 }
