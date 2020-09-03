@@ -18,8 +18,11 @@ import beans.Domacin;
 import beans.Gost;
 import beans.Korisnik;
 import beans.Odgovor;
+import beans.Rezervacija;
+import dao.ApartmaniDAO;
 import dao.KorisniciDAO;
 import dao.RezervacijeDAO;
+import dao.SadrzajApartmanaDAO;
 import enums.StatusKorisnika;
 import enums.Uloga;
 import io.jsonwebtoken.Claims;
@@ -35,6 +38,8 @@ public class MainApp {
 	private static Gson gson = new Gson();
 	private static KorisniciDAO korisnici = null;
 	private static RezervacijeDAO rezervacije = null;
+	private static ApartmaniDAO apartmani = null;
+	private static SadrzajApartmanaDAO sadrzaji = null;
 	private static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 	
 	public static void main(String[] args) throws IOException {
@@ -48,6 +53,10 @@ public class MainApp {
 		korisnici = new KorisniciDAO("./static/baza/");
 		
 		rezervacije = new RezervacijeDAO("./static/baza/rezervacije.txt");
+		
+		apartmani = new ApartmaniDAO("./static/baza/apartmani.txt");
+		
+		sadrzaji = new SadrzajApartmanaDAO("./static/baza/sadrzajApartmana.txt");
 		
 		// Obrada HTTP zahteva
 		
@@ -223,6 +232,47 @@ public class MainApp {
 			}
 		});
 		
+		get("/app/dobavi_aktivne_apartmane", (req, res) -> {
+			if (req.headers("Authorization") != null)	{
+				Korisnik korisnik = proveraOvlascenja(req, res);
+				
+				if (korisnik != null)	{
+					if (korisnik.getUloga().equals(Uloga.DOMACIN))	{
+						return gson.toJson(apartmani.dobaviAktivneApartmaneZaDomacina(korisnik.getKorisnickoIme()));
+					}
+				}
+			}
+			
+			return gson.toJson(apartmani.dobaviAktivneApartmane());
+		});
+		
+		get("/app/dobavi_neaktivne_apartmane", (req, res) -> {
+			Korisnik korisnik = proveraOvlascenja(req, res);
+			
+			if (korisnik != null) {
+				if (korisnik.getUloga().equals(Uloga.ADMINISTRATOR))	{
+					return gson.toJson(apartmani.dobaviNeaktivneApartmane());
+				} else if (korisnik.getUloga().equals(Uloga.DOMACIN))	{
+					return gson.toJson(apartmani.dobaviNeaktivneApartmaneZaDomacina(korisnik.getKorisnickoIme()));
+				} else	{
+					System.out.println("DOBAVI NEAKTIVNE APARTMANE: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ove podatke.\r\n");
+					res.status(403); // Error 403: Forbidden
+					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
+				}
+			} else	{
+				if (res.status() == 400)	{
+					System.out.println("DOBAVI NEAKTIVNE APARTMANE: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				} else if (res.status() == 500)	{
+					System.out.println("DOBAVI NEAKTIVNE APARTMANE: Ne moze da parsira JWT.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				}
+				
+				res.status(500);
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+			}
+		});
+		
 		delete("/app/obirsi_korisnika", (req, res) -> {
 			Korisnik korisnik = proveraOvlascenja(req, res);
 			
@@ -265,7 +315,7 @@ public class MainApp {
 			if (korisnik != null)	{
 				if (korisnik.getUloga().equals(Uloga.ADMINISTRATOR))	{
 					String payload = req.body();
-					System.out.println("PROMENI STATUS KORISNIKA: " + payload);
+					System.out.println("PROMENI STATUS KORISNIKA: " + payload + "\r\n");
 					Korisnik korisnikZaPromenu = gson.fromJson(payload, Korisnik.class);
 					korisnici.promeniStatusKorisnika(korisnikZaPromenu.getKorisnickoIme());
 					return gson.toJson(korisnici.sviKorisnici());
@@ -281,6 +331,41 @@ public class MainApp {
 				}
 				else if (res.status() == 500)	{ 
 					System.out.println("PROMENI STATUS KORISNIKA: Ne moze da parsira JWT.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				}
+				
+				res.status(500);
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+			}
+		});
+		
+		put("/app/napravi_rezervaciju", (req, res) -> {
+			Korisnik korisnik = proveraOvlascenja(req, res);
+			
+			if (korisnik != null)	{
+				if (korisnik.getUloga().equals(Uloga.GOST))	{
+					String payload = req.body();
+					System.out.println("NAPRAVI REZERVACIJU: " + payload + "\r\n");
+					Rezervacija novaRezervacija = gson.fromJson(payload, Rezervacija.class);
+					if (rezervacije.dodajNovuRezervaciju(novaRezervacija))	{
+						System.out.println("NAPRAVI REZERVACIJU: Nova rezervacija id:" + novaRezervacija.getId() + " uspesno kreirana.\r\n");
+						return gson.toJson(new Odgovor("Uspešno ste rezervisali apartman."));
+					} else	{
+						System.out.println("NAPRAVI REZERVACIJU: Datumi se preklapaju, rezervacija nije napravljena.\r\n");
+						return gson.toJson(new Odgovor("Datumi za izabrani apartman su zauzeti. Pokušajte neki drugi apartman ili datum."));
+					}
+				} else	{
+					System.out.println("NAPRAVI REZERVACIJU: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ovu metodu.\r\n");
+					res.status(403); // Error 403: Forbidden
+					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
+				}
+			} else	{
+				if (res.status() == 400)	{
+					System.out.println("NAPRAVI REZERVACIJU: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				}
+				else if (res.status() == 500)	{ 
+					System.out.println("NAPRAVI REZERVACIJU: Ne moze da parsira JWT.\r\n");
 					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
 				}
 				

@@ -51,7 +51,7 @@ public class Adresa {
 
 	@Override
 	public String toString() {
-		return  ulica + " " + broj + ", " + mesto + " " + postanskiBroj;
+		return  ulica + "," + broj + "," + mesto + "," + postanskiBroj;
 	}
 
 }

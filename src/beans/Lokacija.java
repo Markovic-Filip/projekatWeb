@@ -41,6 +41,6 @@ public class Lokacija {
 
 	@Override
 	public String toString() {
-		return adresa + " " + geografskaSirina + ", " + geografskaDuzina;
+		return this.adresa.toString() + ";" + this.geografskaSirina + ";" + this.geografskaDuzina;
 	}
 }
