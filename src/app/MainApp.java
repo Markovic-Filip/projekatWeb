@@ -14,6 +14,7 @@ import java.util.Date;
 
 import com.google.gson.Gson;
 
+import beans.Apartman;
 import beans.Domacin;
 import beans.Gost;
 import beans.Korisnik;
@@ -23,6 +24,7 @@ import dao.ApartmaniDAO;
 import dao.KorisniciDAO;
 import dao.RezervacijeDAO;
 import dao.SadrzajApartmanaDAO;
+import enums.Status;
 import enums.StatusKorisnika;
 import enums.Uloga;
 import io.jsonwebtoken.Claims;
@@ -331,6 +333,54 @@ public class MainApp {
 				}
 				else if (res.status() == 500)	{ 
 					System.out.println("PROMENI STATUS KORISNIKA: Ne moze da parsira JWT.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				}
+				
+				res.status(500);
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+			}
+		});
+		
+		delete("/app/obrisi_apartman", (req, res) -> {
+			Korisnik korisnik = proveraOvlascenja(req, res);
+			
+			if (korisnik != null)	{
+				if (!korisnik.getUloga().equals(Uloga.GOST))	{
+					String payload = req.body();
+					System.out.println("OBRISI APARTMAN: " + payload + "\r\n");
+					Apartman apartmanZaBrisanje = gson.fromJson(payload, Apartman.class);
+					if (apartmani.obrisiApartman(apartmanZaBrisanje.getId()))	{
+						System.out.println("OBRISI APARTMAN: Apartman " + apartmanZaBrisanje.getId() + " uspesno obrisan iz baze.\r\n");
+						if (korisnik.getUloga().equals(Uloga.ADMINISTRATOR))	{
+							if (apartmanZaBrisanje.getStatus().equals(Status.AKTIVNO))	{
+								return gson.toJson(apartmani.dobaviAktivneApartmane());
+							} else	{
+								return gson.toJson(apartmani.dobaviNeaktivneApartmane());
+							}
+						} else	{
+							if (apartmanZaBrisanje.getStatus().equals(Status.AKTIVNO))	{
+								return gson.toJson(apartmani.dobaviAktivneApartmaneZaDomacina(korisnik.getKorisnickoIme()));
+							} else	{
+								return gson.toJson(apartmani.dobaviNeaktivneApartmaneZaDomacina(korisnik.getKorisnickoIme()));
+							}
+						}
+					} else	{
+						System.out.println("OBRISI APARTMAN: " + apartmanZaBrisanje.getId() + " nije pronadjen u bazi.\r\n");
+						res.status(404); // Error 404: Not Found
+						return gson.toJson(new Odgovor("Traženi resurs nije pronađen."));
+					}
+				} else	{
+					System.out.println("OBRISI APARTMAN: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ovu metodu.\r\n");
+					res.status(403); // Error 403: Forbidden
+					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
+				}
+			} else	{
+				if (res.status() == 400)	{
+					System.out.println("OBRISI APARTMAN: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				}
+				else if (res.status() == 500)	{ 
+					System.out.println("OBIRIS APARTMAN: Ne moze da parsira JWT.\r\n");
 					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
 				}
 				

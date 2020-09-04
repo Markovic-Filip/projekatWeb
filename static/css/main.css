@@ -34,3 +34,13 @@ table   {
     font-family: 'Times New Roman', Times, serif;
     font-size: larger;
 }
+
+#aktivni_apartmani td   {
+    vertical-align: middle;
+    font-size: large;
+}
+
+#neaktivni_apartmani td   {
+    vertical-align: middle;
+    font-size: large;
+}

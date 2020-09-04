@@ -174,12 +174,14 @@ public class ApartmaniDAO {
 				Lokacija lokacija = new Lokacija(geografskaSirina,geografskaDuzina,adresaApartmana);
 				ArrayList<Integer> idSadrzaja = new ArrayList<Integer>();
 				ArrayList<Integer> idRezervacije = new ArrayList<Integer>();
+				
+				// TODO: Moze se desiti da apartman nema sadrzaj i rezervacije, treba prvo proveriti da li ima pa onda nastaviti s ovim kodom ispod
+				
 				String sadrzaj = tokeni[12];
 				String[] sadrzaji = sadrzaj.split(",");
 				for (String s : sadrzaji) {
 					idSadrzaja.add(Integer.parseInt(s));
 				}
-				
 				String rezervacija = tokeni[13];
 				if(rezervacija.length()>1) {
 					String[] rezrevacije = rezervacija.split(",");
