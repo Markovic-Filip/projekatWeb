@@ -38,7 +38,7 @@ public class Apartman {
 	}
 	
 	public Apartman(int id, Tip tip, int brojSoba,int brojGostiju, Lokacija lokacija, /*Date date, dostuponost po datumima*/
-			String korisickoImeDomacina,/*komentari, slike*/ double cenaPoNoci, int vremeZaPrijavu, int vremeZaOdjavu, Status status,
+			String korisnickoImeDomacina,/*komentari, slike*/ double cenaPoNoci, int vremeZaPrijavu, int vremeZaOdjavu, Status status,
 			ArrayList<Integer> idSadrzaja, ArrayList<Integer> idRezervacije) {
 		super();
 		this.id = id;

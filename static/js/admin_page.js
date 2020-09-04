@@ -8,7 +8,10 @@ new Vue({
         pretraga_uloga: 5,
         pretraga_pol: 5,
 
-        rezervacije: []
+        rezervacije: [],
+
+        aktivni_apartmani: [],
+        neaktivni_apartmani: []
     },
     mounted()   {
         /*
@@ -53,7 +56,6 @@ new Vue({
                 }
             });
 
-        // TODO: isti poziv za apartmane i mozda rezervacije
         axios
             .get('app/dobavi_rezervacije', {
                 headers: {
@@ -62,6 +64,42 @@ new Vue({
             })
             .then(response => {
                 this.rezervacije = response.data;
+            })
+            .catch(error => {
+                console.log(error);
+                alert(error.response.data.sadrzaj);
+                if (error.response.status == 400 || error.response.status == 403)   {
+                    window.localStorage.removeItem('jwt');
+                    window.location = 'login.html';
+                }
+            });
+
+            axios
+            .get('app/dobavi_aktivne_apartmane', {
+                headers: {
+                    'Authorization': 'Bearer ' + window.localStorage.getItem('jwt')
+                }
+            })
+            .then(response => {
+                this.aktivni_apartmani = response.data;
+            })
+            .catch(error => {
+                console.log(error);
+                alert(error.response.data.sadrzaj);
+                if (error.response.status == 400 || error.response.status == 403)   {
+                    window.localStorage.removeItem('jwt');
+                    window.location = 'login.html';
+                }
+            });
+        
+        axios
+            .get('app/dobavi_neaktivne_apartmane', {
+                headers: {
+                    'Authorization': 'Bearer ' + window.localStorage.getItem('jwt')
+                }
+            })
+            .then(response => {
+                this.neaktivni_apartmani = response.data;
             })
             .catch(error => {
                 console.log(error);
@@ -137,6 +175,33 @@ new Vue({
             this.korisnici = filtrirani_korisnici;
         },
 
+        obrisiApartman: function(apartman)  {
+            if (confirm('Obriši apartman ' + apartman.id + '?'))    {
+                axios
+                    .delete('app/obrisi_apartman', {
+                        headers: {
+                            'Authorization': 'Bearer ' + window.localStorage.getItem('jwt')
+                        },
+                        data: apartman
+                    })
+                    .then(response => {
+                        if (apartman.status == 0)   {
+                            this.aktivni_apartmani = response.data;
+                        } else  {
+                            this.neaktivni_apartmani = response.data;
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        alert(error.response.data.sadrzaj);
+                        if (error.response.status == 400 || error.response.status == 403)   {
+                            window.localStorage.removeItem('jwt');
+                            window.location = 'login.html';
+                        }
+                    });
+            }
+        },
+
         prikaziStatus: function(status)   {
             switch (status) {
                 case '0':
@@ -156,6 +221,11 @@ new Vue({
 
         prikaziPoruku: function(poruka) {
             this.$refs.poruka.innerText = "Poruka: \n" + poruka;
+        },
+
+        prikaziAdresu: function(apartman)   {
+            //return apartman.lokacija.adresa['mesto'] + ", " + apartman.lokacija.adresa['ulica'] + " " + apartman.lokacija.adresa['broj'];
+            return apartman.lokacija.adresa['ulica'] + " " + apartman.lokacija.adresa['broj'] + "\n" + apartman.lokacija.adresa['mesto'] + "\n" + apartman.lokacija.adresa['postanskiBroj'];
         }
     }
 });

@@ -91,9 +91,68 @@
                     </tbody>
                 </table>
 
-                <h2>Pregled svih apartmana</h2>
-                <table>
+                <h2>Pregled svih aktivnih apartmana</h2>
+                <table class="table table-hover" id="aktivni_apartmani">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Slika</th>
+                            <th>Tip</th>
+                            <th>Domaćin</th>
+                            <th>Broj soba</th>
+                            <th>Broj gostiju</th>
+                            <th>Adresa</th>
+                            <th>Cena po noći</th>
+                            <th></th>
+                        </tr>
+                    </thead>
 
+                    <tbody>
+                        <tr v-for="apartman in aktivni_apartmani">
+                            <td>{{ apartman.id }}</td>
+                            <!--<td><img src="" alt="slike/no_apartment.png" width="100" height="100"/></td>-->
+                            <td><img src="" alt="Nema slike" onerror="this.onerror=null;this.src='slike/no_apartment.png';"/></td>
+                            <td>{{ apartman.tip == 0 ? 'Apartman' : 'Soba' }}</td>
+                            <td>{{ apartman.korisnickoImeDomacina }}</td>
+                            <td>{{ apartman.brojSoba }}</td>
+                            <td>{{ apartman.brojGostiju }}</td>
+                            <td style="white-space:pre-wrap;">{{ prikaziAdresu(apartman) }}</td>
+                            <td>{{ apartman.cenaPoNoci.toFixed(2) }} RSD</td>
+                            <td><button v-on:click="obrisiApartman(apartman)">Obriši apartman</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>Pregled svih neaktivnih apartmana</h2>
+                <table class="table table-hover" id="neaktivni_apartmani">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Slika</th>
+                            <th>Tip</th>
+                            <th>Domaćin</th>
+                            <th>Broj soba</th>
+                            <th>Broj gostiju</th>
+                            <th>Adresa</th>
+                            <th>Cena po noći</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr v-for="apartman in neaktivni_apartmani">
+                            <td>{{ apartman.id }}</td>
+                            <!--<td><img src="" alt="slike/no_apartment.png" width="100" height="100"/></td>-->
+                            <td><img src="" alt="Nema slike" onerror="this.onerror=null;this.src='slike/no_apartment.png';"/></td>
+                            <td>{{ apartman.tip == 0 ? 'Apartman' : 'Soba' }}</td>
+                            <td>{{ apartman.korisnickoImeDomacina }}</td>
+                            <td>{{ apartman.brojSoba }}</td>
+                            <td>{{ apartman.brojGostiju }}</td>
+                            <td style="white-space:pre-wrap;">{{ prikaziAdresu(apartman) }}</td>
+                            <td>{{ apartman.cenaPoNoci.toFixed(2) }}</td>
+                            <td><button v-on:click="obrisiApartman(apartman)">Obriši apartman</button></td>
+                        </tr>
+                    </tbody>
                 </table>
 
                 <h2>Pregled svih rezervacija</h2>
