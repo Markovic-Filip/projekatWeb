@@ -389,7 +389,7 @@ public class MainApp {
 			}
 		});
 		
-		put("/app/napravi_rezervaciju", (req, res) -> {
+		post("/app/napravi_rezervaciju", (req, res) -> {
 			Korisnik korisnik = proveraOvlascenja(req, res);
 			
 			if (korisnik != null)	{

@@ -44,3 +44,27 @@ table   {
     vertical-align: middle;
     font-size: large;
 }
+
+div.galerija {
+    margin: 5px;
+    border: 1px solid #ccc;
+    float: left;
+    width: 180px;
+  }
+  
+  div.galerija:hover {
+    border: 1px solid #777;
+  }
+  
+  div.galerija img {
+    width: 100%;
+    height: auto;
+  }
+
+.dobra-vrednost {
+    border: 2px solid greenyellow;
+}
+
+.losa-vrednost  {
+    border: 2px solid orangered;
+}

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Rezervacija apartmana</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <link rel="stylesheet" href="./css/main.css">
+        <style>
+            div.row {
+                margin: 2em;
+            }
+
+            label   {
+                text-align: center;
+            }
+
+            div.podatak {
+                text-align: center;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="rezervacija-app">
+            <nav class="navbar navbar-expand navbar-dark bg-dark fixed-top">
+                <h1><a href="gost_page.html" class="navbar-brand">Ovde treba ime sajta</a></h1>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item"><a href="gost_page.html" class="nav-link">Početna</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link">Moj profil</a></li>
+                        <li class="nav-item"><a href="apartmani.html" class="nav-link">Apartmani</a></li>
+                        <li class="nav-item"><a href="javascript:window.localStorage.removeItem('jwt'); window.location = 'login.html';" class="nav-link">Odjavi se</a></li>
+                    </ul>
+                </div>
+            </nav>
+            <br/><br/><br/>
+
+            <div class="container">
+                <h2>Rezervacija apartmana</h2>
+                <div class="row">
+                    <div class="col" v-for="slika in apartman.slike">
+                        <div class="galerija">
+                            <a target="_blank" v-bind:href="slika">
+                              <img v-bind:src="slika" alt="Nema slike" onerror="this.onerror=null;this.src='slike/no_apartment.png';" width="600" height="400">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Osnovne informacije</h3>
+
+                <div class="row">
+                    <div class="col-4">
+                        <label>Tip:</label>
+                    </div>
+                    <div class="col-8 podatak">
+                        {{ apartman.tip == '0' ? 'Apartman' : 'Soba' }}
+                    </div>
+                </div>
+
+                <div class="row" v-if="apartman.tip == '0'">
+                    <div class="col-4">
+                        <label>Broj soba:</label>
+                    </div>
+                    <div class="col-8 podatak">
+                        {{ apartman.brojSoba }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <label>Broj gostiju:</label>
+                    </div>
+                    <div class="col-8 podatak">
+                        {{ apartman.brojGostiju }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <label>Adresa:</label>
+                    </div>
+                    <div class="col-8 podatak">
+                        {{ prikaziAdresu() }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <label>Cena po noći:</label>
+                    </div>
+                    <div class="col-8 podatak">
+                        {{ apartman.cenaPoNoci }} &euro;
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <label>Vreme za prijavu:</label>
+                    </div>
+                    <div class="col-8 podatak">
+                        {{ apartman.vremeZaPrijavu }}.00
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <label>Vreme za odjavu:</label>
+                    </div>
+                    <div class="col-8 podatak">
+                        {{ apartman.vremeZaOdjavu }}.00
+                    </div>
+                </div>
+
+                <h3>Lista sadržaja:</h3>
+
+                <div class="row" v-for="sadrzaj in sadrzaji">
+                    {{ sadrzaj.naziv }}
+                </div>
+
+                <h3>Rezervacija</h3>
+
+                <div class="row">
+                    <div class="col-4">
+                        <label>Početni datum:</label>
+                    </div>
+                    <div class="col-8 podatak">
+                        <vuejs-datepicker v-model="pocetniDatum" format="dd.MM.yyyy"></vuejs-datepicker>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <label>Broj noćenja:</label>
+                    </div>
+                    <div class="col-8 podatak">
+                        <input v-model="brojNocenja" ref="broj_nocenja" type="number" min="1" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <button v-on:click="validacija()">Rezerviši</button>
+                </div>
+            </div>
+        </div>
+
+        <script src="./js/vue.js"></script>
+        <script src="./js/vuejs-datepicker.min.js"></script>
+        <script src="./js/axios.js"></script>
+        <script src="./js/rezervacija_apartmana.js"></script>
+    </body>
+</html>

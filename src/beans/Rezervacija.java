@@ -9,7 +9,6 @@ import enums.StatusRezervacije;
 public class Rezervacija {
 
 	private int id;
-	//private Apartman apartman;
 	private int apartmanId;
 	@JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
 	private Date pocetniDatum;
