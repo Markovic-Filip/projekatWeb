@@ -9,8 +9,8 @@
 
     <body>
         <div id="domacin-app">
-            <nav class="navbar navbar-expand navbar-dark bg-dark">
-                <h1><a href="index.html" class="navbar-brand">Ovde treba ime sajta</a></h1>
+            <nav class="navbar navbar-expand navbar-dark bg-dark fixed-top">
+                <h1><a href="#" class="navbar-brand">Ovde treba ime sajta</a></h1>
                 <div class="collapse navbar-collapse">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item"><a href="#" class="nav-link">Početna</a></li>
@@ -20,6 +20,7 @@
                     </ul>
                 </div>
             </nav>
+            <br/><br/><br/>
 
             <div class="container">
                 <h2>Aktivni apartmani</h2>
@@ -43,7 +44,7 @@
                             <td>{{ apartman.brojSoba }}</td>
                             <td>{{ apartman.brojGostiju }}</td>
                             <td style="white-space:pre-wrap;">{{ prikaziAdresu(apartman) }}</td>
-                            <td>{{ apartman.cenaPoNoci.toFixed(2) }}</td>
+                            <td>{{ apartman.cenaPoNoci.toFixed(2) }} &euro;</td>
                             <td><button v-on:click="obrisiApartman(apartman)">Obriši apartman</button></td>
                         </tr>
                     </tbody>
@@ -68,7 +69,7 @@
                             <td>{{ apartman.brojSoba }}</td>
                             <td>{{ apartman.brojGostiju }}</td>
                             <td style="white-space:pre-wrap;">{{ prikaziAdresu(apartman) }}</td>
-                            <td>{{ apartman.cenaPoNoci.toFixed(2) }}</td>
+                            <td>{{ apartman.cenaPoNoci.toFixed(2) }} &euro;</td>
                             <td><button v-on:click="obrisiApartman(apartman)">Obriši apartman</button></td>
                         </tr>
                     </tbody>
