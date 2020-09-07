@@ -13,6 +13,8 @@ import java.security.Key;
 import java.util.Date;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
 
 import beans.Apartman;
 import beans.Domacin;
@@ -37,7 +39,8 @@ import spark.Response;
 
 public class MainApp {
 
-	private static Gson gson = new Gson();
+	//private static Gson gson = new Gson();
+	private static Gson gson;
 	private static KorisniciDAO korisnici = null;
 	private static RezervacijeDAO rezervacije = null;
 	private static ApartmaniDAO apartmani = null;
@@ -59,6 +62,9 @@ public class MainApp {
 		apartmani = new ApartmaniDAO("./static/baza/apartmani.txt");
 		
 		sadrzaji = new SadrzajApartmanaDAO("./static/baza/sadrzajApartmana.txt");
+		
+		// Izmenjeno iz new Gson() u ovo jer ovaj oblik moze da parsira milisekunde u Date
+		gson =  new GsonBuilder().registerTypeAdapter(Date.class, (JsonDeserializer) (json, typeOfT, context) -> new Date(json.getAsLong())).create();
 		
 		// Obrada HTTP zahteva
 		
@@ -397,8 +403,10 @@ public class MainApp {
 					String payload = req.body();
 					System.out.println("NAPRAVI REZERVACIJU: " + payload + "\r\n");
 					Rezervacija novaRezervacija = gson.fromJson(payload, Rezervacija.class);
+					novaRezervacija.setGost(korisnik.getKorisnickoIme());
 					if (rezervacije.dodajNovuRezervaciju(novaRezervacija))	{
 						System.out.println("NAPRAVI REZERVACIJU: Nova rezervacija id:" + novaRezervacija.getId() + " uspesno kreirana.\r\n");
+						korisnici.dodajRezervaciju(korisnik.getKorisnickoIme(), novaRezervacija.getId());
 						return gson.toJson(new Odgovor("Uspešno ste rezervisali apartman."));
 					} else	{
 						System.out.println("NAPRAVI REZERVACIJU: Datumi se preklapaju, rezervacija nije napravljena.\r\n");
