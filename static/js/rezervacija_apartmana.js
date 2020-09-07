@@ -23,7 +23,6 @@ new Vue({
     },
     methods:    {
         validacija: function()  {
-
             this.valid = true;
 
             this.pocetniDatum.setHours(this.apartman.vremeZaPrijavu);
@@ -44,6 +43,17 @@ new Vue({
                 this.valid = false;
             }
 
+            if (this.poruka === '') {
+                this.$refs.poruka.classList.remove("dobra-vrednost");
+                this.$refs.poruka.classList.add("losa-vrednost");
+                this.valid = false;
+            } else  {
+                if (this.$refs.poruka.classList.contains("losa-vrednost"))   {
+                    this.$refs.poruka.classList.remove("losa-vrednost");
+                    this.$refs.poruka.classList.add("dobra-vrednost");
+                }
+            }
+
             if (this.valid)  {
                 this.rezervisi();
             }
@@ -51,11 +61,11 @@ new Vue({
 
         rezervisi: function()   {
             let rezervacija = {
-                apartmanId: this.apartman.id,
-                pocetniDatum: this.pocetniDatum.getTime(),
-                brojNocenja: this.brojNocenja,
-                cena: this.apartman.cenaPoNoci * this.brojNocenja,
-                poruka: this.poruka
+                'apartmanId': this.apartman.id,
+                'pocetniDatum': this.pocetniDatum.getTime(),
+                'brojNocenja': this.brojNocenja,
+                'cena': this.apartman.cenaPoNoci * this.brojNocenja,
+                'poruka': this.poruka
             }
 
             axios
@@ -66,13 +76,22 @@ new Vue({
                     }
                 })
                 .then(response => {
-
+                    //this.$refs.msg.classList.add("ok-msg");
+                    this.$refs.msg.classList.remove("error-msg");
+                    this.$refs.msg.innerHTML = response.data.sadrzaj;
+                    window.localStorage.removeItem('apartman'); // Ne treba vise
                 })
                 .catch(error => {
-
+                    console.log(error);
+                    //this.$refs.msg.classList.remove("ok-msg");
+                    this.$refs.msg.classList.add("error-msg");
+                    this.$refs.msg.innerHTML = error.response.data.sadrzaj;
+                    if (error.response.status == 400 || error.response.status == 403)   {
+                        window.localStorage.removeItem('apartman');
+                        window.localStorage.removeItem('jwt');
+                        window.location = 'login.html';
+                    }
                 });
-
-            window.localStorage.removeItem('apartman'); // Ne treba vise
         },
 
         prikaziAdresu: function()   {

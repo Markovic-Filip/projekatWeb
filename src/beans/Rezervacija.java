@@ -21,6 +21,18 @@ public class Rezervacija {
 	public Rezervacija()	{
 		pocetniDatum = new Date();
 	}
+	
+	public Rezervacija(int id, int apartmanId, long pocetniDatumMili, int brojNocenja, double cena, String poruka, String korisnickoImeGosta, StatusRezervacije status) {
+		super();
+		this.id = id;
+		this.apartmanId = apartmanId;
+		this.pocetniDatum = new Date(pocetniDatumMili);
+		this.brojNocenja = brojNocenja;
+		this.cena = cena;
+		this.poruka = poruka;
+		this.korisnickoImeGosta = korisnickoImeGosta;
+		this.status = status;
+	}
 
 	public Rezervacija(int id, int apartmanId, Date pocetniDatum, int brojNocenja, double cena, String poruka, String korisnickoImeGosta, StatusRezervacije status) {
 		super();
@@ -56,6 +68,10 @@ public class Rezervacija {
 
 	public void setPocetniDatum(Date pocetniDatum) {
 		this.pocetniDatum = pocetniDatum;
+	}
+	
+	public void setPocetniDatum(long timeInMillis)	{
+		this.pocetniDatum = new Date(timeInMillis);
 	}
 
 	public int getBrojNocenja() {

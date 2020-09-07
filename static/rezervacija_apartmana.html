@@ -17,6 +17,12 @@
             div.podatak {
                 text-align: center;
             }
+
+            textarea    {
+                height: 10em;
+                width: 40em;
+                resize: none;
+            }
         </style>
     </head>
 
@@ -121,11 +127,17 @@
                 <h3>Rezervacija</h3>
 
                 <div class="row">
+                    <div class="col" align="center">
+                        <p id="msg" ref="msg"></p>
+                    </div>
+                </div>
+
+                <div class="row">
                     <div class="col-4">
                         <label>Početni datum:</label>
                     </div>
                     <div class="col-8 podatak">
-                        <vuejs-datepicker v-model="pocetniDatum" format="dd.MM.yyyy"></vuejs-datepicker>
+                        <vuejs-datepicker v-model="pocetniDatum" format="dd.MM.yyyy" style="margin-left: 15em;"></vuejs-datepicker>
                     </div>
                 </div>
 
@@ -135,6 +147,15 @@
                     </div>
                     <div class="col-8 podatak">
                         <input v-model="brojNocenja" ref="broj_nocenja" type="number" min="1" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-2">
+                        <label>Poruka:</label>
+                    </div>
+                    <div class="col-10 podatak">
+                        <textarea ref="poruka" v-model="poruka"></textarea>
                     </div>
                 </div>
 

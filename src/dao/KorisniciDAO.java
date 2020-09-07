@@ -89,6 +89,20 @@ public class KorisniciDAO {
 		azurirajBazu(korisnik.getUloga());
 	}
 	
+	public void dodajRezervaciju(String korisnickoIme, int idRezervacije)	{
+		String putanja = "./static/baza/korisnici/" + korisnickoIme + "-Rezervacije.txt";
+		
+		try {
+			FileWriter writer = new FileWriter(putanja);
+			writer.append(idRezervacije + "\n");
+			System.out.println("KORISNICI DAO: Rezervacija " + idRezervacije + " dodata u " + korisnickoIme + "-Rezervacije.txt\r\n");
+			writer.close();
+		} catch (IOException e)	{
+			e.printStackTrace();
+			System.out.println("Fajl " + putanja + " nije pronadjen!\r\n");
+		}
+	}
+	
 	private void ucitajKorisnike(String putanja, Uloga uloga)	{
 		BufferedReader bafer;
 		try	{
