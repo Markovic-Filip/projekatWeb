@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Rezervacija apartmana</title>
+        <title>Izmena apartmana</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
         <link rel="stylesheet" href="./css/main.css">
         <style>
@@ -17,42 +17,38 @@
             div.podatak {
                 text-align: center;
             }
-
-            textarea    {
-                height: 10em;
-                width: 40em;
-                resize: none;
-            }
         </style>
     </head>
 
     <body>
-        <div id="rezervacija-app">
-            <nav class="navbar navbar-expand navbar-dark bg-dark fixed-top">
-                <h1><a href="gost_page.html" class="navbar-brand">Ovde treba ime sajta</a></h1>
+        <div id="izmena-apartmana-app">
+            <nav v-if="uloga() === 'DOMACIN'" class="navbar navbar-expand navbar-dark bg-dark fixed-top">
+                <h1><a href="domacin_page.html" class="navbar-brand">Ovde treba ime sajta</a></h1>
                 <div class="collapse navbar-collapse">
                     <ul class="navbar-nav ml-auto">
-                        <li class="nav-item"><a href="gost_page.html" class="nav-link">Početna</a></li>
+                        <li class="nav-item"><a href="domacin_page.html" class="nav-link">Početna</a></li>
                         <li class="nav-item"><a href="#" class="nav-link">Moj profil</a></li>
-                        <li class="nav-item"><a href="apartmani.html" class="nav-link">Apartmani</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link">Pregled gostiju</a></li>
                         <li class="nav-item"><a href="javascript:window.localStorage.removeItem('jwt'); window.location = 'login.html';" class="nav-link">Odjavi se</a></li>
                     </ul>
                 </div>
             </nav>
+
+            <nav v-else-if="uloga() === 'ADMINISTRATOR'" class="navbar navbar-expand navbar-dark bg-dark fixed-top">
+                <h1><a href="admin_page.html" class="navbar-brand">Ovde treba ime sajta</a></h1>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item"><a href="admin_page.html" class="nav-link">Početna</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link">Moj profil</a></li>
+                        <li class="nav-item"><a href="registration.html" class="nav-link">Dodaj domaćina</a></li>
+                        <li class="nav-item"><a href="javascript:window.localStorage.removeItem('jwt'); window.location = 'login.html';" class="nav-link">Odjavi se</a></li>
+                    </ul>
+                </div>
+            </nav>
+
             <br/><br/><br/>
 
             <div class="container">
-                <h2>Rezervacija apartmana</h2>
-                <div class="row">
-                    <div class="col" v-for="slika in apartman.slike">
-                    <!--<div class="col">-->
-                        <div class="galerija">
-                            <a target="_blank" v-bind:href="slika">
-                              <img v-bind:src="slika" alt="Nema slike" onerror="this.onerror=null;this.src='slike/no_apartment.png';" width="600" height="400">
-                            </a>
-                        </div>
-                    </div>
-                </div>
 
                 <h3>Osnovne informacije</h3>
 
@@ -61,7 +57,10 @@
                         <label>Tip:</label>
                     </div>
                     <div class="col-8 podatak">
-                        {{ apartman.tip == '0' ? 'Apartman' : 'Soba' }}
+                        <select v-model="apartman.tip">
+                            <option value="0">Apartman</option>
+                            <option value="1">Soba</option>
+                        </select>
                     </div>
                 </div>
 
@@ -70,7 +69,7 @@
                         <label>Broj soba:</label>
                     </div>
                     <div class="col-8 podatak">
-                        {{ apartman.brojSoba }}
+                        <input type="number" v-model="apartman.brojSoba" ref="broj_soba" min="1" />
                     </div>
                 </div>
 
@@ -79,16 +78,7 @@
                         <label>Broj gostiju:</label>
                     </div>
                     <div class="col-8 podatak">
-                        {{ apartman.brojGostiju }}
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-4">
-                        <label>Adresa:</label>
-                    </div>
-                    <div class="col-8 podatak">
-                        {{ prikaziAdresu() }}
+                        <input type="number" v-model="apartman.brojGostiju" ref="broj_gostiju" min="1" />
                     </div>
                 </div>
 
@@ -97,7 +87,7 @@
                         <label>Cena po noći:</label>
                     </div>
                     <div class="col-8 podatak">
-                        {{ apartman.cenaPoNoci }} &euro;
+                        <input type="number" v-model="apartman.cenaPoNoci" ref="cena_po_noci" min="1" step="0.01" /> &euro;
                     </div>
                 </div>
 
@@ -106,7 +96,7 @@
                         <label>Vreme za prijavu:</label>
                     </div>
                     <div class="col-8 podatak">
-                        {{ apartman.vremeZaPrijavu }}.00
+                        <input type="number" v-model="apartman.vremeZaPrijavu" ref="vreme_za_prijavu" min="0" max="23" /> h
                     </div>
                 </div>
 
@@ -115,7 +105,18 @@
                         <label>Vreme za odjavu:</label>
                     </div>
                     <div class="col-8 podatak">
-                        {{ apartman.vremeZaOdjavu }}.00
+                        <input type="number" v-model="apartman.vremeZaOdjavu" ref="vreme_za_odjavu" min="0" max="23" /> h
+                    </div>
+                </div>
+
+                <div class="row" v-if="uloga() === 'ADMINISTRATOR'">
+                    <div class="col-4">
+                        <button v-if="apartman.status == 1" v-on:click="promeniStatus()">Aktiviraj</button>
+                        <button v-else v-on:click="promeniStatus()">Deaktiviraj</button>
+                    </div>
+
+                    <div class="col-8 podatak">
+                        {{ apartman.status === '0' ? 'Aktivan' : 'Neaktivan' }}
                     </div>
                 </div>
 
@@ -123,9 +124,8 @@
 
                 <div class="row" v-for="sadrzaj in sadrzaji">
                     {{ sadrzaj.naziv }}
+                    <input type="image" title="Obriši" src="slike/delete.png" width="48" height="48" v-on:click="obrisiSadrzaj(sadrzaj)">
                 </div>
-
-                <h3>Rezervacija</h3>
 
                 <div class="row">
                     <div class="col" align="center">
@@ -134,41 +134,15 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-4">
-                        <label>Početni datum:</label>
+                    <div class="col" style="text-align: right;">
+                        <input type="image" title="Sačuvaj izmene" src="slike/save.png" width="48" height="48" v-on:click.prevent="validacija()">
                     </div>
-                    <div class="col-8 podatak">
-                        <vuejs-datepicker v-model="pocetniDatum" format="dd.MM.yyyy" style="margin-left: 15em;"></vuejs-datepicker>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-4">
-                        <label>Broj noćenja:</label>
-                    </div>
-                    <div class="col-8 podatak">
-                        <input v-model="brojNocenja" ref="broj_nocenja" type="number" min="1" />
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-2">
-                        <label>Poruka:</label>
-                    </div>
-                    <div class="col-10 podatak">
-                        <textarea ref="poruka" v-model="poruka"></textarea>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <button v-on:click="validacija()">Rezerviši</button>
                 </div>
             </div>
         </div>
 
         <script src="./js/vue.js"></script>
-        <script src="./js/vuejs-datepicker.min.js"></script>
         <script src="./js/axios.js"></script>
-        <script src="./js/rezervacija_apartmana.js"></script>
+        <script src="./js/izmena_apartmana.js"></script>
     </body>
 </html>

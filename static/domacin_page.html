@@ -34,6 +34,7 @@
                             <th>Adresa</th>
                             <th>Cena po noći</th>
                             <th></th>
+                            <th></th>
                         </tr>
                     </thead>
 
@@ -45,7 +46,8 @@
                             <td>{{ apartman.brojGostiju }}</td>
                             <td style="white-space:pre-wrap;">{{ prikaziAdresu(apartman) }}</td>
                             <td>{{ apartman.cenaPoNoci.toFixed(2) }} &euro;</td>
-                            <td><button v-on:click="obrisiApartman(apartman)">Obriši apartman</button></td>
+                            <td><input type="image" title="Izmeni" src="slike/edit.png" width="48" height="48" v-on:click.prevent="izmeniApartman(apartman)"></td>
+                            <td><input type="image" title="Obriši" src="slike/delete.png" width="48" height="48" v-on:click="obrisiApartman(apartman)"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -60,6 +62,7 @@
                         <th>Adresa</th>
                         <th>Cena po noći</th>
                         <th></th>
+                        <th></th>
                     </thead>
 
                     <tbody>
@@ -70,7 +73,8 @@
                             <td>{{ apartman.brojGostiju }}</td>
                             <td style="white-space:pre-wrap;">{{ prikaziAdresu(apartman) }}</td>
                             <td>{{ apartman.cenaPoNoci.toFixed(2) }} &euro;</td>
-                            <td><button v-on:click="obrisiApartman(apartman)">Obriši apartman</button></td>
+                            <td><input type="image" title="Izmeni" src="slike/edit.png" width="48" height="48" v-on:click.prevent="izmeniApartman(apartman)"></td>
+                            <td><input type="image" title="Obriši" src="slike/delete.png" width="48" height="48" v-on:click="obrisiApartman(apartman)"></td>
                         </tr>
                     </tbody>
                 </table>

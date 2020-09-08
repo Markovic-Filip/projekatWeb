@@ -125,6 +125,17 @@ public class ApartmaniDAO {
 		azurirajBazu();
 	}
 
+	public boolean izmeniApartman(Apartman izmenjenApartman)	{
+		if (apartmani.containsKey(izmenjenApartman.getId()))	{
+			apartmani.put(izmenjenApartman.getId(), izmenjenApartman);
+			azurirajBazu();
+			return true;
+		} else	{
+			System.out.println("APARTMANI DAO: Apartman id:" + izmenjenApartman.getId() + " nije pronadjen u bazi.\r\n");
+			return false;
+		}
+	}
+	
 	private void upisiNoviApartman(Apartman novApartman) {
 		String putanja = "./static/baza/apartmani.txt";
 		try {
