@@ -71,6 +71,12 @@ new Vue({
 
         prikaziAdresu: function(apartman)   {
             return apartman.lokacija.adresa['ulica'] + " " + apartman.lokacija.adresa['broj'] + "\n" + apartman.lokacija.adresa['mesto'] + "\n" + apartman.lokacija.adresa['postanskiBroj'];
+        },
+
+        izmeniApartman: function(apartman)  {
+            window.localStorage.setItem('apartman', JSON.stringify(apartman));
+            window.localStorage.setItem('uloga', 'DOMACIN');
+            document.location.href = 'http://localhost:8080/izmena_apartmana.html';
         }
     }
 });
