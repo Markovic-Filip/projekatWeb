@@ -25,7 +25,7 @@ new Vue({
 
         rezervisiApartman: function(apartman)   {
             window.localStorage.setItem('apartman', JSON.stringify(apartman));
-            document.location.href = 'http://localhost:8080/rezervacija_apartmana.html';
+            window.location = 'http://localhost:8080/rezervacija_apartmana.html';
         }
     }
 });

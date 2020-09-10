@@ -28,7 +28,7 @@
 
     <body>
         <div id="rezervacija-app">
-            <nav class="navbar navbar-expand navbar-dark bg-dark fixed-top">
+            <nav v-if="ulogovanKorisnik()" class="navbar navbar-expand navbar-dark bg-dark fixed-top">
                 <h1><a href="gost_page.html" class="navbar-brand">Ovde treba ime sajta</a></h1>
                 <div class="collapse navbar-collapse">
                     <ul class="navbar-nav ml-auto">
@@ -39,10 +39,22 @@
                     </ul>
                 </div>
             </nav>
+
+            <nav v-else class="navbar navbar-expand navbar-dark bg-dark fixed-top">
+                <h1><a href="index.html" class="navbar-brand">Ovde treba ime sajta</a></h1>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item"><a href="index.html" class="nav-link">Početna</a></li>
+                        <li class="nav-item"><a href="apartmani.html" class="nav-link">Apartmani</a></li>
+                        <li class="nav-item"><a href="login.html" class="nav-link">Uloguj se</a></li>
+                        <li class="nav-item"><a href="registration.html" class="nav-link">Registruj se</a></li>
+                    </ul>
+                </div>
+            </nav>
             <br/><br/><br/>
 
             <div class="container">
-                <h2>Rezervacija apartmana</h2>
+                <h2>Pregled apartmana</h2>
                 <div class="row">
                     <div class="col" v-for="slika in apartman.slike">
                     <!--<div class="col">-->
@@ -125,43 +137,45 @@
                     {{ sadrzaj.naziv }}
                 </div>
 
-                <h3>Rezervacija</h3>
+                <div v-if="ulogovanKorisnik()">
+                    <h3>Rezervacija</h3>
 
-                <div class="row">
-                    <div class="col" align="center">
-                        <p id="msg" ref="msg"></p>
+                    <div class="row">
+                        <div class="col" align="center">
+                            <p id="msg" ref="msg"></p>
+                        </div>
                     </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-4">
-                        <label>Početni datum:</label>
+                    <div class="row">
+                        <div class="col-4">
+                            <label>Početni datum:</label>
+                        </div>
+                        <div class="col-8 podatak">
+                            <vuejs-datepicker v-model="pocetniDatum" :disabled-dates="state.disabledDates" format="dd.MM.yyyy" style="margin-left: 15em;"></vuejs-datepicker>
+                        </div>
                     </div>
-                    <div class="col-8 podatak">
-                        <vuejs-datepicker v-model="pocetniDatum" format="dd.MM.yyyy" style="margin-left: 15em;"></vuejs-datepicker>
-                    </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-4">
-                        <label>Broj noćenja:</label>
+                    <div class="row">
+                        <div class="col-4">
+                            <label>Broj noćenja:</label>
+                        </div>
+                        <div class="col-8 podatak">
+                            <input v-model="brojNocenja" ref="broj_nocenja" type="number" min="1" />
+                        </div>
                     </div>
-                    <div class="col-8 podatak">
-                        <input v-model="brojNocenja" ref="broj_nocenja" type="number" min="1" />
-                    </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-2">
-                        <label>Poruka:</label>
+                    <div class="row">
+                        <div class="col-2">
+                            <label>Poruka:</label>
+                        </div>
+                        <div class="col-10 podatak">
+                            <textarea ref="poruka" v-model="poruka"></textarea>
+                        </div>
                     </div>
-                    <div class="col-10 podatak">
-                        <textarea ref="poruka" v-model="poruka"></textarea>
-                    </div>
-                </div>
 
-                <div class="row">
-                    <button v-on:click="validacija()">Rezerviši</button>
+                    <div class="row">
+                        <button v-on:click="validacija()">Rezerviši</button>
+                    </div>
                 </div>
             </div>
         </div>

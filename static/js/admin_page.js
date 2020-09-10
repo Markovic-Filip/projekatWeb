@@ -205,7 +205,7 @@ new Vue({
         izmeniApartman: function(apartman)  {
             window.localStorage.setItem('apartman', JSON.stringify(apartman));
             window.localStorage.setItem('uloga', 'ADMINISTRATOR');
-            document.location.href = 'http://localhost:8080/izmena_apartmana.html';
+            window.location = 'http://localhost:8080/izmena_apartmana.html';
         },
 
         prikaziStatus: function(status)   {

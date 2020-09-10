@@ -9,12 +9,12 @@ new Vue({
         this.apartman = JSON.parse(window.localStorage.getItem('apartman'));
         if (this.apartman == null)   {
             if (this.uloga === 'DOMACIN')    {
-                document.location.href = 'http://localhost:8080/domacin_page.html';
+                window.location = 'http://localhost:8080/domacin_page.html';
             } else if (this.uloga === 'ADMINISTRATOR')  {
-                document.location.href = 'http://localhost:8080/admin_page.html';
+                window.location = 'http://localhost:8080/admin_page.html';
             } else  {
                 window.localStorage.removeItem('jwt');
-                document.location.href = 'http://localhost:8080/login.html';
+                window.location = 'http://localhost:8080/login.html';
             }
         }
 
@@ -27,7 +27,7 @@ new Vue({
                 return uloga;
             } else  {
                 window.localStorage.removeItem('jwt');
-                document.location.href = 'http://localhost:8080/login.html';
+                window.location = 'http://localhost:8080/login.html';
             }
         },
 

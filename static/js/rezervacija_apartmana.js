@@ -3,6 +3,7 @@ new Vue({
     data:   {
         apartman: {},
         sadrzaji: [],
+        state: {},
         pocetniDatum: new Date(parseInt(Date.now() + 86400000)),
         brojNocenja: 1,
         poruka: '',
@@ -11,17 +12,46 @@ new Vue({
     mounted()   {
         this.apartman = JSON.parse(window.localStorage.getItem('apartman'));
         if (this.apartman == null)   {
-            document.location.href = 'http://localhost:8080/apartmani.html';
+            window.location = 'http://localhost:8080/apartmani.html';
         }/* else  {
             window.localStorage.removeItem('apartman'); // Premestio sam ovo posle ajax poziva za slanje rezervacije
         }*/
 
-        // TODO: axios.get('app/dobavi_sadrzaje')
+        let datumi = [];
+        // TODO: otkomentarisati kad se uradi back end
+        //for (datum of this.apartman.zauzetiDatumi)  {
+          //  datumi.push(new Date(datum));
+        //}
+
+        this.state = {
+            disabledDates: {
+                to: new Date(),
+                dates: datumi
+            }
+        };
+        // TODO:
+        /*axios
+            .get('app/dobavi_sadrzaje', {
+                params: {
+                    idSadrzaja: JSON.stringify(this.apartman.idSadrzaja)
+                }
+            })
+            .then(response => {
+                this.sadrzaji = response.data;
+            })
+            .catch(error => {
+                console.log(error);
+                alert(error.response.data.sadrzaj);
+            });*/
     },
     components: {
         vuejsDatepicker
     },
     methods:    {
+        ulogovanKorisnik: function()    {
+            return window.localStorage.getItem('jwt') != null;
+        },
+
         validacija: function()  {
             this.valid = true;
 
