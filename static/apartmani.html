@@ -51,14 +51,14 @@
                     </thead>
 
                     <tbody>
-                        <tr v-for="apartman in apartmani">
+                        <tr v-for="apartman in apartmani" v-on:click="rezervisiApartman(apartman)">
                             <td><img src="" alt="Nema slike" onerror="this.onerror=null;this.src='slike/no_apartment.png';"/></td>
                             <td>{{ apartman.tip == 0 ? 'Apartman' : 'Soba' }}</td>
                             <td>{{ apartman.brojSoba }}</td>
                             <td>{{ apartman.brojGostiju }}</td>
                             <td style="white-space:pre-wrap;">{{ prikaziAdresu(apartman) }}</td>
                             <td>{{ apartman.cenaPoNoci.toFixed(2) }} &euro;</td>
-                            <td v-if="ulogovanKorisnik()"><button v-on:click="rezervisiApartman(apartman)">Rezerviši</button></td>
+                            <td v-if="ulogovanKorisnik()"><button v-on:click.prevent="rezervisiApartman(apartman)">Rezerviši</button></td>
                         </tr>
                     </tbody>
                 </table>
