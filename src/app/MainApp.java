@@ -23,6 +23,7 @@ import beans.Korisnik;
 import beans.Odgovor;
 import beans.Rezervacija;
 import dao.ApartmaniDAO;
+import dao.KomentariDAO;
 import dao.KorisniciDAO;
 import dao.RezervacijeDAO;
 import dao.SadrzajApartmanaDAO;
@@ -45,6 +46,7 @@ public class MainApp {
 	private static RezervacijeDAO rezervacije = null;
 	private static ApartmaniDAO apartmani = null;
 	private static SadrzajApartmanaDAO sadrzaji = null;
+	private static KomentariDAO komentari = null;
 	private static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 	
 	public static void main(String[] args) throws IOException {
@@ -62,6 +64,8 @@ public class MainApp {
 		apartmani = new ApartmaniDAO("./static/baza/apartmani.txt");
 		
 		sadrzaji = new SadrzajApartmanaDAO("./static/baza/sadrzajApartmana.txt");
+		
+		komentari = new KomentariDAO("./static/baza/komentari.txt");
 		
 		// Izmenjeno iz new Gson() u ovo jer ovaj oblik moze da parsira milisekunde u Date
 		gson =  new GsonBuilder().registerTypeAdapter(Date.class, (JsonDeserializer) (json, typeOfT, context) -> new Date(json.getAsLong())).create();
