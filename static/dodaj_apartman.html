@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Dodavanje apartmana</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <link rel="stylesheet" href="./css/main.css">
+    </head>
+
+    <body>
+        
+            <nav class="navbar navbar-expand navbar-dark bg-dark">
+                <h1><a href="index.html" class="navbar-brand">Ovde treba ime sajta</a></h1>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item"><a href="#" class="nav-link">Početna</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link">Moj profil</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link">Dodavanje apartmana</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link">Pregled gostiju</a></li>
+                        <li class="nav-item"><a href="javascript:window.localStorage.removeItem('jwt'); window.location = 'login.html';" class="nav-link">Odjavi se</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+            <div id="add_apartment-app">
+            <form id="registForma">
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="tip">Tip</label>
+                            <select id="tip" ref="tip" class="form-control" v-model:value="tip">
+                                <option value="" selected disabled hidden>Izaberite tip apartmana</option>
+                                <option value="0">Ceo apartman</option>
+                                <option value="1">Soba</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="brojSoba">Broj soba</label>
+                    <input v-model:value="brojSoba" type="text" id="brojSoba" ref="brojSoba" class="form-control">
+                    <div class="invalid-feedback">Unesite broj soba. Samo brojevi!</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="brojGostiju">Broj gostiju</label>
+                    <input v-model:value="brojGostiju" type="text" id="brojGostiju" ref="brojGostiju" class="form-control">
+                    <div class="invalid-feedback">Unesite broj gostiju. Samo brojevi!</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="ulica">Ulica</label>
+                    <input v-model:value="ulica" type="text" id="ulica" ref="ulica" class="form-control">
+                    <div class="invalid-feedback">Unesite naziv ulice. Samo slova!</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="broj">Broj ulice</label>
+                    <input v-model:value="broj" type="text" id="broj" ref="broj" class="form-control">
+                    <div class="invalid-feedback">Unesite broj ulice. Samo brojevi!</div>
+                </div>
+                
+                 <div class="form-group">
+                    <label for="mesto">Mesto</label>
+                    <input v-model:value="mesto" type="text" id="mesto" ref="mesto" class="form-control">
+                    <div class="invalid-feedback">Unesite naziv mesta. Samo slova!</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="postanskiBroj">Poštanski broj</label>
+                    <input v-model:value="postanskiBroj" type="text" id="postanskiBroj" ref="postanskiBroj" class="form-control">
+                    <div class="invalid-feedback">Unesite ispravan poštanski broj. Samo brojevi!</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="geografskaSirina">Geografska širina</label>
+                    <input v-model:value="geografskaSirina" type="text" id="geografskaSirina" ref="geografskaSirina" class="form-control">
+                    <div class="invalid-feedback">Unesite geografsku širinu. Samo brojevi sa .!</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="geografskaDuzina">Geografska dužina</label>
+                    <input v-model:value="geografskaDuzina" type="text" id="geografskaDuzina" ref="geografskaDuzina" class="form-control">
+                    <div class="invalid-feedback">Unesite geografsku dužinu. Samo brojevi sa .!</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cenaPoNoci">Cena po noći</label>
+                    <input v-model:value="cenaPoNoci" type="text" id="cenaPoNoci" ref="cenaPoNoci" class="form-control">
+                    <div class="invalid-feedback">Unesite cenu po noći. Samo brojevi sa .!</div>
+                </div>
+                
+                 <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="idSadrzaja">Sadržaj</label>
+                            <div  v-for = "sadrzaji in sadrzaj" class = "form-control">
+                            
+                            	<input type="checkbox" v-bind:id="sadrzaji.id " v-bind:value="sadrzaji.id " v-model = "idSadrzaja">
+  								<label v-bind:for="sadrzaji.id">{{ sadrzaji.naziv }}</label><br>
+                                
+                               
+              				</div>
+                               
+                         
+                        </div>
+                    </div>
+                </div>
+                
+                
+                
+                
+                
+                
+                
+
+               
+					
+                <button v-on:click.prevent="validacija">Dodaj apartman</button>
+            </form>
+            <div class="row">
+                <div class="col" align="center">
+                    <p id="msg" ref="msg"></p>
+                </div>
+            </div>
+        </div>
+
+        <script src="./js/vue.js"></script>
+        <script src="./js/axios.js"></script>
+        <script src="./js/add_apartment.js"></script>
+    </body>
+</html>
