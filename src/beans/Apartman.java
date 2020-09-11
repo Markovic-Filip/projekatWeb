@@ -31,9 +31,12 @@ public class Apartman {
 	protected ArrayList<Integer> idRezervacije;
 	
 	public Apartman() {
+		
 		this.vremeZaPrijavu = 14;
 		this.vremeZaOdjavu = 10;
 		this.status = Status.NEAKTIVNO;
+		idSadrzaja = new ArrayList<Integer>();
+		idRezervacije = new ArrayList<Integer>();
 		
 		
 		

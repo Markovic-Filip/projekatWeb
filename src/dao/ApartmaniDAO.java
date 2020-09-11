@@ -68,11 +68,74 @@ public class ApartmaniDAO {
 	}
 	
 	
+	public ArrayList<Apartman> dobaviAktivneApartmane()	{
+		ArrayList<Apartman> retVal = new ArrayList<Apartman>();
+
+		for (Apartman apartman : apartmani.values())	{
+			if (apartman.getStatus().equals(Status.AKTIVNO)) {
+				retVal.add(apartman);
+			}
+		}
+
+		return retVal;
+	}
+
+	public ArrayList<Apartman> dobaviNeaktivneApartmane()	{
+		ArrayList<Apartman> retVal = new ArrayList<Apartman>();
+
+		for (Apartman apartman : apartmani.values())	{
+			if (apartman.getStatus().equals(Status.NEAKTIVNO)) {
+				retVal.add(apartman);
+			}
+		}
+
+		return retVal;
+	}
+
+	public ArrayList<Apartman> dobaviAktivneApartmaneZaDomacina(String korisnickoIme)	{
+		ArrayList<Apartman> retVal = new ArrayList<Apartman>();
+
+		for (Apartman apartman : apartmani.values())	{
+			if(apartman.getKorisnickoImeDomacina().equals(korisnickoIme)) {
+				if (apartman.getStatus().equals(Status.AKTIVNO)) {
+					retVal.add(apartman);
+				}
+			}
+		}
+
+		return retVal;
+	}
+
+	public ArrayList<Apartman> dobaviNeaktivneApartmaneZaDomacina(String korisnickoIme)	{
+		ArrayList<Apartman> retVal = new ArrayList<Apartman>();
+
+		for (Apartman apartman : apartmani.values())	{
+			if(apartman.getKorisnickoImeDomacina().equals(korisnickoIme)) {
+				if (apartman.getStatus().equals(Status.NEAKTIVNO)) {
+					retVal.add(apartman);
+				}
+			}
+		}
+
+		return retVal;
+	}
+	
 	public void promeniStatusApartmana(int id, Status noviStatus)	{
 		apartmani.get(id).setStatus(noviStatus);
 		azurirajBazu();
 	}
 
+	public boolean izmeniApartman(Apartman izmenjenApartman)	{
+		if (apartmani.containsKey(izmenjenApartman.getId()))	{
+			apartmani.put(izmenjenApartman.getId(), izmenjenApartman);
+			azurirajBazu();
+			return true;
+		} else	{
+			System.out.println("APARTMANI DAO: Apartman id:" + izmenjenApartman.getId() + " nije pronadjen u bazi.\r\n");
+			return false;
+		}
+	}
+	
 	private void upisiNoviApartman(Apartman novApartman) {
 		String putanja = "./static/baza/apartmani.txt";
 		try {
@@ -122,12 +185,14 @@ public class ApartmaniDAO {
 				Lokacija lokacija = new Lokacija(geografskaSirina,geografskaDuzina,adresaApartmana);
 				ArrayList<Integer> idSadrzaja = new ArrayList<Integer>();
 				ArrayList<Integer> idRezervacije = new ArrayList<Integer>();
+				
+				// TODO: Moze se desiti da apartman nema sadrzaj i rezervacije, treba prvo proveriti da li ima pa onda nastaviti s ovim kodom ispod
+				
 				String sadrzaj = tokeni[12];
 				String[] sadrzaji = sadrzaj.split(",");
 				for (String s : sadrzaji) {
 					idSadrzaja.add(Integer.parseInt(s));
 				}
-				
 				String rezervacija = tokeni[13];
 				if(rezervacija.length()>1) {
 					String[] rezrevacije = rezervacija.split(",");
@@ -178,59 +243,6 @@ public class ApartmaniDAO {
 			System.out.println("Fajl " + putanja + " nije pronadjen.\r\n");
 		}
 	}
-	
-	public ArrayList<Apartman> dobaviAktivneApartmane()	{
-		ArrayList<Apartman> retVal = new ArrayList<Apartman>();
-		
-		for (Apartman apartman : apartmani.values())	{
-			if (apartman.getStatus().equals(Status.AKTIVNO)) {
-				retVal.add(apartman);
-			}
-		}
-		
-		return retVal;
-	}
-	
-	public ArrayList<Apartman> dobaviNeaktivneApartmane()	{
-		ArrayList<Apartman> retVal = new ArrayList<Apartman>();
-		
-		for (Apartman apartman : apartmani.values())	{
-			if (apartman.getStatus().equals(Status.NEAKTIVNO)) {
-				retVal.add(apartman);
-				}
-		}
-		
-		return retVal;
-	}
-	
-	public ArrayList<Apartman> dobaviAktivneApartmaneZaDomacina(String korisnickoIme)	{
-		ArrayList<Apartman> retVal = new ArrayList<Apartman>();
-		
-		for (Apartman apartman : apartmani.values())	{
-			if(apartman.getKorisnickoImeDomacina().equals(korisnickoIme)) {
-				if (apartman.getStatus().equals(Status.AKTIVNO)) {
-					retVal.add(apartman);
-					}
-			}
-		}
-		
-		return retVal;
-	}
-	
-	public ArrayList<Apartman> dobaviNeaktivneApartmaneZaDomacina(String korisnickoIme)	{
-		ArrayList<Apartman> retVal = new ArrayList<Apartman>();
-		
-		for (Apartman apartman : apartmani.values())	{
-			if(apartman.getKorisnickoImeDomacina().equals(korisnickoIme)) {
-				if (apartman.getStatus().equals(Status.NEAKTIVNO)) {
-					retVal.add(apartman);
-					}
-			}
-		}
-		
-		return retVal;
-	}
-	
 	
 	
 }

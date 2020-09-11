@@ -9,7 +9,6 @@ import enums.StatusRezervacije;
 public class Rezervacija {
 
 	private int id;
-	//private Apartman apartman;
 	private int apartmanId;
 	@JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
 	private Date pocetniDatum;
@@ -21,6 +20,18 @@ public class Rezervacija {
 	
 	public Rezervacija()	{
 		pocetniDatum = new Date();
+	}
+	
+	public Rezervacija(int id, int apartmanId, long pocetniDatumMili, int brojNocenja, double cena, String poruka, String korisnickoImeGosta, StatusRezervacije status) {
+		super();
+		this.id = id;
+		this.apartmanId = apartmanId;
+		this.pocetniDatum = new Date(pocetniDatumMili);
+		this.brojNocenja = brojNocenja;
+		this.cena = cena;
+		this.poruka = poruka;
+		this.korisnickoImeGosta = korisnickoImeGosta;
+		this.status = status;
 	}
 
 	public Rezervacija(int id, int apartmanId, Date pocetniDatum, int brojNocenja, double cena, String poruka, String korisnickoImeGosta, StatusRezervacije status) {
@@ -57,6 +68,10 @@ public class Rezervacija {
 
 	public void setPocetniDatum(Date pocetniDatum) {
 		this.pocetniDatum = pocetniDatum;
+	}
+	
+	public void setPocetniDatum(long timeInMillis)	{
+		this.pocetniDatum = new Date(timeInMillis);
 	}
 
 	public int getBrojNocenja() {
@@ -99,6 +114,10 @@ public class Rezervacija {
 		this.status = status;
 	}
 
+	public Date getKrajnjiDatum()	{
+		return new Date(this.pocetniDatum.getTime() + 86400 * 1000 * this.brojNocenja);
+	}
+	
 	@Override
 	public String toString() {
 		return this.id + ";" + this.apartmanId + ";" + this.pocetniDatum.getTime() + ";" + this.brojNocenja + ";" + this.cena + ";" + this.poruka + ";" + this.korisnickoImeGosta + ";" + this.status.name() + "\n";

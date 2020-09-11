@@ -204,7 +204,8 @@ new Vue({
             axios
                 .post(putanja, apartman, {
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + window.localStorage.getItem('jwt')
                     }
                 })
                 .then(response => {

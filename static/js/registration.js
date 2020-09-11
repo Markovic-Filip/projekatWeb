@@ -122,7 +122,7 @@ new Vue({
                 'pol': this.pol
             };
 
-            if (window.localStorage.getItem('jwt') == null) {
+            if (!this.ulogovanKorisnik()) {
 
                 //var putanja = 'app/registracija/' + (this.uloga == 1 ? 'domacin' : 'gost');
                 let putanja = 'app/registracija/gost';
@@ -172,6 +172,10 @@ new Vue({
                         this.$refs.msg.innerHTML = error.response.data.sadrzaj;
                     });
             }
+        },
+
+        ulogovanKorisnik: function() {
+            return window.localStorage.getItem('jwt') != null;
         }
     }
 });
