@@ -3,6 +3,8 @@ new Vue({
     data:   {
         apartman: {},
         sadrzaji: [],
+        sviSadrzaji: [],
+        selektovanSadrzaj: null,
         valid: false
     },
     mounted()   {
@@ -18,7 +20,28 @@ new Vue({
             }
         }
 
-        // TODO: axios.get('app/dobavi_sadrzaje')
+        axios
+            .get('app/dobavi_sadrzaj_apartmana', {
+                params: {
+                    idSadrzaja: JSON.stringify(this.apartman.idSadrzaja)
+                }
+            })
+            .then(response => {
+                this.sadrzaji = response.data;
+            })
+            .catch(error => {
+                console.log(error);
+                //alert(error.response.data.sadrzaj);
+            });
+
+        axios
+            .get('app/dobavi_sadrzaj_apartmana')
+            .then(response => {
+                this.sviSadrzaji = response.data;
+            })
+            .catch(error => {
+                error.log(error);
+            });
     },
     methods:    {
         uloga: function() {
@@ -32,7 +55,16 @@ new Vue({
         },
 
         obrisiSadrzaj: function(sadrzaj)   {
-            this.apartman.idSadrzaja.splice(indexOf(sadrzaj));
+            let indexSadrzaja = this.apartman.idSadrzaja.indexOf(sadrzaj.id);
+            this.apartman.idSadrzaja.splice(indexSadrzaja, 1);
+            this.sadrzaji.splice(this.sadrzaji.indexOf(sadrzaj), 1);
+        },
+
+        dodajSadrzaj: function()    {
+            if (!this.apartman.idSadrzaja.includes(this.selektovanSadrzaj.id))  {
+                this.apartman.idSadrzaja.push(this.selektovanSadrzaj.id);
+                this.sadrzaji.push(this.selektovanSadrzaj);
+            }
         },
 
         promeniStatus: function()   {
@@ -129,6 +161,10 @@ new Vue({
                             window.location = 'login.html';
                         }
                     });
+        },
+
+        capitalize: function(string)    {
+            return string.charAt(0).toUpperCase() + string.slice(1);
         }
     }
 });

@@ -133,8 +133,10 @@
 
                 <h3>Lista sadržaja:</h3>
 
-                <div class="row" v-for="sadrzaj in sadrzaji">
-                    {{ sadrzaj.naziv }}
+                <div class="row">
+                    <ul v-for="sadrzaj in sadrzaji">
+                        <li>{{ capitalize(sadrzaj.naziv) }}</li>
+                    </ul>
                 </div>
 
                 <div v-if="ulogovanKorisnik()">

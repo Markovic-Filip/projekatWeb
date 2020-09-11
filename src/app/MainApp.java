@@ -432,6 +432,47 @@ public class MainApp {
 			}
 		});
 		
+		post("/app/dodavanje_apartmana", (req, res) ->	{
+			res.type("application/json");
+			Korisnik korisnik = proveraOvlascenja(req, res);
+			String payload = req.body();
+			System.out.println("DODAVANJE APARTMANA: " + payload);
+			Apartman noviApartman = gson.fromJson(payload, Apartman.class);
+			if (korisnik != null)	{
+				if (korisnik.getUloga().equals(Uloga.DOMACIN))	{
+
+					if (noviApartman != null)	{
+						System.out.println("DODAVANJE APARTMANA: " + noviApartman.getId() + " " + noviApartman.getKorisnickoImeDomacina());
+						noviApartman.setKorisnickoImeDomacina(korisnik.getKorisnickoIme());
+						apartmani.dodajNoviApartman(noviApartman);
+						System.out.println("Dodavanje apartmana: Apartman " + noviApartman.getId() + " uspesno dodat.\r\n");
+						return gson.toJson(noviApartman);
+
+					} else	{
+						System.out.println("DODAVANJE APARTMANA: Objekat apartman ne moze da se kreira.\r\n");
+						res.status(500);	// Error 500: Internal Server Error - iz nekog razloga ne moze da parsira JSON objekat
+						return gson.toJson(new Odgovor("Greška prilikom dodavanja apartmana. Pokušajte ponovo."));
+					}
+				} else	{
+					System.out.println("DODAVANJE APARTMANA: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ove podatke.\r\n");
+					res.status(403); // Error 403: Forbidden
+					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
+				}
+			} else	{
+				if (res.status() == 400)	{
+					System.out.println("DODAVANJE APARTMANA: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				} else if (res.status() == 500)	{
+					System.out.println("DODAVANJA APARTMANA: Ne moze da parsira JWT.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				}
+
+				res.status(500);
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+			}
+
+		});
+		
 		put("/app/izmeni_apartman", (req, res) -> {
 			Korisnik korisnik = proveraOvlascenja(req, res);
 			
@@ -464,6 +505,17 @@ public class MainApp {
 				
 				res.status(500);
 				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+			}
+		});
+		
+		get("/app/dobavi_sadrzaj_apartmana", (req, res) -> {
+			String parametri = req.queryParams("idSadrzaja");
+			if (parametri != null)	{
+				int[] idSadrzaja = gson.fromJson(parametri, int[].class);
+				System.out.println("DOBAVI SADRZAJE: " + req.queryParams("idSadrzaja"));
+				return gson.toJson(sadrzaji.dobaviSadrzaje(idSadrzaja));
+			} else	{
+				return gson.toJson(sadrzaji.sviSadrzaji());
 			}
 		});
 	}

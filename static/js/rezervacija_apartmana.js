@@ -30,8 +30,8 @@ new Vue({
             }
         };
         // TODO:
-        /*axios
-            .get('app/dobavi_sadrzaje', {
+        axios
+            .get('app/dobavi_sadrzaj_apartmana', {
                 params: {
                     idSadrzaja: JSON.stringify(this.apartman.idSadrzaja)
                 }
@@ -42,7 +42,7 @@ new Vue({
             .catch(error => {
                 console.log(error);
                 alert(error.response.data.sadrzaj);
-            });*/
+            });
     },
     components: {
         vuejsDatepicker
@@ -126,6 +126,10 @@ new Vue({
 
         prikaziAdresu: function()   {
             return this.apartman.lokacija.adresa['ulica'] + " " + this.apartman.lokacija.adresa['broj'] + ", " + this.apartman.lokacija.adresa['mesto'] + ", " + this.apartman.lokacija.adresa['postanskiBroj'];
+        },
+        
+        capitalize: function(string)    {
+            return string.charAt(0).toUpperCase() + string.slice(1);
         }
     }
 });
