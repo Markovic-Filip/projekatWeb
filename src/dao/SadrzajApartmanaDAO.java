@@ -39,6 +39,18 @@ public class SadrzajApartmanaDAO {
 		return retVal;
 	}
 	
+	public ArrayList<SadrzajApartmana> dobaviSadrzaje(int[] idSadrzaja)	{
+		ArrayList<SadrzajApartmana> retVal = new ArrayList<SadrzajApartmana>();
+		
+		for (int id : idSadrzaja)	{
+			if (sadrzaji.containsKey(id))	{
+				retVal.add(sadrzaji.get(id));
+			}
+		}
+		
+		return retVal;
+	}
+	
 	public void dodajNoviSadrzaj(SadrzajApartmana noviSadrzajApartman) {
 		noviSadrzajApartman.setId(idSadrzaji);
 		sadrzaji.put(idSadrzaji, noviSadrzajApartman);

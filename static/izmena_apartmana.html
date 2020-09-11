@@ -122,9 +122,28 @@
 
                 <h3>Lista sadržaja:</h3>
 
-                <div class="row" v-for="sadrzaj in sadrzaji">
-                    {{ sadrzaj.naziv }}
-                    <input type="image" title="Obriši" src="slike/delete.png" width="48" height="48" v-on:click="obrisiSadrzaj(sadrzaj)">
+                <ul>
+                    <div class="row" v-for="sadrzaj in sadrzaji">
+                        <div class="col-4">
+                            <li>{{ capitalize(sadrzaj.naziv) }}</li>
+                        </div>
+                        <div class="col-8 podatak">
+                            <input type="image" title="Obriši" src="slike/delete.png" width="48" height="48" v-on:click="obrisiSadrzaj(sadrzaj)">
+                        </div>
+                    </div>
+                </ul>
+
+                <div class="row">
+                    <div class="col-4">
+                        <select v-model="selektovanSadrzaj">
+                            <option v-for="sadrzaj in sviSadrzaji" :value="sadrzaj">
+                                {{ capitalize(sadrzaj.naziv) }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-8 podatak">
+                        <button v-on:click="dodajSadrzaj()">Dodaj</button>
+                    </div>
                 </div>
 
                 <div class="row">

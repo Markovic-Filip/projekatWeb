@@ -32,7 +32,9 @@ public class Apartman {
 	
 	public Apartman() {
 		
-		
+		this.vremeZaPrijavu = 14;
+		this.vremeZaOdjavu = 10;
+		this.status = Status.NEAKTIVNO;
 		
 		
 	}
