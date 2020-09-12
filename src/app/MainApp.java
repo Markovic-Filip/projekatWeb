@@ -19,10 +19,12 @@ import com.google.gson.JsonDeserializer;
 import beans.Apartman;
 import beans.Domacin;
 import beans.Gost;
+import beans.Komentar;
 import beans.Korisnik;
 import beans.Odgovor;
 import beans.Rezervacija;
 import dao.ApartmaniDAO;
+import dao.KomentariDAO;
 import dao.KorisniciDAO;
 import dao.RezervacijeDAO;
 import dao.SadrzajApartmanaDAO;
@@ -45,6 +47,7 @@ public class MainApp {
 	private static RezervacijeDAO rezervacije = null;
 	private static ApartmaniDAO apartmani = null;
 	private static SadrzajApartmanaDAO sadrzaji = null;
+	private static KomentariDAO komentari = null;
 	private static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 	
 	public static void main(String[] args) throws IOException {
@@ -62,6 +65,8 @@ public class MainApp {
 		apartmani = new ApartmaniDAO("./static/baza/apartmani.txt");
 		
 		sadrzaji = new SadrzajApartmanaDAO("./static/baza/sadrzajApartmana.txt");
+		
+		komentari = new KomentariDAO("./static/baza/komentari.txt");
 		
 		// Izmenjeno iz new Gson() u ovo jer ovaj oblik moze da parsira milisekunde u Date
 		gson =  new GsonBuilder().registerTypeAdapter(Date.class, (JsonDeserializer) (json, typeOfT, context) -> new Date(json.getAsLong())).create();
@@ -446,6 +451,7 @@ public class MainApp {
 						noviApartman.setKorisnickoImeDomacina(korisnik.getKorisnickoIme());
 						apartmani.dodajNoviApartman(noviApartman);
 						System.out.println("Dodavanje apartmana: Apartman " + noviApartman.getId() + " uspesno dodat.\r\n");
+						korisnici.dodajApartman(korisnik.getKorisnickoIme(), noviApartman.getId());
 						return gson.toJson(noviApartman);
 
 					} else	{
@@ -512,10 +518,62 @@ public class MainApp {
 			String parametri = req.queryParams("idSadrzaja");
 			if (parametri != null)	{
 				int[] idSadrzaja = gson.fromJson(parametri, int[].class);
-				System.out.println("DOBAVI SADRZAJE: " + req.queryParams("idSadrzaja"));
+				System.out.println("DOBAVI SADRZAJE: " + req.queryParams("idSadrzaja") + "\r\n");
 				return gson.toJson(sadrzaji.dobaviSadrzaje(idSadrzaja));
 			} else	{
 				return gson.toJson(sadrzaji.sviSadrzaji());
+			}
+		});
+		
+		get("/app/dobavi_komentare", (req, res) -> {
+			String idApartmana = req.queryParams("idApartmana");
+			String domacin = req.queryParams("domacin");
+			if (idApartmana != null)	{
+				System.out.println("DOBAVI KOMENTARE: Komentari za apartman id:" + idApartmana + "\r\n");
+				if (domacin != null)	{
+					return gson.toJson(komentari.sviKomentariApartmana(Integer.parseInt(idApartmana)));
+				} else	{
+					return gson.toJson(komentari.sviOdobreniKomentariApartmana(Integer.parseInt(idApartmana)));
+				}
+			} else	{
+				System.out.println("DOBAVI KOMENTARE: Greska u pozivu. Fali parametar.\r\n");
+				res.status(400); // Error 400: Bad Request
+				return gson.toJson(new Odgovor("Greška u dobavljanju komentara. Pokušajte da ponovo otvorite stranicu."));
+			}
+		});
+		
+		put("/app/promeni_status_komentara", (req, res) -> {
+			Korisnik korisnik = proveraOvlascenja(req, res);
+			
+			if (korisnik != null)	{
+				if (korisnik.getUloga().equals(Uloga.DOMACIN))	{
+					String payload = req.body();
+					System.out.println("IZMENI KOMENTAR: " + payload + "\r\n");
+					Komentar izmenjenKomentar = gson.fromJson(payload, Komentar.class);
+					if (komentari.promeniStatusKomentara(izmenjenKomentar.getId(), izmenjenKomentar.isOdobren()))	{
+						System.out.println("IZMENI KOMENTAR: Komentar id:" + izmenjenKomentar.getId() + " uspesno izmenjen i sacuvan.\r\n");
+						return gson.toJson(new Odgovor("Status komentara promenjen."));
+					} else	{
+						System.out.println("IZMENI KOMENTAR: Greska pri izmeni komentara. Izmenjen komentar nije sacuvan.\r\n");
+						return gson.toJson(new Odgovor("Došlo je do greške prilikom izmene. Pokušajte ponovo."));
+					}
+				} else	{
+					System.out.println("IZMENI KOMENTAR: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ovu metodu.\r\n");
+					res.status(403); // Error 403: Forbidden
+					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
+				}
+			} else	{
+				if (res.status() == 400)	{
+					System.out.println("IZMENI APARTMAN: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				}
+				else if (res.status() == 500)	{ 
+					System.out.println("IZMENI APARTMAN: Ne moze da parsira JWT.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				}
+				
+				res.status(500);
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
 			}
 		});
 	}

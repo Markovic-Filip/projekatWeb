@@ -23,6 +23,40 @@
                 width: 40em;
                 resize: none;
             }
+
+            .comments .comment-box {
+                width: 100%;
+                float: left;
+                height: 100%;
+                background-color: #FAFAFA;
+                padding: 10px 10px 10px;
+                margin-bottom: 15px;
+                border-radius: 5px;
+                border: 1px solid #ddd;
+            }
+
+            .comments .commenter-name {
+                display: inline-block;
+                position: relative;
+                top: -40px;
+                left: 10px;
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+            /*.comments .comment-meta {
+                font-size: 14px;
+                color: #333;
+                padding: 2px 5px 0px;
+                line-height: 20px;
+                float: right;
+            }*/
+
+            .comments p.comment-txt {
+                font-size: 15px;
+                border-bottom: 1px solid #ddd;
+                padding: 0px 0px 15px;
+            }
         </style>
     </head>
 
@@ -134,9 +168,27 @@
                 <h3>Lista sadržaja:</h3>
 
                 <div class="row">
-                    <ul v-for="sadrzaj in sadrzaji">
-                        <li>{{ capitalize(sadrzaj.naziv) }}</li>
+                    <ul>
+                        <li v-for="sadrzaj in sadrzaji">{{ capitalize(sadrzaj.naziv) }}</li>
                     </ul>
+                </div>
+
+                <h3>Komentari gostiju:</h3>
+                <div class="comments">
+                    <div class="row" v-for="komentar in komentari">
+                        <div class="comment-box">
+                            <span class="commenter-name">
+                                {{ komentar.korisnickoImeGosta }}
+                            </span>
+                            <p class="comment-txt more">
+                                {{ komentar.tekst }}
+                            </p>
+                            <!--div class="comment-meta">
+                                <button v-if="komentar.odobren" v-on:click="promeniStatusKomentara(komentar)">Skloni</button>
+                                <button v-else v-on:click="promeniStatusKomentara(komentar)">Odobri</button>
+                            </div-->
+                        </div>
+                    </div>
                 </div>
 
                 <div v-if="ulogovanKorisnik()">

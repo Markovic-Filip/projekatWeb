@@ -7,6 +7,7 @@ new Vue({
         ulica: '',
         broj: '',
         mesto: '',
+        drzava: '',
         postanskiBroj: '',
         geografskaSirina: '',
         geografskaDuzina: '',
@@ -117,6 +118,18 @@ new Vue({
                 this.$refs.mesto.classList.add("is-valid");
             }
         }
+
+        // proveri drzavu
+        if (this.$refs.drzava.value.length <= 1 || !/^[a-zA-Z ]+$/.test(this.$refs.drzava.value))   {
+            this.$refs.drzava.classList.remove("is-valid");
+            this.$refs.drzava.classList.add("is-invalid");
+            valid = false;
+        } else  {
+            if (this.$refs.drzava.classList.contains('is-invalid'))    {
+                this.$refs.drzava.classList.remove("is-invalid");
+                this.$refs.drzava.classList.add("is-valid");
+            }
+        }
         
      // proveri postanski broj
         if (this.$refs.postanskiBroj.value.length < 4 || this.$refs.postanskiBroj.value.length > 7 || !/^[0-9]+$/.test(this.$refs.postanskiBroj.value))   {
@@ -179,7 +192,7 @@ new Vue({
     		var adresa = {
     				'ulica' : this.ulica,
     				'broj' : this.broj,
-    				'mesto' : this.mesto,
+    				'mesto' : this.mesto + ' - ' + this.drzava,
     				'postanskiBroj' : this.postanskiBroj
     		};
     		
