@@ -66,6 +66,12 @@
                     <input v-model:value="mesto" type="text" id="mesto" ref="mesto" class="form-control">
                     <div class="invalid-feedback">Unesite naziv mesta. Samo slova!</div>
                 </div>
+
+                <div class="form-group">
+                    <label for="drzava">Država</label>
+                    <input v-model:value="drzava" type="text" id="drzava" ref="drzava" class="form-control">
+                    <div class="invalid-feedback">Unesite naziv države. Samo slova!</div>
+                </div>
                 
                 <div class="form-group">
                     <label for="postanskiBroj">Poštanski broj</label>
@@ -86,7 +92,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="cenaPoNoci">Cena po noći</label>
+                    <label for="cenaPoNoci">Cena po noći (&euro;)</label>
                     <input v-model:value="cenaPoNoci" type="text" id="cenaPoNoci" ref="cenaPoNoci" class="form-control">
                     <div class="invalid-feedback">Unesite cenu po noći. Samo brojevi sa .!</div>
                 </div>

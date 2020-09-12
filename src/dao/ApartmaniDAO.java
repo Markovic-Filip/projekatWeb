@@ -50,6 +50,7 @@ public class ApartmaniDAO {
 	
 	public void dodajNoviApartman(Apartman noviApartman) {
 		noviApartman.setId(idApartmani);
+		noviApartman.setStatus(Status.NEAKTIVNO);
 		apartmani.put(idApartmani, noviApartman);
 		inkrementirajApartmaniBrojac();
 		upisiNoviApartman(noviApartman);
@@ -187,20 +188,24 @@ public class ApartmaniDAO {
 				ArrayList<Integer> idRezervacije = new ArrayList<Integer>();
 				
 				// TODO: Moze se desiti da apartman nema sadrzaj i rezervacije, treba prvo proveriti da li ima pa onda nastaviti s ovim kodom ispod
-				
-				String sadrzaj = tokeni[12];
-				String[] sadrzaji = sadrzaj.split(",");
-				for (String s : sadrzaji) {
-					idSadrzaja.add(Integer.parseInt(s));
+				if (tokeni.length >= 13)	{
+					String sadrzaj = tokeni[12];
+					String[] sadrzaji = sadrzaj.split(",");
+					for (String s : sadrzaji) {
+						idSadrzaja.add(Integer.parseInt(s));
+					}
 				}
-				String rezervacija = tokeni[13];
-				if(rezervacija.length()>1) {
-					String[] rezrevacije = rezervacija.split(",");
-					for (String r : rezrevacije) {
-						idRezervacije.add(Integer.parseInt(r));
-					}	
-				}else {
-					idRezervacije.add(Integer.parseInt(rezervacija));
+				
+				if (tokeni.length >= 14)	{
+					String rezervacija = tokeni[13];
+					if(rezervacija.length()>1) {
+						String[] rezrevacije = rezervacija.split(",");
+						for (String r : rezrevacije) {
+							idRezervacije.add(Integer.parseInt(r));
+						}	
+					}else {
+						idRezervacije.add(Integer.parseInt(rezervacija));
+					}
 				}
 				
 				apartmani.put(id, new Apartman(id, Tip.valueOf(tokeni[1]), Integer.parseInt(tokeni[2]), Integer.parseInt(tokeni[3]),  lokacija, tokeni[7], Double.parseDouble(tokeni[8]), Integer.parseInt(tokeni[9]), Integer.parseInt(tokeni[10]), Status.valueOf(tokeni[11]),idSadrzaja,idRezervacije ));

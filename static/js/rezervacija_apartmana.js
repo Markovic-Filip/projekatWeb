@@ -3,6 +3,7 @@ new Vue({
     data:   {
         apartman: {},
         sadrzaji: [],
+        komentari: [],
         state: {},
         pocetniDatum: new Date(parseInt(Date.now() + 86400000)),
         brojNocenja: 1,
@@ -29,7 +30,7 @@ new Vue({
                 dates: datumi
             }
         };
-        // TODO:
+
         axios
             .get('app/dobavi_sadrzaj_apartmana', {
                 params: {
@@ -38,6 +39,20 @@ new Vue({
             })
             .then(response => {
                 this.sadrzaji = response.data;
+            })
+            .catch(error => {
+                console.log(error);
+                alert(error.response.data.sadrzaj);
+            });
+        
+        axios
+            .get('app/dobavi_komentare', {
+                params: {
+                    idApartmana: this.apartman.id
+                }
+            })
+            .then(response => {
+                this.komentari = response.data;
             })
             .catch(error => {
                 console.log(error);

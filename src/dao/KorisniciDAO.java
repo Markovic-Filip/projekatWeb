@@ -92,10 +92,30 @@ public class KorisniciDAO {
 	public void dodajRezervaciju(String korisnickoIme, int idRezervacije)	{
 		String putanja = "./static/baza/korisnici/" + korisnickoIme + "-Rezervacije.txt";
 		
+		Gost gost = (Gost) korisnici.get(korisnickoIme);
+		gost.getRezervacije().add(idRezervacije);
+		
 		try {
 			FileWriter writer = new FileWriter(putanja);
 			writer.append(idRezervacije + "\n");
 			System.out.println("KORISNICI DAO: Rezervacija " + idRezervacije + " dodata u " + korisnickoIme + "-Rezervacije.txt\r\n");
+			writer.close();
+		} catch (IOException e)	{
+			e.printStackTrace();
+			System.out.println("Fajl " + putanja + " nije pronadjen!\r\n");
+		}
+	}
+	
+	public void dodajApartman(String korisnickoIme, int idApartmana)	{
+		String putanja = "./static/baza/korisnici/" + korisnickoIme + "-Apartmani.txt";
+		
+		Domacin domacin = (Domacin) korisnici.get(korisnickoIme);
+		domacin.getApartmani().add(idApartmana);
+		
+		try {
+			FileWriter writer = new FileWriter(putanja);
+			writer.append(idApartmana + "\n");
+			System.out.println("KORISNICI DAO: Apartman " + idApartmana + " dodat u " + korisnickoIme + "-Rezervacije.txt\r\n");
 			writer.close();
 		} catch (IOException e)	{
 			e.printStackTrace();

@@ -35,7 +35,8 @@ public class Apartman {
 		this.vremeZaPrijavu = 14;
 		this.vremeZaOdjavu = 10;
 		this.status = Status.NEAKTIVNO;
-		
+		this.idSadrzaja = new ArrayList<Integer>();
+		this.idRezervacije = new ArrayList<Integer>();
 		
 	}
 	
