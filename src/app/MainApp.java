@@ -452,7 +452,7 @@ public class MainApp {
 						apartmani.dodajNoviApartman(noviApartman);
 						System.out.println("Dodavanje apartmana: Apartman " + noviApartman.getId() + " uspesno dodat.\r\n");
 						korisnici.dodajApartman(korisnik.getKorisnickoIme(), noviApartman.getId());
-						return gson.toJson(noviApartman);
+						return gson.toJson(new Odgovor("Apartman uspešno dodat."));
 
 					} else	{
 						System.out.println("DODAVANJE APARTMANA: Objekat apartman ne moze da se kreira.\r\n");
