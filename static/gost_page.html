@@ -23,8 +23,80 @@
             <br/><br/><br/>
 
             <div class="container">
-                <!-- TODO: Ovde treba lista svih rezervacija za gosta -->
+               <h2>Pregled mojih rezervacija</h2>
+               <div class="row">   
+                    <div class="col">
+                        <p>Sortiraj po ceni:</p>
+                        <select v-model:value="sortiranje" class="form-control" @change="sortirajPoCeni">
+                            <option disabled hidden value="">Sortiranje po ceni</option>
+                            <option value="rastuce">Rastuće</option>
+                            <option value="opadajuce">Opadajuće</option>
+                        </select>
+                    </div>          
+        	 	</div>
+                <p class="text-center reserv-msg" ref="poruka">Poruka:<br/></p>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID Apartmana</th>
+                            <th>Početni datum</th>
+                            <th>Broj noćenja</th>
+                            <th>Cena</th>
+                            <th>Gost</th>
+                            <th>Status rezervacije</th>
+                            <th></th>
+                            <th></th>
+                            
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr v-for="rezervacija in rezervacije">
+                            <td>{{ rezervacija.apartmanId }}</td>
+                            <td>{{ rezervacija.pocetniDatum }}</td>
+                            <td>{{ rezervacija.brojNocenja }}</td>
+                            <td>{{ rezervacija.cena.toFixed(2) }} €</td>  <!-- toFixed(2) zaokruzuje broj na 2 decimale -->
+                            <td>{{ rezervacija.korisnickoImeGosta }}</td>
+                            <td>{{ prikaziStatus(rezervacija.status) }}</td>
+                            <td><input type="image" title="Prikaži poruku" src="slike/msg_bubble.png" width="48" height="48" v-on:click.prevent="prikaziPoruku(rezervacija.poruka)"></td>
+                      		<td><button v-if="rezervacija.status === '0' || rezervacija.status === '3'" v-on:click="promeniStatusRezervacije(rezervacija)">ODUSTANAK</button>
+                      			
+                      		</td>
+                         
+                        </tr>
+                    </tbody>
+                </table>
+                <h2>Apartmani u kojima sam boravio</h2>
+                 <table class="table table-hover" id="apartmani">
+                    <thead>
+                        <tr>
+                            <th>Slika</th>
+                            <th>Tip</th>
+                            <th>Broj soba</th>
+                            <th>Broj gostiju</th>
+                            <th>Adresa</th>
+                            <th>Cena po noći</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <!--<tr v-for="apartman in apartmani" v-on:click="rezervisiApartman(apartman)">-->
+                        <tr v-for="apartman in apartmani" >
+                            <td><img src="" alt="Nema slike" onerror="this.onerror=null;this.src='slike/no_apartment.png';"/></td>
+                            <td>{{ apartman.tip == 0 ? 'Apartman' : 'Soba' }}</td>
+                            <td>{{ apartman.brojSoba }}</td>
+                            <td>{{ apartman.brojGostiju }}</td>
+                            <td style="white-space:pre-wrap;">{{ prikaziAdresu(apartman) }}</td>
+                            <td>{{ apartman.cenaPoNoci.toFixed(2) }} &euro;</td>
+                            <td><button v-on:click="dodajKomentar(apartman)">OSTAVI KOMENTAR</button></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
+        <script src="./js/vue.js"></script>
+        <script src="./js/axios.js"></script>
+        <script src="./js/gost_page.js"></script>
     </body>
 </html>
