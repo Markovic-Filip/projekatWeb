@@ -40,6 +40,21 @@ public class KorisniciDAO {
 		return retVal;
 	}
 	
+	public ArrayList<Korisnik> sviKorisniciDomacin(ArrayList<String> gosti)	{
+		ArrayList<Korisnik> retVal = new ArrayList<Korisnik>();
+		for (Korisnik korisnik : korisnici.values())	{
+			for(String gost : gosti) {
+				if(korisnik.getKorisnickoIme().equals(gost) && !retVal.contains(korisnik)) {
+					retVal.add(korisnik);
+				}
+			}
+		}
+		//return (ArrayList<Korisnik>) korisnici.values();
+		return retVal;
+	}
+	
+	
+	
 	// TODO: Ovo uloga je mozda suvisno, ne secam se zasto sam stavio
 	public boolean dodajNovogKorisnika(Korisnik noviKorisnik, Uloga uloga)	{
 		if (!korisnici.containsKey(noviKorisnik.getKorisnickoIme()))	{
@@ -92,10 +107,30 @@ public class KorisniciDAO {
 	public void dodajRezervaciju(String korisnickoIme, int idRezervacije)	{
 		String putanja = "./static/baza/korisnici/" + korisnickoIme + "-Rezervacije.txt";
 		
+		Gost gost = (Gost) korisnici.get(korisnickoIme);
+		gost.getRezervacije().add(idRezervacije);
+		
 		try {
-			FileWriter writer = new FileWriter(putanja);
+			FileWriter writer = new FileWriter(putanja,true);
 			writer.append(idRezervacije + "\n");
 			System.out.println("KORISNICI DAO: Rezervacija " + idRezervacije + " dodata u " + korisnickoIme + "-Rezervacije.txt\r\n");
+			writer.close();
+		} catch (IOException e)	{
+			e.printStackTrace();
+			System.out.println("Fajl " + putanja + " nije pronadjen!\r\n");
+		}
+	}
+	
+	public void dodajApartman(String korisnickoIme, int idApartmana)	{
+		String putanja = "./static/baza/korisnici/" + korisnickoIme + "-Apartmani.txt";
+
+		Domacin domacin = (Domacin) korisnici.get(korisnickoIme);
+		domacin.getApartmani().add(idApartmana);
+
+		try {
+			FileWriter writer = new FileWriter(putanja);
+			writer.append(idApartmana + "\n");
+			System.out.println("KORISNICI DAO: Apartman " + idApartmana + " dodat u " + korisnickoIme + "-Rezervacije.txt\r\n");
 			writer.close();
 		} catch (IOException e)	{
 			e.printStackTrace();
@@ -145,6 +180,48 @@ public class KorisniciDAO {
 			System.out.println("Fajl " + putanja + " nije pronadjen.\r\n");
 		}
 	}
+	
+	public Domacin ucitajApartmane(String korisnickoIme) {
+		String putanja = "./static/baza/korisnici/" + korisnickoIme + "-Apartmani.txt";
+		Domacin domacin = (Domacin) korisnici.get(korisnickoIme);
+		BufferedReader bafer;
+		try	{
+			bafer = new BufferedReader(new FileReader(putanja));
+			String red;
+			while ((red = bafer.readLine()) != null)	{
+				domacin.getApartmani().add(Integer.parseInt(red));
+			}
+			bafer.close();
+			return domacin;
+		} catch (Exception e)	{
+			e.printStackTrace();
+			System.out.println("Fajl " + putanja + " nije pronadjen.\r\n");
+			return null;
+		}
+	}
+	
+	
+	
+	public Gost ucitajRezervacije(String korisnickoIme) {
+		String putanja = "./static/baza/korisnici/" + korisnickoIme + "-Rezervacije.txt";
+		Gost gost = (Gost) korisnici.get(korisnickoIme);
+		BufferedReader bafer;
+		try	{
+			bafer = new BufferedReader(new FileReader(putanja));
+			String red;
+			while ((red = bafer.readLine()) != null)	{
+				gost.getRezervacije().add(Integer.parseInt(red));
+			}
+			bafer.close();
+			return gost;
+		} catch (Exception e)	{
+			e.printStackTrace();
+			System.out.println("Fajl " + putanja + " nije pronadjen.\r\n");
+			return null;
+		}
+	}
+	
+	
 
 	private void ucitajApartmaneIRezervacije(Gost gost) {
 		String putanja = "./static/baza/korisnici/" + gost.getKorisnickoIme() + "-IznajmljeniApartmani.txt";

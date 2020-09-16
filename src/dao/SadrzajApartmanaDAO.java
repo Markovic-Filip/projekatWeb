@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import beans.Apartman;
 import beans.SadrzajApartmana;
 
 
@@ -60,7 +61,7 @@ public class SadrzajApartmanaDAO {
 	
 	
 	public boolean obrisiSadrzajApartmana(int id)	{
-		SadrzajApartmana obrisaniSadrzajApartman =  sadrzaji.remove(id);
+		SadrzajApartmana obrisaniSadrzajApartman =  sadrzaji.remove(id); 
 		if (obrisaniSadrzajApartman != null) {
 			System.out.println("ApartmaniDAO: Sadrzaj apartmana " + obrisaniSadrzajApartman.getId() + " uspesno obrisan iz base.\r\n");
 			azurirajBazuS();
@@ -83,6 +84,20 @@ public class SadrzajApartmanaDAO {
 			System.out.println("Fajl " + putanja + " nije pronadjen!\r\n");
 		}
 	}
+	
+	public boolean izmeniSadrzajApartman(ArrayList<SadrzajApartmana> izmenjenSadrzajApartmana)	{
+		for(SadrzajApartmana sa : izmenjenSadrzajApartmana) {	
+			if (sadrzaji.containsKey(sa.getId())) {
+				sadrzaji.get(sa.getId()).setNaziv(sa.getNaziv());
+			}
+		}
+		azurirajBazuS();
+		return true;
+		
+		
+		
+	}
+	
 	
 	
 	private void azurirajBazuS()	{
