@@ -71,6 +71,18 @@ public class SadrzajApartmanaDAO {
 		}
 	}
 	
+	public boolean izmeniSadrzajApartman(ArrayList<SadrzajApartmana> izmenjenSadrzajApartmana)	{
+		for(SadrzajApartmana sa : izmenjenSadrzajApartmana) {	
+			if (sadrzaji.containsKey(sa.getId())) {
+				sadrzaji.get(sa.getId()).setNaziv(sa.getNaziv());
+			}
+		}
+		azurirajBazuS();
+		return true;
+
+
+
+	}
 	
 	private void upisiNoviSadrzaj(SadrzajApartmana novSadrzaj) {
 		String putanja = "./static/baza/sadrzajApartmana.txt";

@@ -6,7 +6,12 @@ new Vue({
         sadrzaji: [],
         sortiranje: undefined,
         pretraga_tip: '2',
-        pretraga_sadrzaji: []
+        pretraga_sadrzaji: [],
+
+        rezervacije: [],
+        pretraga_rezervacije: '',
+        sortiranje_rezervacije: undefined,
+        pretraga_status: '5'
     },
     mounted()  {
         axios
@@ -52,6 +57,24 @@ new Vue({
             })
             .catch(error => {
                 alert(error.response.data.sadrzaj);
+            });
+
+        axios
+            .get('app/dobavi_rezervacije_domacin', {
+                headers: {
+                    'Authorization': 'Bearer ' + window.localStorage.getItem('jwt')
+                }
+            })
+            .then(response => {
+                this.rezervacije = response.data;
+            })
+            .catch(error => {
+                console.log(error);
+                alert(error.response.data.sadrzaj);
+                if (error.response.status == 400 || error.response.status == 403)   {
+                    window.localStorage.removeItem('jwt');
+                    window.location = 'login.html';
+                }
             });
     },
     methods:    {
@@ -127,6 +150,146 @@ new Vue({
 
         capitalize: function(string)    {
             return string.charAt(0).toUpperCase() + string.slice(1);
+        },
+
+        promeniStatusRezervacije: function(rezervacija)    {
+
+
+        	rezervacija.status = '3'
+
+        	let datum = new Date(rezervacija.pocetniDatum)
+        	rezervacija.pocetniDatum = datum.getTime()
+
+            axios
+                .put('app/promeni_status_rezervacije', rezervacija, {
+                    headers:    {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + window.localStorage.getItem('jwt')
+                    }
+                })
+                .then(response => {
+                    this.$refs.msg.classList.remove("error-msg");
+                    this.$refs.msg.innerHTML = response.data.sadrzaj;
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.$refs.msg.classList.add("error-msg");
+                    this.$refs.msg.innerHTML = error.response.data.sadrzaj;
+                    if (error.response.status == 400 || error.response.status == 403)   {
+                        window.localStorage.removeItem('apartman');
+                        window.localStorage.removeItem('jwt');
+                        window.location = 'login.html';
+                    }
+                });
+        },
+
+        promeniStatusRezervacije1: function(rezervacija)    {
+
+
+        	rezervacija.status = '1'
+        	let datum = new Date(rezervacija.pocetniDatum)
+        	rezervacija.pocetniDatum = datum.getTime()
+
+            axios
+                .put('app/promeni_status_rezervacije', rezervacija, {
+                    headers:    {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + window.localStorage.getItem('jwt')
+                    }
+                })
+                .then(response => {
+                    this.$refs.msg.classList.remove("error-msg");
+                    this.$refs.msg.innerHTML = response.data.sadrzaj;
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.$refs.msg.classList.add("error-msg");
+                    this.$refs.msg.innerHTML = error.response.data.sadrzaj;
+                    if (error.response.status == 400 || error.response.status == 403)   {
+                        window.localStorage.removeItem('apartman');
+                        window.localStorage.removeItem('jwt');
+                        window.location = 'login.html';
+                    }
+                });
+        },
+
+        promeniStatusRezervacije2: function(rezervacija)    {
+
+
+        	rezervacija.status = '4'
+        	let datum = new Date(rezervacija.pocetniDatum)
+        	rezervacija.pocetniDatum = datum.getTime()
+
+            axios
+                .put('app/promeni_status_rezervacije', rezervacija, {
+                    headers:    {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + window.localStorage.getItem('jwt')
+                    }
+                })
+                .then(response => {
+                    this.$refs.msg.classList.remove("error-msg");
+                    this.$refs.msg.innerHTML = response.data.sadrzaj;
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.$refs.msg.classList.add("error-msg");
+                    this.$refs.msg.innerHTML = error.response.data.sadrzaj;
+                    if (error.response.status == 400 || error.response.status == 403)   {
+                        window.localStorage.removeItem('apartman');
+                        window.localStorage.removeItem('jwt');
+                        window.location = 'login.html';
+                    }
+                });
+        },
+        
+        prikaziStatus: function(status)   {
+            switch (status) {
+                case '0':
+                    return 'Kreirana';
+                case '1':
+                    return 'Odbijena';
+                case '2':
+                    return 'Odustanak';
+                case '3':
+                    return 'Prihvaćena';
+                case '4':
+                    return 'Završena';
+                default:
+                    return 'Invalid status';
+            }
+        },
+
+        prikaziPoruku: function(poruka) {
+            this.$refs.poruka.innerText = "Poruka: \n" + poruka;
+        },
+
+        rastuceRezervacije: function (a, b) {
+            if ( a.cena < b.cena )  {
+              return -1;
+            }
+            if ( a.cena > b.cena )  {
+              return 1;
+            }
+            return 0;
+        },
+
+        opadajuceRezervacije: function(a, b)   {
+            if ( a.cena > b.cena )  {
+                return -1;
+              }
+              if ( a.cena < b.cena )  {
+                return 1;
+              }
+              return 0;
+        },
+
+        sortirajRezervacijePoCeni: function(event)  {
+            if (this.sortiranje_rezervacije == 'rastuce')   {
+                this.rezervacije.sort(this.rastuceRezervacije);
+            } else  {
+                this.rezervacije.sort(this.opadajuceRezervacije);
+            }
         }
     },
 
@@ -141,6 +304,17 @@ new Vue({
                 });
                   
                 return ((apartman.tip == this.pretraga_tip || this.pretraga_tip == '2') && result);
+            });
+        },
+
+        filtriraneRezervacije: function(){
+    		return this.rezervacije.filter((rezervacija) => {
+
+
+
+
+                return (rezervacija.korisnickoImeGosta.match(this.pretraga_rezervacije))
+                		&& (rezervacija.status == this.pretraga_status || this.pretraga_status == '5');
             });
         }
     }

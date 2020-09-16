@@ -18,6 +18,11 @@ new Vue({
         sortiranje: undefined,
 
         rezervacije: [],
+        sortiranje_rezervacije: undefined,
+        pretraga_rezervacije: '',
+        pretraga_status: '5',
+
+        sadrzaj: '',
 
         aktivni_apartmani: [],
         neaktivni_apartmani: []
@@ -125,6 +130,7 @@ new Vue({
                 this.sadrzaji = response.data;
             })
             .catch(error => {
+                console.log(error);
                 alert(error.response.data.sadrzaj);
             });
     },
@@ -291,7 +297,140 @@ new Vue({
 
         capitalize: function(string)    {
             return string.charAt(0).toUpperCase() + string.slice(1);
-        }
+        },
+
+        obrisiSadrzaj: function(sadrzaji)  {
+            if (confirm('Obriši sadžaj ' + sadrzaji.naziv + '?'))    {
+                axios
+                    .delete('app/obrisi_sadrzaj_apartmana', {
+                        headers: {
+                            'Authorization': 'Bearer ' + window.localStorage.getItem('jwt')
+                        },
+                        data: sadrzaji
+                    })
+                    .then(response => {
+                        this.sadrzajApartmana=response.data;
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        alert(error.response.data.sadrzaj);
+                        if (error.response.status == 400 || error.response.status == 403)   {
+                            window.localStorage.removeItem('jwt');
+                            window.location = 'login.html';
+                        }
+                    });
+            }
+        },
+
+        validacija: function() {
+        	valid = true;
+         // proveri sadrzaj
+            if (this.$refs.sadrzaj.value.length <= 1 || !/^[a-zA-Z ]+$/.test(this.$refs.sadrzaj.value))   {
+                this.$refs.sadrzaj.classList.remove("is-valid");
+                this.$refs.sadrzaj.classList.add("is-invalid");
+                valid = false;
+            } else  {
+                if (this.$refs.sadrzaj.classList.contains('is-invalid'))    {
+                    this.$refs.sadrzaj.classList.remove("is-invalid");
+                    this.$refs.sadrzaj.classList.add("is-valid");
+                }
+            }
+
+
+
+
+            if(valid) {
+            	this.dodajSadrzaj();
+            }
+
+        	},
+
+        	dodajSadrzaj: function(){
+
+
+        		var sadrzajiApartmana = {
+        				'naziv' : this.sadrzaj,
+        				'id' : -1
+        				};
+
+        		this.sadrzajApartmana.push(sadrzajApartmana)
+        		let putanja = 'app/dodavanje_sadrzaja';
+
+                axios
+                    .post(putanja, sadrzajiApartmana, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + window.localStorage.getItem('jwt')
+                        }
+                    })
+                    .then(response => {
+
+                    	this.sadrzajApartmana=response.data;
+
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        //alert(error.response.data.sadrzaj);
+                        this.$refs.msg.classList.add("error-msg");
+                        this.$refs.msg.innerHTML = error.response.data.sadrzaj;
+                    });
+
+
+
+
+
+            },
+            
+            sacuvajIzmene: function()   {
+                axios
+                .put('app/izmeni_sadrzaj_apartmana', this.sadrzajApartmana, {
+                    headers:    {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + window.localStorage.getItem('jwt')
+                    }
+                })
+                .then(response => {
+                    alert(response.data.sadrzaj);
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.$refs.msg.classList.add("error-msg");
+                    this.$refs.msg.innerHTML = error.response.data.sadrzaj;
+                    if (error.response.status == 400 || error.response.status == 403)   {
+                        window.localStorage.removeItem('apartman');
+                        window.localStorage.removeItem('jwt');
+                        window.location = 'login.html';
+                    }
+                });
+            },
+
+            rastuceRezervacije: function (a, b) {
+                if ( a.cena < b.cena )  {
+                  return -1;
+                }
+                if ( a.cena > b.cena )  {
+                  return 1;
+                }
+                return 0;
+            },
+    
+            opadajuceRezervacije: function(a, b)   {
+                if ( a.cena > b.cena )  {
+                    return -1;
+                  }
+                  if ( a.cena < b.cena )  {
+                    return 1;
+                  }
+                  return 0;
+            },
+    
+            sortirajRezervacijePoCeni: function(event)  {
+                if (this.sortiranje_rezervacije == 'rastuce')   {
+                    this.rezervacije.sort(this.rastuceRezervacije);
+                } else  {
+                    this.rezervacije.sort(this.opadajuceRezervacije);
+                }
+            }
     },
 
     computed:   {
@@ -368,6 +507,17 @@ new Vue({
                     && ((apartman.brojSoba > donja_granica_sobe && apartman.brojSoba <= gornja_granica_sobe) || sve_sobe)
                     && (apartman.brojGostiju == this.pretraga_broj_gostiju || this.pretraga_broj_gostiju == undefined || this.pretraga_broj_gostiju == 0)
                     && result;
+            });
+        },
+
+        filtriraneRezervacije: function(){
+    		return this.rezervacije.filter((rezervacija) => {
+
+
+
+
+                return (rezervacija.korisnickoImeGosta.match(this.pretraga_rezervacije))
+                		&& (rezervacija.status == this.pretraga_status || this.pretraga_status == '5');
             });
         }
     },

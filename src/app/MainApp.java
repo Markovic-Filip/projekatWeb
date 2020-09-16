@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Key;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 
@@ -32,6 +33,7 @@ import beans.Komentar;
 import beans.Korisnik;
 import beans.Odgovor;
 import beans.Rezervacija;
+import beans.SadrzajApartmana;
 import dao.ApartmaniDAO;
 import dao.KomentariDAO;
 import dao.KorisniciDAO;
@@ -76,6 +78,10 @@ public class MainApp {
 		sadrzaji = new SadrzajApartmanaDAO("./static/baza/sadrzajApartmana.txt");
 		
 		komentari = new KomentariDAO("./static/baza/komentari.txt");
+		
+		for(Apartman apartman : apartmani.sviApartmani()) {
+			apartman.setZauzetiDatumi(rezervacije.zauzetiDatumiApartmana(apartman.getId()));
+		}
 		
 		// Izmenjeno iz new Gson() u ovo jer ovaj oblik moze da parsira milisekunde u Date
 		gson =  new GsonBuilder().registerTypeAdapter(Date.class, (JsonDeserializer) (json, typeOfT, context) -> new Date(json.getAsLong())).create();
@@ -698,6 +704,301 @@ public class MainApp {
 					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
 				}
 				
+				res.status(500);
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+			}
+		});
+		
+		get("/app/dobavi_korisnike_domacin", (req, res) -> {
+			Korisnik korisnik = proveraOvlascenja(req, res);
+
+			if (korisnik != null) {
+				if (korisnik.getUloga().equals(Uloga.DOMACIN))	{
+					Domacin domacin = (Domacin) korisnik;
+					ArrayList<Integer> apart = domacin.getApartmani();
+					ArrayList<String> gosti = rezervacije.sveKorisniciDomacin(apart);
+					return gson.toJson(korisnici.sviKorisniciDomacin(gosti));
+				} else	{
+					System.out.println("DOBAVI KORISNIKE: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ove podatke.\r\n");
+					res.status(403); // Error 403: Forbidden
+					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
+				}
+			} else	{
+				if (res.status() == 400)	{
+					System.out.println("DOBAVI KORISNIKE: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				} else if (res.status() == 500)	{
+					System.out.println("DOBAVI KORISNIKE: Ne moze da parsira JWT.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				}
+
+				res.status(500);
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+			}
+		});
+		
+		get("/app/dobavi_rezervacije_gost", (req, res) -> {
+			Korisnik korisnik = proveraOvlascenja(req, res);
+			if (korisnik != null)	{
+				if (korisnik.getUloga().equals(Uloga.GOST))	{
+					Gost gost = korisnici.ucitajRezervacije(korisnik.getKorisnickoIme());
+					ArrayList<Rezervacija> rez = rezervacije.sveRezervacijeGosta(gost.getRezervacije());
+					return gson.toJson(rez);
+				} else	{
+					System.out.println("DOBAVI REZERVACIJE: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ove podatke.\r\n");
+					res.status(403); // Error 403: Forbidden
+					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
+				}
+			} else	{
+				if (res.status() == 400)	{
+					System.out.println("DOBAVI REZERVACIJE: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				} else if (res.status() == 500)	{
+					System.out.println("DOBAVI REZERVACIJE: Ne moze da parsira JWT.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				}
+
+				res.status(500);
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+			}
+		});
+		
+		get("/app/dobavi_rezervacije_domacin", (req, res) -> {
+			Korisnik korisnik = proveraOvlascenja(req, res);
+			if (korisnik != null)	{
+				if (korisnik.getUloga().equals(Uloga.DOMACIN))	{
+					Domacin domacin = korisnici.ucitajApartmane(korisnik.getKorisnickoIme());
+					ArrayList<Rezervacija> rez = rezervacije.sveRezervacijeDomacin(domacin.getApartmani());
+					return gson.toJson(rez);
+				} else	{
+					System.out.println("DOBAVI REZERVACIJE: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ove podatke.\r\n");
+					res.status(403); // Error 403: Forbidden
+					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
+				}
+			} else	{
+				if (res.status() == 400)	{
+					System.out.println("DOBAVI REZERVACIJE: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				} else if (res.status() == 500)	{
+					System.out.println("DOBAVI REZERVACIJE: Ne moze da parsira JWT.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				}
+
+				res.status(500);
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+			}
+		});
+		
+		get("/app/dobavi_apartmane_gost", (req, res) -> {
+			Korisnik korisnik = proveraOvlascenja(req, res);
+
+			if (korisnik != null) {
+				if (korisnik.getUloga().equals(Uloga.GOST))	{
+					Gost gost = (Gost) korisnik;	
+					return gson.toJson(apartmani.apartmaniGdeJeGostBio(rezervacije.sviApartmaniGosta(gost)));
+				} else	{
+					System.out.println("DOBAVI APARTMANE: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ove podatke.\r\n");
+					res.status(403); // Error 403: Forbidden
+					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
+				}
+			} else	{
+				if (res.status() == 400)	{
+					System.out.println("DOBAVI APARTMANE: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				} else if (res.status() == 500)	{
+					System.out.println("DOBAVI APARTMANE: Ne moze da parsira JWT.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				}
+
+				res.status(500);
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+			}
+		});
+		
+		delete("/app/obrisi_sadrzaj_apartmana", (req, res) -> {
+			Korisnik korisnik = proveraOvlascenja(req, res);
+
+			if (korisnik != null)	{
+				if (korisnik.getUloga().equals(Uloga.ADMINISTRATOR))	{
+					String payload = req.body();
+					System.out.println("OBRISI SADRZAJ: " + payload + "\r\n");
+					SadrzajApartmana sadrzajZaBrisanje = gson.fromJson(payload, SadrzajApartmana.class);
+					if (sadrzaji.obrisiSadrzajApartmana(sadrzajZaBrisanje.getId()))	{
+						System.out.println("OBRISI SADRZAJ: Sadrzaj " + sadrzajZaBrisanje.getId() + " uspesno obrisan iz baze.\r\n");
+						return gson.toJson(sadrzaji.sviSadrzaji());
+					} else	{
+						System.out.println("OBRISI SADRZAJ: " + sadrzajZaBrisanje.getId() + " nije pronadjen u bazi.\r\n");
+						res.status(404); // Error 404: Not Found
+						return gson.toJson(new Odgovor("Traženi resurs nije pronađen."));
+					}
+				} else	{
+					System.out.println("OBRISI SADRZAJ: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ovu metodu.\r\n");
+					res.status(403); // Error 403: Forbidden
+					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
+				}
+			} else	{
+				if (res.status() == 400)	{
+					System.out.println("OBRISI SADRZAJ: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				}
+				else if (res.status() == 500)	{ 
+					System.out.println("OBIRIS SADRZAJ: Ne moze da parsira JWT.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				}
+
+				res.status(500);
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+			}
+		});
+		
+		post("/app/dodavanje_sadrzaja", (req, res) ->	{
+			res.type("application/json");
+			Korisnik korisnik = proveraOvlascenja(req, res);
+			String payload = req.body();
+			System.out.println("DODAVANJE SADRZAJA: " + payload);
+			SadrzajApartmana noviSadrzaj = gson.fromJson(payload, SadrzajApartmana.class);
+			if (korisnik != null)	{
+				if (korisnik.getUloga().equals(Uloga.ADMINISTRATOR))	{
+
+					if (noviSadrzaj != null)	{
+
+						sadrzaji.dodajNoviSadrzaj(noviSadrzaj);
+						System.out.println("DODAVANJE SADRZAJA: " + noviSadrzaj.getId());
+						System.out.println("Dodavanje sadrzaja: Sadrzaj " + noviSadrzaj.getId() + " uspesno dodat.\r\n");
+						return gson.toJson(sadrzaji.sviSadrzaji());
+
+					} else	{
+						System.out.println("DODAVANJE SADRZAJA: Objekat sadrzaj ne moze da se kreira.\r\n");
+						res.status(500);	// Error 500: Internal Server Error - iz nekog razloga ne moze da parsira JSON objekat
+						return gson.toJson(new Odgovor("Greška prilikom dodavanja sadrzaja. Pokušajte ponovo."));
+					}
+				} else	{
+					System.out.println("DODAVANJE SADRZAJA: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ove podatke.\r\n");
+					res.status(403); // Error 403: Forbidden
+					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
+				}
+			} else	{
+				if (res.status() == 400)	{
+					System.out.println("DODAVANJE SADRZAJA: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				} else if (res.status() == 500)	{
+					System.out.println("DODAVANJA SADRZAJA: Ne moze da parsira JWT.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				}
+
+				res.status(500);
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+			}
+
+		});
+		
+		post("/app/dodavanje_komentara", (req, res) ->	{
+			res.type("application/json");
+			Korisnik korisnik = proveraOvlascenja(req, res);
+			String payload = req.body();
+			System.out.println("DODAVANJE KOMENTARA: " + payload);
+			Komentar noviKomentar = gson.fromJson(payload, Komentar.class);
+			if (korisnik != null)	{
+				if (korisnik.getUloga().equals(Uloga.GOST))	{
+
+					if (noviKomentar != null)	{
+						System.out.println("DODAVANJE KOMENTARA: " + noviKomentar.getId() + " " + noviKomentar.getKorisnickoImeGosta());
+						noviKomentar.setKorisnickoImeGosta(korisnik.getKorisnickoIme());
+						komentari.dodajNoviKomentar(noviKomentar);
+						System.out.println("Dodavanje komentara: Komentar " + noviKomentar.getId() + " uspesno dodat.\r\n");
+						return gson.toJson(new Odgovor("Komentar uspešno dodat."));
+
+					} else	{
+						System.out.println("DODAVANJE KOMENTARA: Objekat apartman ne moze da se kreira.\r\n");
+						res.status(500);	// Error 500: Internal Server Error - iz nekog razloga ne moze da parsira JSON objekat
+						return gson.toJson(new Odgovor("Greška prilikom dodavanja apartmana. Pokušajte ponovo."));
+					}
+				} else	{
+					System.out.println("DODAVANJE KOMENTARA: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ove podatke.\r\n");
+					res.status(403); // Error 403: Forbidden
+					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
+				}
+			} else	{
+				if (res.status() == 400)	{
+					System.out.println("DODAVANJE KOMENTARA: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				} else if (res.status() == 500)	{
+					System.out.println("DODAVANJA APARTMANA: Ne moze da parsira JWT.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				}
+
+				res.status(500);
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+			}
+
+		});
+		
+		put("/app/izmeni_sadrzaj_apartmana", (req, res) -> {
+			Korisnik korisnik = proveraOvlascenja(req, res);
+
+			if (korisnik != null)	{
+				if (korisnik.getUloga().equals(Uloga.ADMINISTRATOR))	{
+					String payload = req.body();
+					System.out.println("IZMENI SADRZAJ APARTMANA: " + payload + "\r\n");
+					SadrzajApartmana[] izmenjenSadrzajApartmana = gson.fromJson(payload,SadrzajApartmana[].class);
+					ArrayList<SadrzajApartmana> izmenjenSadrzaj = new ArrayList<SadrzajApartmana>(Arrays.asList(izmenjenSadrzajApartmana));
+					if (sadrzaji.izmeniSadrzajApartman(izmenjenSadrzaj))	{
+						System.out.println("IZMENI SADRZAJ APARTMANA: uspesno izmenjen i sacuvan.\r\n");
+						return gson.toJson(new Odgovor("Sadrzaj apartmana uspešno izmenjen."));
+					} else	{
+						System.out.println("IZMENI SADRZAJ APARTMANA: Greska pri izmeni sadrzaja apartmana. Izmenjen sadrzaj apartmana nije sacuvan.\r\n");
+						return gson.toJson(new Odgovor("Došlo je do greške prilikom izmene. Pokušajte ponovo."));
+					}
+				} else	{
+					System.out.println("IZMENI SADRZAJ APARTMANA: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ovu metodu.\r\n");
+					res.status(403); // Error 403: Forbidden
+					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
+				}
+			} else	{
+				if (res.status() == 400)	{
+					System.out.println("IZMENI SADRZAJ APARTMANA: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				}
+				else if (res.status() == 500)	{ 
+					System.out.println("IZMENI SADRZAJ APARTMANA: Ne moze da parsira JWT.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				}
+
+				res.status(500);
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+			}
+		});
+		
+		put("/app/promeni_status_rezervacije", (req, res) -> {
+			Korisnik korisnik = proveraOvlascenja(req, res);
+
+			if (korisnik != null)	{
+				if (korisnik.getUloga().equals(Uloga.GOST) || korisnik.getUloga().equals(Uloga.DOMACIN))	{
+					String payload = req.body();
+					System.out.println("IZMENI REZERVACIJU: " + payload + "\r\n");
+					Rezervacija izmenjenaRezervacija = gson.fromJson(payload, Rezervacija.class);
+					if (rezervacije.promeniStatusRezervacije(izmenjenaRezervacija.getId(), izmenjenaRezervacija.getStatus()))	{
+						System.out.println("IZMENI REZERVACIJU: Rezervacija id:" + izmenjenaRezervacija.getId() + " uspesno izmenjena i sacuvana.\r\n");
+						return gson.toJson(new Odgovor("Status rezervacije promenjen."));
+					} else	{
+						System.out.println("IZMENI REZERVACIJU: Greska pri izmeni rezervacije. Izmenjena rezervacija nije sacuvana.\r\n");
+						return gson.toJson(new Odgovor("Došlo je do greške prilikom izmene. Pokušajte ponovo."));
+					}
+				} else	{
+					System.out.println("IZMENI REZERVACIJU: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ovu metodu.\r\n");
+					res.status(403); // Error 403: Forbidden
+					return gson.toJson(new Odgovor("Niste ovlašćeni za traženi sadržaj."));
+				}
+			} else	{
+				if (res.status() == 400)	{
+					System.out.println("IZMENI REZERVACIJU: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				}
+				else if (res.status() == 500)	{ 
+					System.out.println("IZMENI REZERVACIJU: Ne moze da parsira JWT.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				}
+
 				res.status(500);
 				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
 			}

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dodavanje komentara</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <link rel="stylesheet" href="./css/main.css">
+<style>
+.comments-details button.btn.dropdown-toggle,
+.comments-details .total-comments {
+    font-size: 18px;
+    font-weight: 500;
+    color: #5e5e5e;
+}
+.comments-details {
+    padding: 15px 15px;
+}
+.comments .comments .dropdown,
+.comments .dropup {
+    position: relative;
+}
+.comments button {
+    background-color: transparent;
+    border: none;
+}
+.comments .comment-box {
+    width: 100%;
+    float: left;
+    height: 100%;
+    background-color: #FAFAFA;
+    padding: 10px 10px 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+.comments .add-comment {
+    background-color: transparent;
+    border: none;
+    position: relative;
+    margin-bottom: 50px;
+}
+.comments .commenter-pic {
+    width: 50px;
+    height: 50px;
+    display: inline-block;
+    border-radius: 100%;
+    border: 2px solid #fff;
+    overflow: hidden;
+    background-color: #fff;
+}
+.comments .add-comment .commenter-name {
+    width: 100%;
+    padding-left: 75px;
+    position: absolute;
+    top: 20px;
+    left: 0px;
+}
+.comments .add-comment input {
+    border-top: 0px;
+    border-bottom: 1px solid #ccc;
+    border-left: 0px;
+    border-right: 0px;
+    outline: 0px;
+    box-shadow: none;
+    border-radius: 0;
+    width: 100%;
+    padding: 0;
+    font-weight: normal;
+}
+.comments .add-comment input:focus {
+    border-color: #03a9f4;
+    border-width: 2px;
+}
+.comments .add-comment button[type=submit] {
+    background-color: #03a9f4;
+    color: #fff;
+    margin-right: 0px;
+}
+.comments .add-comment button {
+    background-color: #f5f5f5;
+    margin: 10px 5px;
+    font-size: 14px;
+    text-transform: uppercase;
+    float: right;
+}
+.comments .commenter-name .comment-time {
+    font-weight: normal;
+    margin-left: 8px;
+    font-size: 15px;
+}
+.comments p.comment-txt {
+    font-size: 15px;
+    border-bottom: 1px solid #ddd;
+    padding: 0px 0px 15px;
+}
+.comments .commenter-name {
+    display: inline-block;
+    position: relative;
+    top: -20px;
+    left: 10px;
+    font-size: 16px;
+    font-weight: bold;
+}
+.comments .comment-meta {
+    font-size: 14px;
+    color: #333;
+    padding: 2px 5px 0px;
+    line-height: 20px;
+    float: right;
+}
+.comments .reply-box {
+    display: none;
+}
+.comments .replied {
+    background-color: #fff;
+    width: 95%;
+    float: right;
+    margin-top: 15px;
+}
+
+/*======Responsive CSS=======*/
+@media (max-width: 767px){
+.comments .commenter-name {
+    font-size: 13px;
+    top: -5px;
+}
+.comments .commenter-pic {
+    width: 40px;
+    height: 40px;
+}
+.comments .commenter-name a{
+  display: block;
+}
+.comments .commenter-name .comment-time{
+  display: block;
+  margin-left: 0px;
+}
+}
+
+
+
+</style>  
+</head>
+	<body>
+		<div id="dodaj_komentar-app">
+            <nav  class="navbar navbar-expand navbar-dark bg-dark fixed-top">
+                <h1><a href="gost_page.html" class="navbar-brand">Ovde treba ime sajta</a></h1>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item"><a href="gost_page.html" class="nav-link">Početna</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link">Moj profil</a></li>
+                        <li class="nav-item"><a href="apartmani.html" class="nav-link">Apartmani</a></li>
+                        <li class="nav-item"><a href="javascript:window.localStorage.removeItem('jwt'); window.location = 'login.html';" class="nav-link">Odjavi se</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+            <br/><br/><br/>
+        <div class="container">
+        <h2>Oceni apartman</h2>
+		<table class="table table-hover" id="aktivni_apartmani">
+                    <thead>
+                        <tr>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                            <th>4</th>
+                            <th>5</th>
+                            <th>6</th>
+                            <th>7</th>
+                            <th>8</th>
+                            <th>9</th>
+                            <th>10</th>
+                            
+                           
+                            
+
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <!--<tr v-for="apartman in apartmani" v-on:click="rezervisiApartman(apartman)">-->
+                        <tr >
+                        
+                            <td><input type="radio" name="ocena" value="1" v-model="picked" id="ocena1" ref="ocena"></td>
+                            <td><input type="radio" name="ocena" value="2" v-model="picked" id="ocena2" ref="ocena"></td>
+                            <td><input type="radio" name="ocena" value="3" v-model="picked" id="ocena3" ref="ocena"></td>
+                            <td><input type="radio" name="ocena" value="4" v-model="picked" id="ocena4" ref="ocena"></td>
+                            <td><input type="radio" name="ocena" value="5" v-model="picked" id="ocena5" ref="ocena"></td>
+                            <td><input type="radio" name="ocena" value="6" v-model="picked" id="ocena6" ref="ocena"></td>
+                            <td><input type="radio" name="ocena" value="7" v-model="picked" id="ocena7" ref="ocena"></td>
+                            <td><input type="radio" name="ocena" value="8" v-model="picked" id="ocena8" ref="ocena"></td>
+                            <td><input type="radio" name="ocena" value="9" v-model="picked" id="ocena9" ref="ocena"></td>
+                            <td><input type="radio" name="ocena" value="10" v-model="picked" id="ocena10" ref="ocena"></td>
+                            
+                        </tr>
+                    </tbody>
+                </table>
+ 
+           
+	<h2>Komentar</h2>		
+	<div class="container">
+  		<div class="row">
+    		<div class="col-12">
+      			<div class="comments">
+        			<div class="comment-box add-comment">
+          				<span class="commenter-name">
+          					<div class="form-group">
+            					<input v-model:value="tekst" type="text" placeholder="Napiši komentar" id="tekst" ref="tekst" name="tekst" class="form-control" >
+            					<div class="invalid-feedback">Napisite komentar</div>
+            					<button type="submit" class="btn btn-default" v-on:click.prevent="validacija()">Komentarši</button>
+            					<button type="cancel" class="btn btn-default" onclick="location.href='gost_page.html';">Cancel</button>
+            				</div>
+          				</span>
+        			</div>
+      			</div>
+    		</div>
+  		</div>
+	</div>
+	</div>
+	</div>
+		<script src="./js/vue.js"></script>
+        <script src="./js/vuejs-datepicker.min.js"></script>
+        <script src="./js/axios.js"></script>
+        <script src="./js/dodaj_komentar.js"></script>
+</body>
+</html>
+

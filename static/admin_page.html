@@ -233,7 +233,74 @@
                     </tbody>
                 </table>
 
+                <h2>Pregled sadrzaja za apartmane</h2>
+                <table class="table table-hover" id="sadrzajApartmana">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Sadrzaj</th>     
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr v-for="sadrzaj in sadrzaji">
+                            <td>{{ sadrzaj.id }}</td>
+                            <td><input type="text" v-model="sadrzaj.naziv"  /></td>
+                            <td><input type="image" title="Obriši" src="slike/delete.png" width="48" height="48" v-on:click="obrisiSadrzaj(sadrzaj)"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                	<div class="col" >
+
+                     <input v-model:value="sadrzaj" type="text" id="sadrzaj" ref="sadrzaj" class="form-control" >
+                     </div>
+                     <div class="col" style = "text-align: center;">
+                     <button v-on:click.prevent="validacija" >Dodaj</button>
+                     </div>
+                    <div class="invalid-feedback">Unesite naziv sadrzaja. Samo slova!</div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-8" style="text-align: center;">
+                        <input type="image" title="Sačuvaj izmene" src="slike/save.png" width="48" height="48" v-on:click.prevent="sacuvajIzmene">
+                    </div>
+                </div>
+
                 <h2>Pregled svih rezervacija</h2>
+
+                <div class="row">
+                    <div class="col">
+                        <p>Korisničko ime:</p>
+                        <input type="text" v-model="pretraga_rezervacije" class="form-control" placeholder="Pretaga po korisnickom imenu..." />
+                        <br/>
+                    </div>  
+                    <div class="col">
+                        <p>Status:</p>
+                        <select v-model:value="pretraga_status" class="form-control">
+                            <option disabled hidden value="">Pretraga po statusu</option>
+                            <option value="5">Sve</option>
+                            <option value="0">Kreirana</option>
+                            <option value="1">Odbijena</option>
+                            <option value="2">Odustanak</option>
+                            <option value="3">Prihvaćena</option>
+                            <option value="4">Završena</option>
+                        </select>
+                        <br/>
+                    </div>  
+                    <div class="col">
+                        <p>Sortiraj po ceni:</p>
+                        <select v-model:value="sortiranje_rezervacije" class="form-control" @change="sortirajRezervacijePoCeni">
+                            <option disabled hidden value="">Sortiranje po ceni</option>
+                            <option value="rastuce">Rastuće</option>
+                            <option value="opadajuce">Opadajuće</option>
+                        </select>
+                    </div>          
+        	 	</div>
+
                 <p class="text-center reserv-msg" ref="poruka">Poruka:<br/></p>
                 <table class="table table-hover">
                     <thead>
@@ -249,7 +316,7 @@
                     </thead>
 
                     <tbody>
-                        <tr v-for="rezervacija in rezervacije">
+                        <tr v-for="rezervacija in filtriraneRezervacije">
                             <td>{{ rezervacija.apartmanId }}</td>
                             <td>{{ rezervacija.pocetniDatum | dateFormat('DD.MM.YYYY') }}</td>
                             <td>{{ rezervacija.brojNocenja }}</td>
