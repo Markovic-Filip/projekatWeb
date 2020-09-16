@@ -37,6 +37,56 @@
             <div class="container">
                 <h1>Pregled apartmana</h1>
 
+				<div class="row">
+                    <div class="col">
+                        <p>Adresa:</p>
+                        <input type="text" v-model="pretraga" class="form-control" placeholder="Pretaga po adresi..." />
+                        <br/>
+                    </div>
+
+                    <div class="col">
+                        <p>Tip:</p>
+                        <select v-model:value="pretraga_tip" class="form-control">
+                            <option disabled hidden value="">Pretraga po tipu</option>
+                            <option value="2">Sve</option>
+                            <option value="0">Apartman</option>
+                            <option value="1">Soba</option>
+                        </select>
+                        <br/>
+                    </div>
+
+                    <div class="col">
+                        <p>Cena:</p>
+                        <select v-model:value="pretraga_cena" class="form-control">
+                            <option disabled hidden value="">Pretraga po ceni</option>
+                            <option value="0" selected>Sve cene</option>
+                            <option value="1">Ispod 5&euro;</option>
+                            <option value="2">5&euro; - 10&euro;</option>
+                            <option value="3">10&euro; - 20&euro;</option>
+                            <option value="4">20&euro; - 30&euro;</option>
+                            <option value="5">Preko 30&euro;</option>
+                        </select>
+                        <br/>
+                    </div>
+
+                    <div class="col">
+                        <p>Broj soba:</p>
+                        <select v-model:value="pretraga_broj_soba" class="form-control">
+                            <option disabled hidden value="">Pretraga po broju soba</option>
+                            <option value="0" selected>Sve</option>
+                            <option value="1">1</option>
+                            <option value="2">1-3</option>
+                            <option value="3">3-5</option>
+                            <option value="4">Preko 5</option>
+                        </select>
+                        <br/>
+                    </div>
+
+                    <div class="col">
+                        <p>Broj gostiju:</p>
+                        <input type="number" class="form-control" v-model="pretraga_broj_gostiju" min="0" />
+                    </div>
+                </div>
                 <table class="table table-hover" id="aktivni_apartmani">
                     <thead>
                         <tr>
@@ -47,18 +97,20 @@
                             <th>Adresa</th>
                             <th>Cena po noći</th>
                             <th v-if="ulogovanKorisnik()"></th>
+
                         </tr>
                     </thead>
 
                     <tbody>
-                        <tr v-for="apartman in apartmani" v-on:click="rezervisiApartman(apartman)">
+                        <!--<tr v-for="apartman in apartmani" v-on:click="rezervisiApartman(apartman)">-->
+                        <tr v-for="apartman in filtriraniApartmani" >
                             <td><img src="" alt="Nema slike" onerror="this.onerror=null;this.src='slike/no_apartment.png';"/></td>
                             <td>{{ apartman.tip == 0 ? 'Apartman' : 'Soba' }}</td>
                             <td>{{ apartman.brojSoba }}</td>
                             <td>{{ apartman.brojGostiju }}</td>
                             <td style="white-space:pre-wrap;">{{ prikaziAdresu(apartman) }}</td>
                             <td>{{ apartman.cenaPoNoci.toFixed(2) }} &euro;</td>
-                            <td v-if="ulogovanKorisnik()"><button v-on:click.prevent="rezervisiApartman(apartman)">Rezerviši</button></td>
+                            <td v-if="ulogovanKorisnik()"><button v-on:click="rezervisiApartman(apartman)">Rezerviši</button></td> 
                         </tr>
                     </tbody>
                 </table>

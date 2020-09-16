@@ -4,6 +4,7 @@ new Vue({
         apartman: {},
         sadrzaji: [],
         sviSadrzaji: [],
+        komentari: [],
         selektovanSadrzaj: null,
         valid: false
     },
@@ -42,6 +43,21 @@ new Vue({
             .catch(error => {
                 error.log(error);
             });
+        
+        axios
+        .get('app/dobavi_komentare', {
+            params: {
+                idApartmana: this.apartman.id,
+                domacin: true
+            }
+        })
+        .then(response => {
+            this.komentari = response.data;
+        })
+        .catch(error => {
+            console.log(error);
+            alert(error.response.data.sadrzaj);
+        });
     },
     methods:    {
         uloga: function() {
@@ -73,6 +89,32 @@ new Vue({
             } else  {
                 this.apartman.status = '1';
             }
+        },
+        
+        promeniStatusKomentara: function(komentar)    {
+            komentar.odobren = !komentar.odobren;
+
+            axios
+                .put('app/promeni_status_komentara', komentar, {
+                    headers:    {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + window.localStorage.getItem('jwt')
+                    }
+                })
+                .then(response => {
+                    this.$refs.msg.classList.remove("error-msg");
+                    this.$refs.msg.innerHTML = response.data.sadrzaj;
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.$refs.msg.classList.add("error-msg");
+                    this.$refs.msg.innerHTML = error.response.data.sadrzaj;
+                    if (error.response.status == 400 || error.response.status == 403)   {
+                        window.localStorage.removeItem('apartman');
+                        window.localStorage.removeItem('jwt');
+                        window.location = 'login.html';
+                    }
+                });
         },
 
         validacija: function()   {
@@ -140,27 +182,27 @@ new Vue({
 
         sacuvajIzmene: function()   {
             axios
-                    .put('app/izmeni_apartman', this.apartman, {
-                        headers:    {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + window.localStorage.getItem('jwt')
-                        }
-                    })
-                    .then(response => {
-                        this.$refs.msg.classList.remove("error-msg");
-                        this.$refs.msg.innerHTML = response.data.sadrzaj;
-                        window.localStorage.removeItem('apartman'); // Ne treba vise
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        this.$refs.msg.classList.add("error-msg");
-                        this.$refs.msg.innerHTML = error.response.data.sadrzaj;
-                        if (error.response.status == 400 || error.response.status == 403)   {
-                            window.localStorage.removeItem('apartman');
-                            window.localStorage.removeItem('jwt');
-                            window.location = 'login.html';
-                        }
-                    });
+            .put('app/izmeni_apartman', this.apartman, {
+                headers:    {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + window.localStorage.getItem('jwt')
+                }
+            })
+            .then(response => {
+                this.$refs.msg.classList.remove("error-msg");
+                this.$refs.msg.innerHTML = response.data.sadrzaj;
+                window.localStorage.removeItem('apartman'); // Ne treba vise
+            })
+            .catch(error => {
+                console.log(error);
+                this.$refs.msg.classList.add("error-msg");
+                this.$refs.msg.innerHTML = error.response.data.sadrzaj;
+                if (error.response.status == 400 || error.response.status == 403)   {
+                    window.localStorage.removeItem('apartman');
+                    window.localStorage.removeItem('jwt');
+                    window.location = 'login.html';
+                }
+            });
         },
 
         capitalize: function(string)    {

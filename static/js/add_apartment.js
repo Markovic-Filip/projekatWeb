@@ -2,11 +2,12 @@ new Vue({
     el: '#add_apartment-app',
     data: {
         tip: -1,
-        brojSoba: '',
+        brojSoba: 1,
         brojGostiju: '',
         ulica: '',
         broj: '',
         mesto: '',
+        drzava: '',
         postanskiBroj: '',
         geografskaSirina: '',
         geografskaDuzina: '',
@@ -44,19 +45,18 @@ new Vue({
     },
     methods: {
     	validacija: function() {
-    	valid = true;
-    	
-    	// provera combo box-eva
-        if (this.$refs.tip.value == "") {
-            this.$refs.tip.classList.remove("is-valid");
-            this.$refs.tip.classList.add("is-invalid");
-            valid = false;
-        } else {
-            if (this.$refs.tip.classList.contains('is-invalid'))    {
-                this.$refs.tip.classList.remove("is-invalid");
-                this.$refs.tip.classList.add("is-valid");
-            }
-        }
+            valid = true;
+
+            // provera combo box-eva
+            if (this.$refs.tip.value == "") {
+                this.$refs.tip.classList.remove("is-valid");
+                this.$refs.tip.classList.add("is-invalid");
+                valid = false;
+            } else {
+                if (this.$refs.tip.classList.contains('is-invalid'))    {
+                    this.$refs.tip.classList.remove("is-invalid");
+                    this.$refs.tip.classList.add("is-valid");
+                }
         
         // proveri broj soba
         if (this.$refs.brojSoba.value.length < 1 || !/^[0-9]+$/.test(this.$refs.brojSoba.value))   {
@@ -115,6 +115,18 @@ new Vue({
             if (this.$refs.mesto.classList.contains('is-invalid'))    {
                 this.$refs.mesto.classList.remove("is-invalid");
                 this.$refs.mesto.classList.add("is-valid");
+            }
+        }
+        
+        // proveri drzavu
+        if (this.$refs.drzava.value.length <= 1 || !/^[a-zA-Z ]+$/.test(this.$refs.drzava.value))   {
+            this.$refs.drzava.classList.remove("is-valid");
+            this.$refs.drzava.classList.add("is-invalid");
+            valid = false;
+        } else  {
+            if (this.$refs.drzava.classList.contains('is-invalid'))    {
+                this.$refs.drzava.classList.remove("is-invalid");
+                this.$refs.drzava.classList.add("is-valid");
             }
         }
         
@@ -179,7 +191,7 @@ new Vue({
     		var adresa = {
     				'ulica' : this.ulica,
     				'broj' : this.broj,
-    				'mesto' : this.mesto,
+    				'mesto' : this.mesto + ' - ' + this.drzava,
     				'postanskiBroj' : this.postanskiBroj
     		};
     		
@@ -209,16 +221,9 @@ new Vue({
                     }
                 })
                 .then(response => {
-                    if (response.data.hasOwnProperty('tip'))  {
-                        //this.$refs.msg.classList.remove("error-msg");
-                        //this.$refs.msg.classList.add("ok-msg");
-                        //this.$refs.msg.innerHTML = 'Korisnik ' + response.data.korisnickoIme + ' uspešno registrovan!';
-                        //document.getElementById('registForma').reset();
-                        window.localStorage.setItem('jwt', response.data.JWTToken);
-                        window.location = "index.html";
-                    } else  {
-                        console.log(response);
-                    }
+                    this.$refs.msg.classList.remove("error-msg");
+                    this.$refs.msg.classList.add("ok-msg");
+                    this.$refs.msg.innerHTML = response.data.sadrzaj;
                 })
                 .catch(error => {
                     console.log(error);

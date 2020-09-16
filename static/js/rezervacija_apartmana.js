@@ -3,11 +3,13 @@ new Vue({
     data:   {
         apartman: {},
         sadrzaji: [],
+        komentari: [],
         state: {},
         pocetniDatum: new Date(parseInt(Date.now() + 86400000)),
         brojNocenja: 1,
         poruka: '',
-        valid: true
+        valid: true,
+        datumi: []
     },
     mounted()   {
         this.apartman = JSON.parse(window.localStorage.getItem('apartman'));
@@ -17,19 +19,19 @@ new Vue({
             window.localStorage.removeItem('apartman'); // Premestio sam ovo posle ajax poziva za slanje rezervacije
         }*/
 
-        let datumi = [];
+        
         // TODO: otkomentarisati kad se uradi back end
-        //for (datum of this.apartman.zauzetiDatumi)  {
-          //  datumi.push(new Date(datum));
-        //}
+        for (datum of this.apartman.zauzetiDatumi)  {
+            this.datumi.push(new Date(datum));
+        }
 
         this.state = {
             disabledDates: {
                 to: new Date(),
-                dates: datumi
+                dates: this.datumi
             }
         };
-        // TODO:
+      
         axios
             .get('app/dobavi_sadrzaj_apartmana', {
                 params: {
@@ -43,6 +45,20 @@ new Vue({
                 console.log(error);
                 alert(error.response.data.sadrzaj);
             });
+        
+        axios
+        	.get('app/dobavi_komentare', {
+        		params: {
+        			idApartmana: this.apartman.id
+        		}
+        	})
+        	.then(response => {
+        		this.komentari = response.data;
+        	})
+        	.catch(error => {
+        		console.log(error);
+        		alert(error.response.data.sadrzaj);
+        	});
     },
     components: {
         vuejsDatepicker
@@ -82,6 +98,14 @@ new Vue({
                     this.$refs.poruka.classList.remove("losa-vrednost");
                     this.$refs.poruka.classList.add("dobra-vrednost");
                 }
+            }
+            for(let i=0;i<this.brojNocenja;i++){
+            	let tekuciDatum = new Date(this.pocetniDatum.getTime()+i*86400000);
+            	for(dat of this.datumi){
+            		if(dat===tekuciDatum){
+            			this.valid = false;
+            		}
+            	}
             }
 
             if (this.valid)  {

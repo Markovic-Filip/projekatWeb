@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import beans.Gost;
 import beans.Rezervacija;
+import enums.Status;
 import enums.StatusRezervacije;
 
 public class RezervacijeDAO {
@@ -36,6 +38,91 @@ public class RezervacijeDAO {
 		
 		return retVal;
 	}
+	
+	public ArrayList<Rezervacija> sveRezervacijeGosta(ArrayList<Integer> brojevi)	{
+		ArrayList<Rezervacija> retVal = new ArrayList<Rezervacija>();
+			for (Rezervacija rezervacija : rezervacije.values())	{
+				for(int i : brojevi) {
+					if(rezervacija.getId() == i) {
+						if(!retVal.contains(rezervacija)) {
+							retVal.add(rezervacija);
+						}
+				}
+			}
+				
+		}
+		
+		return retVal;
+	}
+	
+	public ArrayList<Rezervacija> sveRezervacijeDomacin(ArrayList<Integer> brojevi)	{
+		ArrayList<Rezervacija> retVal = new ArrayList<Rezervacija>();
+			for (Rezervacija rezervacija : rezervacije.values())	{
+				for(int i : brojevi) {
+					if(rezervacija.getApartmanId() == i) {
+						if(!retVal.contains(rezervacija)) {
+							retVal.add(rezervacija);
+						}
+				}
+			}
+				
+		}
+		
+		return retVal;
+	}
+	
+	public ArrayList<Date> zauzetiDatumiApartmana(int id){
+		ArrayList<Date> retVal = new ArrayList<Date>(); 
+		for(Rezervacija rezervacija : rezervacije.values()) {
+			if(rezervacija.getApartmanId()==id) {
+				for(int i=0; i<rezervacija.getBrojNocenja();i++) {
+					retVal.add(new Date(rezervacija.getPocetniDatum().getTime()+i*86400000));
+				}
+			}
+		}
+		return retVal;
+	}
+	
+	public ArrayList<String> sveKorisniciDomacin(ArrayList<Integer> brojevi)	{
+		ArrayList<Rezervacija> retVal = new ArrayList<Rezervacija>();
+			for (Rezervacija rezervacija : rezervacije.values())	{
+				for(int i : brojevi) {
+					if(rezervacija.getApartmanId() == i) {
+						if(!retVal.contains(rezervacija)) {
+							retVal.add(rezervacija);
+						}
+				}
+			}
+				
+		}
+		ArrayList<String> ret = new ArrayList<String>();
+		for(Rezervacija r : retVal) {
+			if(!ret.contains(r.getKorisnickoImeGosta())) {
+				ret.add(r.getKorisnickoImeGosta());
+			}	
+		}
+			
+		return ret;
+	}
+	
+	public ArrayList<Integer> sviApartmaniGosta(Gost gost){
+		ArrayList<Integer> retVal = new ArrayList<Integer>();
+		for(Rezervacija rezervacija : rezervacije.values()) {
+			for(int i : gost.getRezervacije()) {
+				if(i==rezervacija.getId() && (rezervacija.getStatus()==StatusRezervacije.ODBIJENA || rezervacija.getStatus()==StatusRezervacije.ZAVRSENA) ) {
+					if(!retVal.contains(rezervacija.getApartmanId())) {
+						retVal.add(rezervacija.getApartmanId());
+					}
+				}
+			}
+		}
+		return retVal;
+	}
+	
+	
+	
+	
+	
 	
 	public boolean dodajNovuRezervaciju(Rezervacija novaRezervacija) {
 		boolean retVal = true;
@@ -84,9 +171,16 @@ public class RezervacijeDAO {
 		return retVal;
 	}
 	
-	public void promeniStatusRezervacije(int id, StatusRezervacije noviStatus)	{
-		rezervacije.get(id).setStatus(noviStatus);
-		azurirajBazu();
+	public boolean promeniStatusRezervacije(int id, StatusRezervacije noviStatus)	{
+		if(rezervacije.containsKey(id)) {
+			rezervacije.get(id).setStatus(noviStatus);
+			azurirajBazu();
+			return true;
+		}else{
+			System.out.println("RezervacijeDAO: Ne postoji rezervacija id:" + id + "\r\n");
+			return false;
+			
+		}
 	}
 
 	private void upisiNovuRezervaciju(Rezervacija novaRezervacija) {

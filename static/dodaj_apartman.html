@@ -13,9 +13,9 @@
                 <h1><a href="index.html" class="navbar-brand">Ovde treba ime sajta</a></h1>
                 <div class="collapse navbar-collapse">
                     <ul class="navbar-nav ml-auto">
-                        <li class="nav-item"><a href="#" class="nav-link">Početna</a></li>
+                        <li class="nav-item"><a href="domacin_page.html" class="nav-link">Početna</a></li>
                         <li class="nav-item"><a href="#" class="nav-link">Moj profil</a></li>
-                        <li class="nav-item"><a href="#" class="nav-link">Dodavanje apartmana</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link">Dodaj apartman</a></li>
                         <li class="nav-item"><a href="#" class="nav-link">Pregled gostiju</a></li>
                         <li class="nav-item"><a href="javascript:window.localStorage.removeItem('jwt'); window.location = 'login.html';" class="nav-link">Odjavi se</a></li>
                     </ul>
@@ -37,7 +37,7 @@
                     </div>
                 </div>
                 
-                <div class="form-group">
+                 <div class="form-group" v-show="tip == '0'">
                     <label for="brojSoba">Broj soba</label>
                     <input v-model:value="brojSoba" type="text" id="brojSoba" ref="brojSoba" class="form-control">
                     <div class="invalid-feedback">Unesite broj soba. Samo brojevi!</div>
@@ -67,6 +67,12 @@
                     <div class="invalid-feedback">Unesite naziv mesta. Samo slova!</div>
                 </div>
                 
+                 <div class="form-group">
+                    <label for="drzava">Država</label>
+                    <input v-model:value="drzava" type="text" id="drzava" ref="drzava" class="form-control">
+                    <div class="invalid-feedback">Unesite naziv države. Samo slova!</div>
+                </div>
+                
                 <div class="form-group">
                     <label for="postanskiBroj">Poštanski broj</label>
                     <input v-model:value="postanskiBroj" type="text" id="postanskiBroj" ref="postanskiBroj" class="form-control">
@@ -86,7 +92,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="cenaPoNoci">Cena po noći</label>
+                      <label for="cenaPoNoci">Cena po noći (&euro;)</label>
                     <input v-model:value="cenaPoNoci" type="text" id="cenaPoNoci" ref="cenaPoNoci" class="form-control">
                     <div class="invalid-feedback">Unesite cenu po noći. Samo brojevi sa .!</div>
                 </div>
@@ -108,7 +114,11 @@
                     </div>
                 </div>
                 
-                
+                <div class="row">
+                    <div class="col" align="center">
+                        <p id="msg" ref="msg"></p>
+                    </div>
+                </div>
                 
                 
                 
