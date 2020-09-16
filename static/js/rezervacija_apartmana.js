@@ -8,7 +8,8 @@ new Vue({
         pocetniDatum: new Date(parseInt(Date.now() + 86400000)),
         brojNocenja: 1,
         poruka: '',
-        valid: true
+        valid: true,
+        datumi: []
     },
     mounted()   {
         this.apartman = JSON.parse(window.localStorage.getItem('apartman'));
@@ -18,16 +19,14 @@ new Vue({
             window.localStorage.removeItem('apartman'); // Premestio sam ovo posle ajax poziva za slanje rezervacije
         }*/
 
-        let datumi = [];
-        // TODO: otkomentarisati kad se uradi back end
-        //for (datum of this.apartman.zauzetiDatumi)  {
-          //  datumi.push(new Date(datum));
-        //}
+        for (datum of this.apartman.zauzetiDatumi)  {
+            this.datumi.push(new Date(datum));
+        }
 
         this.state = {
             disabledDates: {
                 to: new Date(),
-                dates: datumi
+                dates: this.datumi
             }
         };
 
@@ -97,6 +96,15 @@ new Vue({
                     this.$refs.poruka.classList.remove("losa-vrednost");
                     this.$refs.poruka.classList.add("dobra-vrednost");
                 }
+            }
+
+            for(let i=0;i<this.brojNocenja;i++){
+            	let tekuciDatum = new Date(this.pocetniDatum.getTime()+i*86400000);
+            	for(dat of this.datumi){
+            		if(dat===tekuciDatum){
+            			this.valid = false;
+            		}
+            	}
             }
 
             if (this.valid)  {

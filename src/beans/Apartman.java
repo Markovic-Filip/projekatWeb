@@ -4,6 +4,8 @@ package beans;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.json.bind.annotation.JsonbDateFormat;
+
 import enums.Status;
 import enums.Tip;
 
@@ -14,8 +16,8 @@ public class Apartman {
 	protected int brojSoba;
 	protected int brojGostiju;
 	protected Lokacija lokacija;
-	//ovo jos nisam siguran kako cemo odraditi 
-	//protected Date date;
+	@JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+	protected ArrayList<Date> zauzetiDatumi;
 	protected String korisnickoImeDomacina;
 	protected ArrayList<String> imenaSlika;
 	protected ArrayList<String> slike;
@@ -35,10 +37,11 @@ public class Apartman {
 		this.idRezervacije = new ArrayList<Integer>();
 		this.slike = new ArrayList<String>();
 		this.imenaSlika = new ArrayList<String>();
+		this.zauzetiDatumi = new ArrayList<Date>();
 		
 	}
 	
-	public Apartman(int id, Tip tip, int brojSoba,int brojGostiju, Lokacija lokacija, /*Date date, dostuponost po datumima*/
+	public Apartman(int id, Tip tip, int brojSoba,int brojGostiju, Lokacija lokacija,
 			String korisnickoImeDomacina, double cenaPoNoci, int vremeZaPrijavu, int vremeZaOdjavu, Status status,
 			ArrayList<Integer> idSadrzaja, ArrayList<Integer> idRezervacije, ArrayList<String> imenaSlika, ArrayList<String> slike) {
 		super();
@@ -92,9 +95,13 @@ public class Apartman {
 		this.lokacija = lokacija;
 	}
 
-	
+	public ArrayList<Date> getZauzetiDatumi() {
+		return zauzetiDatumi;
+	}
 
-	
+	public void setZauzetiDatumi(ArrayList<Date> zauzetiDatumi) {
+		this.zauzetiDatumi = zauzetiDatumi;
+	}	
 
 	public double getCenaPoNoci() {
 		return cenaPoNoci;

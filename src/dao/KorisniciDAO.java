@@ -139,6 +139,58 @@ public class KorisniciDAO {
 		}
 	}
 	
+	public ArrayList<Korisnik> sviKorisniciDomacin(ArrayList<String> gosti)	{
+		ArrayList<Korisnik> retVal = new ArrayList<Korisnik>();
+		for (Korisnik korisnik : korisnici.values())	{
+			for(String gost : gosti) {
+				if(korisnik.getKorisnickoIme().equals(gost) && !retVal.contains(korisnik)) {
+					retVal.add(korisnik);
+				}
+			}
+		}
+		//return (ArrayList<Korisnik>) korisnici.values();
+		return retVal;
+	}
+	
+	
+	// TODO: PROVERI DAL TREBA
+	public Gost ucitajRezervacije(String korisnickoIme) {
+		String putanja = "./static/baza/korisnici/" + korisnickoIme + "-Rezervacije.txt";
+		Gost gost = (Gost) korisnici.get(korisnickoIme);
+		BufferedReader bafer;
+		try	{
+			bafer = new BufferedReader(new FileReader(putanja));
+			String red;
+			while ((red = bafer.readLine()) != null)	{
+				gost.getRezervacije().add(Integer.parseInt(red));
+			}
+			bafer.close();
+			return gost;
+		} catch (Exception e)	{
+			e.printStackTrace();
+			System.out.println("Fajl " + putanja + " nije pronadjen.\r\n");
+			return null;
+		}
+	}
+	public Domacin ucitajApartmane(String korisnickoIme) {
+		String putanja = "./static/baza/korisnici/" + korisnickoIme + "-Apartmani.txt";
+		Domacin domacin = (Domacin) korisnici.get(korisnickoIme);
+		BufferedReader bafer;
+		try	{
+			bafer = new BufferedReader(new FileReader(putanja));
+			String red;
+			while ((red = bafer.readLine()) != null)	{
+				domacin.getApartmani().add(Integer.parseInt(red));
+			}
+			bafer.close();
+			return domacin;
+		} catch (Exception e)	{
+			e.printStackTrace();
+			System.out.println("Fajl " + putanja + " nije pronadjen.\r\n");
+			return null;
+		}
+	}
+	
 	private void ucitajKorisnike(String putanja, Uloga uloga)	{
 		BufferedReader bafer;
 		try	{

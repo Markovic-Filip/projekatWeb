@@ -161,6 +161,18 @@ public class ApartmaniDAO {
 		return zaBrisanje;
 	}
 	
+	public ArrayList<Apartman> apartmaniGdeJeGostBio(ArrayList<Integer> lista){
+		ArrayList<Apartman> retVal = new ArrayList<Apartman>();
+		for(Apartman apartman : apartmani.values()) {
+			for(int i : lista) {
+				if(apartman.getId() == i && !retVal.contains(apartman)) {
+					retVal.add(apartman);
+				}
+			}
+		}
+		return retVal;
+	}
+	
 	public void dodajSliku(int idApartmana, String imeSlike)	{
 		apartmani.get(idApartmana).getImenaSlika().add(imeSlike);
 		apartmani.get(idApartmana).getSlike().add(ucitajSliku("./static/slike/" + imeSlike));

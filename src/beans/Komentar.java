@@ -7,7 +7,6 @@ public class Komentar {
 	protected int apartman;
 	protected String tekst;
 	protected int ocena;
-	//TODO mozda dodati bool ili enumeraciju da se vidi da li ga je domacina odobrio ili nije?
 	protected boolean odobren;
 	
 	public Komentar() {
