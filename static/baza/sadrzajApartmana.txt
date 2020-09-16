@@ -1,6 +1,6 @@
 1;parking
 2;kuhinja
-3;pegla
+3;glape
 4;ves masina
 5;televizor
 6;kablovska
