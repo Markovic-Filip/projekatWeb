@@ -8,20 +8,21 @@ public class Komentar {
 	protected String tekst;
 	protected int ocena;
 	//TODO mozda dodati bool ili enumeraciju da se vidi da li ga je domacina odobrio ili nije?
-	
+	protected boolean odobren;
+
 	public Komentar() {
-		
-		
+
+
 	}
-	
-	public Komentar(int id, String korisnickoImeGosta, int apartman, String tekst, int ocena) {
+
+	public Komentar(int id, String korisnickoImeGosta, int apartman, String tekst, int ocena, boolean odobren) {
 		this.id = id;
 		this.korisnickoImeGosta = korisnickoImeGosta;
 		this.apartman = apartman;
 		this.tekst = tekst;
 		this.ocena = ocena;
-		
-		
+		this.odobren = odobren;
+
 	}
 
 	public int getId() {
@@ -64,8 +65,16 @@ public class Komentar {
 		this.ocena = ocena;
 	}
 
+	public boolean isOdobren()	{
+		return this.odobren;
+	}
+
+	public void setOdobren(boolean odobren)	{
+		this.odobren = odobren;
+	}
+
 	@Override
 	public String toString() {
-		return this.id + ";" + this.korisnickoImeGosta + ";" + this.apartman + ";" + this.tekst + ";" + this.ocena;
+		return this.id + ";" + this.korisnickoImeGosta + ";" + this.apartman + ";" + this.tekst + ";" + this.ocena + ";" + this.odobren + "\n";
 	}
 }
