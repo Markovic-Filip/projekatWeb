@@ -13,8 +13,8 @@ new Vue({
         geografskaDuzina: '',
         korisnickoImeDomacina: '',
         cenaPoNoci: '',
-        vremeZaPrijavu: '',
-        vremeZaOdjavu: '',
+        vremeZaPrijavu: '14',
+        vremeZaOdjavu: '10',
         status: -1,
         idSadrzaja: [],
         idRezervacije: [],
@@ -237,9 +237,11 @@ new Vue({
     		
     		
     		
-    	}
+    	},
 
-    
+        capitalize: function(string)    {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
     
     }
     

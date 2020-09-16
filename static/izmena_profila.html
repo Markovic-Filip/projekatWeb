@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Početna</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <link rel="stylesheet" href="./css/main.css">
+
+        <style>
+            div.podatak {
+                text-align: center !important;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="profil-app">
+            <nav v-if="uloga === 'ADMINISTRATOR'" class="navbar navbar-expand navbar-dark bg-dark fixed-top">
+                <h1><a class="naslov" href="#" class="navbar-brand">APARTMANI</a></h1>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item"><a href="admin_page.html" class="nav-link">Početna</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link">Moj profil</a></li>
+                        <li class="nav-item"><a href="registration.html" class="nav-link">Dodaj domaćina</a></li>
+                        <li class="nav-item"><a href="javascript:window.localStorage.removeItem('jwt'); window.location = 'login.html';" class="nav-link">Odjavi se</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+            <nav v-else-if="uloga === 'DOMACIN'" class="navbar navbar-expand navbar-dark bg-dark fixed-top">
+                <h1><a class="naslov" href="#" class="navbar-brand">APARTMANI</a></h1>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item"><a href="domacin_page.html" class="nav-link">Početna</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link">Moj profil</a></li>
+                        <li class="nav-item"><a href="dodaj_apartman.html" class="nav-link">Dodaj apartman</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link">Pregled gostiju</a></li>
+                        <li class="nav-item"><a href="javascript:window.localStorage.removeItem('jwt'); window.location = 'login.html';" class="nav-link">Odjavi se</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+            <nav v-else-if="uloga === 'GOST'" class="navbar navbar-expand navbar-dark bg-dark fixed-top">
+                <h1><a class="naslov" href="#" class="navbar-brand">APARTMANI</a></h1>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item"><a href="gost_page.html" class="nav-link">Početna</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link">Moj profil</a></li>
+                        <li class="nav-item"><a href="apartmani.html" class="nav-link">Apartmani</a></li>
+                        <li class="nav-item"><a href="javascript:window.localStorage.removeItem('jwt'); window.location = 'login.html';" class="nav-link">Odjavi se</a></li>
+                    </ul>
+                </div>
+            </nav>
+            <br/><br/><br/><br/>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-6">
+                        <label>Ime:</label>
+                    </div>
+                    <div class="col-6 podatak">
+                        <input type="text" v-model="korisnik.ime" ref="ime" class="form-control" style="width: 250px;" />
+                        <div class="invalid-feedback" style="text-align: left;">Unesite Vaše ime. Samo mala i velika slova!</div>
+                    </div>
+                </div>
+
+                <br/><br/>
+
+                <div class="row">
+                    <div class="col-6">
+                        <label>Prezime:</label>
+                    </div>
+                    <div class="col-6 podatak">
+                        <input type="text" v-model="korisnik.prezime" ref="prezime" class="form-control" style="width: 250px;" />
+                        <div class="invalid-feedback" style="text-align: left;">Unesite Vaše prezime. Samo mala i velika slova!</div>
+                    </div>
+                </div>
+
+                <br/><br/>
+
+                <div class="row">
+                    <div class="col-6">
+                        <label>Pol:</label>
+                    </div>
+                    <div class="col-6 podatak">
+                        <select v-model:value="korisnik.pol" class="form-control" style="width: 250px;">
+                            <option value="" selected disabled hidden>Izaberite pol</option>
+                            <option value="0">Muško</option>
+                            <option value="1">Žensko</option>
+                            <option value="2">Ostalo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <br/><br/>
+
+                <div class="row">
+                    <div class="col-6">
+                        <label>Stara lozinka:</label>
+                    </div>
+                    <div class="col-6 podatak">
+                        <input type="password" v-model="stara_lozinka" ref="staraLozinka" class="form-control" style="width: 250px;" />
+                        <div class="invalid-feedback" style="text-align: left;">Lozinka nije ispravna!</div>
+                    </div>
+                </div>
+
+                <br/><br/>
+
+                <div class="row">
+                    <div class="col-6">
+                        <label>Nova lozinka:</label>
+                    </div>
+                    <div class="col-6 podatak">
+                        <input type="password" v-model="nova_lozinka" ref="novaLozinka" class="form-control" style="width: 250px;" />
+                        <div class="invalid-feedback" style="text-align: left;">Lozinke moraju da se poklapaju. Dozvoljena su slova, brojevi i povlaka!</div>
+                    </div>
+                </div>
+
+                <br/><br/>
+
+                <div class="row">
+                    <div class="col-6">
+                        <label>Ponovite lozinku:</label>
+                    </div>
+                    <div class="col-6 podatak">
+                        <input type="password" v-model="kontrolna_lozinka" ref="kontrolnaLozinka" class="form-control" style="width: 250px;" />
+                        <div class="invalid-feedback" style="text-align: left;">Lozinke moraju da se poklapaju. Dozvoljena su slova, brojevi i povlaka!</div>
+                    </div>
+                </div>
+
+                <br/><br/>
+
+                <div class="row">
+                    <div class="col" align="center">
+                        <p id="msg" ref="msg"></p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-8 podatak">
+                        <input type="image" src="slike/save.png" title="Sačuvaj izmene" width="48" height="48" v-on:click.prevent="validacija()" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="./js/vue.js"></script>
+        <script src="./js/axios.js"></script>
+        <script src="./js/izmena_profila.js"></script>
+    </body>
+</html>

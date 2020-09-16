@@ -63,7 +63,7 @@
     <body>
         <div id="rezervacija-app">
             <nav v-if="ulogovanKorisnik()" class="navbar navbar-expand navbar-dark bg-dark fixed-top">
-                <h1><a href="gost_page.html" class="navbar-brand">Ovde treba ime sajta</a></h1>
+                <h1><a class="naslov" href="gost_page.html" class="navbar-brand">APARTMANI</a></h1>
                 <div class="collapse navbar-collapse">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item"><a href="gost_page.html" class="nav-link">Početna</a></li>
@@ -75,7 +75,7 @@
             </nav>
 
             <nav v-else class="navbar navbar-expand navbar-dark bg-dark fixed-top">
-                <h1><a href="index.html" class="navbar-brand">Ovde treba ime sajta</a></h1>
+                <h1><a class="naslov" href="index.html" class="navbar-brand">APARTMANI</a></h1>
                 <div class="collapse navbar-collapse">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item"><a href="index.html" class="nav-link">Početna</a></li>
@@ -85,7 +85,7 @@
                     </ul>
                 </div>
             </nav>
-            <br/><br/><br/>
+            <br/><br/><br/><br/>
 
             <div class="container">
                 <h2>Pregled apartmana</h2>
@@ -93,9 +93,8 @@
                     <div class="col" v-for="slika in apartman.slike">
                     <!--<div class="col">-->
                         <div class="galerija">
-                            <a target="_blank" v-bind:href="slika">
-                              <img v-bind:src="slika" alt="Nema slike" onerror="this.onerror=null;this.src='slike/no_apartment.png';" width="600" height="400">
-                            </a>
+                            <!--img v-bind:src="slika" alt="Nema slike" onerror="this.onerror=null;this.src='slike/no_apartment.png';" width="600" height="400"-->
+                            <img :src="prikaziSliku(slika)" alt="Nema slike" onerror="this.onerror=null;this.src='slike/no_apartment.png';" v-on:click="otvoriSliku(slika)" width="600" height="400"/>
                         </div>
                     </div>
                 </div>
@@ -165,7 +164,7 @@
                     </div>
                 </div>
 
-                <h3>Lista sadržaja:</h3>
+                <h3>Lista sadržaja</h3>
 
                 <div class="row">
                     <ul>
@@ -173,7 +172,7 @@
                     </ul>
                 </div>
 
-                <h3>Komentari gostiju:</h3>
+                <h3>Komentari gostiju</h3>
                 <div class="comments">
                     <div class="row" v-for="komentar in komentari">
                         <div class="comment-box">
@@ -183,10 +182,11 @@
                             <p class="comment-txt more">
                                 {{ komentar.tekst }}
                             </p>
-                            <!--div class="comment-meta">
-                                <button v-if="komentar.odobren" v-on:click="promeniStatusKomentara(komentar)">Skloni</button>
-                                <button v-else v-on:click="promeniStatusKomentara(komentar)">Odobri</button>
-                            </div-->
+                            <div class="comment-meta">
+                                <span>Ocena: {{ komentar.ocena }}</span>
+                                <!--<button v-if="komentar.odobren" v-on:click="promeniStatusKomentara(komentar)">Skloni</button>
+                                <button v-else v-on:click="promeniStatusKomentara(komentar)">Odobri</button>-->
+                            </div>
                         </div>
                     </div>
                 </div>

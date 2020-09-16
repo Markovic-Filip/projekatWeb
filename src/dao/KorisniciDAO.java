@@ -96,7 +96,7 @@ public class KorisniciDAO {
 		gost.getRezervacije().add(idRezervacije);
 		
 		try {
-			FileWriter writer = new FileWriter(putanja);
+			FileWriter writer = new FileWriter(putanja, true);
 			writer.append(idRezervacije + "\n");
 			System.out.println("KORISNICI DAO: Rezervacija " + idRezervacije + " dodata u " + korisnickoIme + "-Rezervacije.txt\r\n");
 			writer.close();
@@ -113,13 +113,29 @@ public class KorisniciDAO {
 		domacin.getApartmani().add(idApartmana);
 		
 		try {
-			FileWriter writer = new FileWriter(putanja);
+			FileWriter writer = new FileWriter(putanja, true);
 			writer.append(idApartmana + "\n");
 			System.out.println("KORISNICI DAO: Apartman " + idApartmana + " dodat u " + korisnickoIme + "-Rezervacije.txt\r\n");
 			writer.close();
 		} catch (IOException e)	{
 			e.printStackTrace();
 			System.out.println("Fajl " + putanja + " nije pronadjen!\r\n");
+		}
+	}
+	
+	public boolean izmeniKorisnika(Korisnik izmenjenKorisnik)	{
+		Korisnik korisnikZaIzmenu = korisnici.get(izmenjenKorisnik.getKorisnickoIme());
+		if (korisnikZaIzmenu != null) {
+			korisnikZaIzmenu.setIme(izmenjenKorisnik.getIme());
+			korisnikZaIzmenu.setPrezime(izmenjenKorisnik.getPrezime());
+			korisnikZaIzmenu.setPol(izmenjenKorisnik.getPol());
+			korisnikZaIzmenu.setLozinka(izmenjenKorisnik.getLozinka());
+			azurirajBazu(izmenjenKorisnik.getUloga());
+			System.out.println("KorisniciDAO: Korisnik " + izmenjenKorisnik.getKorisnickoIme() + " uspesno izmenjen i sacuvan.\r\n");
+			return true;
+		} else	{
+			System.out.println("KorisniciDAO: Korisnik " + izmenjenKorisnik.getKorisnickoIme() + " nije pronadjen u bazi.\r\n");
+			return false;
 		}
 	}
 	

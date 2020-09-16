@@ -6,18 +6,19 @@ new Vue({
         sviSadrzaji: [],
         komentari: [],
         selektovanSadrzaj: null,
+        fajl: '',
         valid: false
     },
     mounted()   {
         this.apartman = JSON.parse(window.localStorage.getItem('apartman'));
         if (this.apartman == null)   {
             if (this.uloga === 'DOMACIN')    {
-                window.location = 'http://localhost:8080/domacin_page.html';
+                window.location = 'domacin_page.html';
             } else if (this.uloga === 'ADMINISTRATOR')  {
-                window.location = 'http://localhost:8080/admin_page.html';
+                window.location = 'admin_page.html';
             } else  {
                 window.localStorage.removeItem('jwt');
-                window.location = 'http://localhost:8080/login.html';
+                window.location = 'login.html';
             }
         }
 
@@ -66,14 +67,16 @@ new Vue({
                 return uloga;
             } else  {
                 window.localStorage.removeItem('jwt');
-                window.location = 'http://localhost:8080/login.html';
+                window.location = 'login.html';
             }
         },
 
         obrisiSadrzaj: function(sadrzaj)   {
-            let indexSadrzaja = this.apartman.idSadrzaja.indexOf(sadrzaj.id);
-            this.apartman.idSadrzaja.splice(indexSadrzaja, 1);
-            this.sadrzaji.splice(this.sadrzaji.indexOf(sadrzaj), 1);
+            if (confirm('Obriši sadrzaj ' + sadrzaj.naziv + '?'))    {
+                let indexSadrzaja = this.apartman.idSadrzaja.indexOf(sadrzaj.id);
+                this.apartman.idSadrzaja.splice(indexSadrzaja, 1);
+                this.sadrzaji.splice(this.sadrzaji.indexOf(sadrzaj), 1);
+            }
         },
 
         dodajSadrzaj: function()    {
@@ -115,6 +118,49 @@ new Vue({
                         window.location = 'login.html';
                     }
                 });
+        },
+
+        preuzmiSliku: function() {
+            this.fajl = this.$refs.file.files[0];
+            /*this.fajl = event.target.files[0];
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                this.novaSlika = e.target.result
+            };
+            reader.onerror = function(error) {
+                console.log(error);
+            };
+            reader.readAsDataURL(this.fajl);
+            */
+        },
+
+        dodajSliku: function()  {
+            //this.apartman.slike.push(this.novaSlika);
+            let formData = new FormData();
+            formData.append('file', this.fajl);
+
+            axios
+                .post('app/dodaj_sliku', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Authorization': 'Bearer ' + window.localStorage.getItem('jwt'),
+                        'IdApartmana': this.apartman.id
+                    }
+                })
+                .then(response => {
+                    this.apartman = response.data;
+                })
+                .catch(error => {
+                    console.log(error);
+                    alert(error.response.data.sadrzaj);
+                });
+        },
+
+        obrisiSliku: function(slika)    {
+            if (confirm('Obriši sliku?'))    {
+                let indexSlike = this.apartman.slike.indexOf(slika);
+                this.apartman.slike.splice(indexSlike, 1);
+            }
         },
 
         validacija: function()   {
@@ -207,6 +253,24 @@ new Vue({
 
         capitalize: function(string)    {
             return string.charAt(0).toUpperCase() + string.slice(1);
+        },
+
+        otvoriSliku: function (slika) {
+            var image = new Image();
+            image.src = "data:image/jpg;base64," + slika;
+    
+            var w = window.open("");
+            w.document.write(image.outerHTML);
+            w.document.close();
+        },
+
+        prikaziSliku: function(slika)    {
+            //return atob(slika);
+            if (slika != null)  {
+                return "data:image/jpeg;base64," + slika;
+            } else  {
+                return '';
+            }
         }
     }
 });

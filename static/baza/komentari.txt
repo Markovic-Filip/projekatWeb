@@ -1,4 +1,4 @@
 1;milicaM;3;svaka cast;9;true
 2;pera52;2;bravo;8;true
 3;mika8834;3;odlicna lokacija;9;true
-4;pera52;2;lik me odbio;1;false
+4;pera52;2;Zasto sam odbijen?;1;false

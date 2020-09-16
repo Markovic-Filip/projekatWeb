@@ -6,7 +6,8 @@ new Vue({
         pretraga_tip: '2',
         pretraga_cena: '0',
         pretraga_broj_soba: '0',
-        pretraga_broj_gostiju: undefined
+        pretraga_broj_gostiju: undefined,
+        sortiranje: undefined
     },
     mounted()  {
         axios
@@ -24,13 +25,50 @@ new Vue({
             return apartman.lokacija.adresa['ulica'] + " " + apartman.lokacija.adresa['broj'] + "\n" + apartman.lokacija.adresa['mesto'] + "\n" + apartman.lokacija.adresa['postanskiBroj'];
         },
 
+        prikaziSliku: function(slika)    {
+            //return atob(slika);
+            if (slika != null)  {
+                return "data:image/jpeg;base64," + slika;
+            } else  {
+                return '';
+            }
+        },
+
         ulogovanKorisnik: function()    {
             return window.localStorage.getItem('jwt') != null;
         },
 
         rezervisiApartman: function(apartman)   {
             window.localStorage.setItem('apartman', JSON.stringify(apartman));
-            window.location = 'http://localhost:8080/rezervacija_apartmana.html';
+            window.location = 'rezervacija_apartmana.html';
+        },
+
+        rastuce: function (a, b) {
+            if ( a.cenaPoNoci < b.cenaPoNoci )  {
+              return -1;
+            }
+            if ( a.cenaPoNoci > b.cenaPoNoci )  {
+              return 1;
+            }
+            return 0;
+        },
+
+        opadajuce: function(a, b)   {
+            if ( a.cenaPoNoci > b.cenaPoNoci )  {
+                return -1;
+              }
+              if ( a.cenaPoNoci < b.cenaPoNoci )  {
+                return 1;
+              }
+              return 0;
+        },
+
+        sortirajPoCeni: function(event)  {
+            if (this.sortiranje == 'rastuce')   {
+                this.apartmani.sort(this.rastuce);
+            } else  {
+                this.apartmani.sort(this.opadajuce);
+            }
         }
     },
     computed:   {
@@ -94,7 +132,7 @@ new Vue({
                         break;
                 }
 
-                return (apartman.lokacija.adresa.mesto.match(this.pretraga) || apartman.lokacija.adresa.ulica.match(this.pretraga))
+                return (apartman.lokacija.adresa.mesto.toLowerCase().match(this.pretraga.toLowerCase()) || apartman.lokacija.adresa.ulica.toLowerCase().match(this.pretraga.toLowerCase()))
                     && (apartman.tip == this.pretraga_tip || this.pretraga_tip == '2')
                     && ((apartman.cenaPoNoci > donja_granica_cena && apartman.cenaPoNoci <= gornja_granica_cena) || sve_cene)
                     && ((apartman.brojSoba > donja_granica_sobe && apartman.brojSoba <= gornja_granica_sobe) || sve_sobe)

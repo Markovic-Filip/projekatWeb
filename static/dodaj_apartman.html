@@ -10,17 +10,19 @@
     <body>
         
             <nav class="navbar navbar-expand navbar-dark bg-dark">
-                <h1><a href="index.html" class="navbar-brand">Ovde treba ime sajta</a></h1>
+                <h1><a class="naslov" href="index.html" class="navbar-brand">APARTMANI</a></h1>
                 <div class="collapse navbar-collapse">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item"><a href="domacin_page.html" class="nav-link">Početna</a></li>
-                        <li class="nav-item"><a href="#" class="nav-link">Moj profil</a></li>
+                        <li class="nav-item"><a href="javascript:window.localStorage.setItem('uloga', 'DOMACIN');window.location = 'izmena_profila.html';" class="nav-link">Moj profil</a></li>
                         <li class="nav-item"><a href="#" class="nav-link">Dodaj apartman</a></li>
                         <li class="nav-item"><a href="#" class="nav-link">Pregled gostiju</a></li>
                         <li class="nav-item"><a href="javascript:window.localStorage.removeItem('jwt'); window.location = 'login.html';" class="nav-link">Odjavi se</a></li>
                     </ul>
                 </div>
             </nav>
+
+            <br/><br/><br/><br/>
 
             <div id="add_apartment-app">
             <form id="registForma">
@@ -104,7 +106,7 @@
                             <div  v-for = "sadrzaji in sadrzaj" class = "form-control">
                             
                             	<input type="checkbox" v-bind:id="sadrzaji.id " v-bind:value="sadrzaji.id " v-model = "idSadrzaja">
-  								<label v-bind:for="sadrzaji.id">{{ sadrzaji.naziv }}</label><br>
+  								<label v-bind:for="sadrzaji.id">{{ capitalize(sadrzaji.naziv) }}</label><br>
                                 
                                
               				</div>

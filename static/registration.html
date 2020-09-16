@@ -11,11 +11,11 @@
     <body>
         <div id="registration-app">
             <nav v-if="ulogovanKorisnik()" class="navbar navbar-expand navbar-dark bg-dark fixed-top">
-                <h1><a href="admin_page.html" class="navbar-brand">Ovde treba ime sajta</a></h1>
+                <h1><a class="naslov" href="admin_page.html" class="navbar-brand">APARTMANI</a></h1>
                 <div class="collapse navbar-collapse">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item"><a href="admin_page.html" class="nav-link">Početna</a></li>
-                        <li class="nav-item"><a href="#" class="nav-link">Moj profil</a></li>
+                        <li class="nav-item"><a href="javascript:window.localStorage.setItem('uloga', 'ADMINISTRATOR');window.location = 'izmena_profila.html';" class="nav-link">Moj profil</a></li>
                         <li class="nav-item"><a href="#" class="nav-link">Dodaj domaćina</a></li>
                         <li class="nav-item"><a href="javascript:window.localStorage.removeItem('jwt'); window.location = 'login.html';" class="nav-link">Odjavi se</a></li>
                     </ul>
@@ -23,7 +23,7 @@
             </nav>
     
             <nav v-else class="navbar navbar-expand navbar-dark bg-dark fixed-top">
-                <h1><a href="index.html" class="navbar-brand">Ovde treba ime sajta</a></h1>
+                <h1><a class="naslov" href="index.html" class="navbar-brand">APARTMANI</a></h1>
                 <div class="collapse navbar-collapse">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item"><a href="index.html" class="nav-link">Početna</a></li>
@@ -33,7 +33,7 @@
                     </ul>
                 </div>
             </nav>
-            <br/><br/><br/>
+            <br/><br/><br/><br/>
 
             <form id="registForma">
                 <div class="form-group">

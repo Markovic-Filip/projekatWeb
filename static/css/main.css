@@ -1,3 +1,14 @@
+.naslov {
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-size: larger;
+    color: white;
+}
+
+a.naslov:hover    {
+    text-decoration: none !important;
+    color: white;
+}
+
 .navbar-nav > li    {
     padding-left: 4em;
     padding-right: 4em;
@@ -46,20 +57,33 @@ table   {
 }
 
 div.galerija {
+    /*display: flex;
+    justify-content: center;*/
     margin: 5px;
     border: 1px solid #ccc;
     float: left;
-    width: 180px;
-  }
+    /*width: 180px;*/
+    width: 300px;
+    height: 250px;
+}
   
-  div.galerija:hover {
+div.galerija img:hover {
     border: 1px solid #777;
-  }
+    opacity: 70%;
+}
   
-  div.galerija img {
-    width: 100%;
-    height: auto;
-  }
+div.galerija img {
+    display: block;
+    margin: auto;
+    /*width: 100%;*/
+    width: 96%;
+    height: 200px;
+}
+
+div.desc {
+    padding: 15px;
+    text-align: center;
+}
 
 .dobra-vrednost {
     border: 2px solid greenyellow;
