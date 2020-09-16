@@ -9,8 +9,17 @@ import static spark.Spark.staticFiles;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Key;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.http.Part;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -296,6 +305,12 @@ public class MainApp {
 					Korisnik korisnikZaBrisanje = gson.fromJson(payload, Korisnik.class);
 					if (korisnici.obrisiKorisnika(korisnikZaBrisanje.getKorisnickoIme()))	{
 						System.out.println("OBRISI KORISNIKA: Korisnik " + korisnikZaBrisanje.getKorisnickoIme() + " uspesno obrisan iz baze.\r\n");
+						if (korisnikZaBrisanje.getUloga().equals(Uloga.DOMACIN))	{
+							ArrayList<Integer> idApartmana = apartmani.obrisiApartmaneDomacina(korisnikZaBrisanje.getKorisnickoIme());
+							rezervacije.odbijRezervacijeZaApartmane(idApartmana);
+						} else if (korisnikZaBrisanje.getUloga().equals(Uloga.GOST))	{
+							rezervacije.obrisiRezervacijeGosta(korisnikZaBrisanje.getKorisnickoIme());
+						}
 						return gson.toJson(korisnici.sviKorisnici());
 					} else	{
 						System.out.println("OBRISI KORISNIKA: " + korisnikZaBrisanje.getKorisnickoIme() + " nije pronadjen u bazi.\r\n");
@@ -331,6 +346,12 @@ public class MainApp {
 					System.out.println("PROMENI STATUS KORISNIKA: " + payload + "\r\n");
 					Korisnik korisnikZaPromenu = gson.fromJson(payload, Korisnik.class);
 					korisnici.promeniStatusKorisnika(korisnikZaPromenu.getKorisnickoIme());
+					if (korisnikZaPromenu.getUloga().equals(Uloga.GOST))	{
+						rezervacije.odustaniOdRezervacija(korisnikZaPromenu.getKorisnickoIme());
+					} else if (korisnikZaPromenu.getUloga().equals(Uloga.DOMACIN))	{
+						ArrayList<Integer> idApartmana = apartmani.deaktivirajApartmaneDomacina(korisnikZaPromenu.getKorisnickoIme());
+						rezervacije.odbijRezervacijeZaApartmane(idApartmana);
+					}
 					return gson.toJson(korisnici.sviKorisnici());
 				} else	{
 					System.out.println("PROMENI STATUS KORISNIKA: Korisnik " + korisnik.getKorisnickoIme() + " nije ovlascen za ovu metodu.\r\n");
@@ -362,6 +383,9 @@ public class MainApp {
 					Apartman apartmanZaBrisanje = gson.fromJson(payload, Apartman.class);
 					if (apartmani.obrisiApartman(apartmanZaBrisanje.getId()))	{
 						System.out.println("OBRISI APARTMAN: Apartman " + apartmanZaBrisanje.getId() + " uspesno obrisan iz baze.\r\n");
+						ArrayList<Integer> idApartmana = new ArrayList<Integer>();
+						idApartmana.add(apartmanZaBrisanje.getId());
+						rezervacije.odbijRezervacijeZaApartmane(idApartmana);
 						if (korisnik.getUloga().equals(Uloga.ADMINISTRATOR))	{
 							if (apartmanZaBrisanje.getStatus().equals(Status.AKTIVNO))	{
 								return gson.toJson(apartmani.dobaviAktivneApartmane());
@@ -564,11 +588,113 @@ public class MainApp {
 				}
 			} else	{
 				if (res.status() == 400)	{
-					System.out.println("IZMENI APARTMAN: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
+					System.out.println("IZMENI KOMENTAR: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
 					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
 				}
 				else if (res.status() == 500)	{ 
-					System.out.println("IZMENI APARTMAN: Ne moze da parsira JWT.\r\n");
+					System.out.println("IZMENI KOMENTAR: Ne moze da parsira JWT.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				}
+				
+				res.status(500);
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+			}
+		});
+		
+		get("/app/dobavi_korisnika", (req, res) -> {
+			Korisnik korisnik = proveraOvlascenja(req, res);
+			
+			if (korisnik != null)	{
+				return gson.toJson(korisnik);
+			} else	{
+				if (res.status() == 400)	{
+					System.out.println("DOBAVI KORISNIKA: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				}
+				else if (res.status() == 500)	{ 
+					System.out.println("DOBAVI KORISNIKA: Ne moze da parsira JWT.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				}
+				
+				res.status(500);
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+			}
+		});
+		
+		put("/app/izmeni_korisnika", (req, res) -> {
+			Korisnik korisnik = proveraOvlascenja(req, res);
+			
+			if (korisnik != null)	{
+				String payload = req.body();
+				System.out.println("IZMENI KORISNIKA: " + payload + "\r\n");
+				Korisnik izmenjenKorisnik = gson.fromJson(payload, Korisnik.class);
+				if (korisnici.izmeniKorisnika(izmenjenKorisnik))	{
+					System.out.println("IZMENI KORISNIKA: Korisnik " + izmenjenKorisnik.getKorisnickoIme() + " uspesno izmenjen i sacuvan.\r\n");
+					return gson.toJson(new Odgovor("Nalog uspešno promenjen i sačuvan."));
+				} else	{
+					System.out.println("IZMENI KORISNIKA: Greska pri izmeni korisnika. Izmenjen korisnik nije sacuvan.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške prilikom izmene. Pokušajte ponovo."));
+				}
+			} else	{
+				if (res.status() == 400)	{
+					System.out.println("IZMENI KORISNIKA: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				}
+				else if (res.status() == 500)	{ 
+					System.out.println("IZMENI KORISNIKA: Ne moze da parsira JWT.\r\n");
+					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+				}
+				
+				res.status(500);
+				return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
+			}
+		});
+		
+		post("/app/dodaj_sliku", (req, res) -> {
+			Korisnik korisnik = proveraOvlascenja(req, res);
+			
+			if (korisnik != null) {
+				String location = "image";          // the directory location where files will be stored
+				long maxFileSize = 100000000;       // the maximum size allowed for uploaded files
+				long maxRequestSize = 100000000;    // the maximum size allowed for multipart/form-data requests
+				int fileSizeThreshold = 1024;       // the size threshold after which files will be written to disk
+
+				MultipartConfigElement multipartConfigElement = new MultipartConfigElement(
+				     location, maxFileSize, maxRequestSize, fileSizeThreshold);
+				 req.raw().setAttribute("org.eclipse.jetty.multipartConfig",
+				     multipartConfigElement);
+
+				Collection<Part> parts = req.raw().getParts();
+				for (Part part : parts) {
+				   System.out.println("DODAJ SLIKU: Name: " + part.getName());
+				   System.out.println("DODAJ SLIKU: Size: " + part.getSize());
+				   System.out.println("DODAJ SLIKU: Filename: " + part.getSubmittedFileName());
+				}
+
+				String fName = req.raw().getPart("file").getSubmittedFileName();
+				System.out.println("DODAJ SLIKU: Title: " + req.raw().getParameter("title"));
+				System.out.println("DODAJ SLIKU: File: " + fName);
+
+				Part uploadedFile = req.raw().getPart("file");
+				Path out = Paths.get("static/slike/" + fName);
+				try (final InputStream in = uploadedFile.getInputStream()) {
+				   Files.copy(in, out);
+				   uploadedFile.delete();
+				   apartmani.dodajSliku(Integer.parseInt(req.headers("IdApartmana")), fName);
+				}
+				// cleanup
+				multipartConfigElement = null;
+				parts = null;
+				uploadedFile = null;
+				
+				return gson.toJson(apartmani.dobaviApartman(Integer.parseInt(req.headers("IdApartmana"))));
+			} else	{
+				if (res.status() == 400)	{
+					System.out.println("DODAJ SLIKU: Korisnik koji nije ulogovan je pokusao da pozove ovu metodu.\r\n");
+					return gson.toJson(new Odgovor("Morate se ulogovati da biste nastavili. Uskoro ćete biti prebačeni na login stranicu."));
+				}
+				else if (res.status() == 500)	{ 
+					System.out.println("DODAJ SLIKU: Ne moze da parsira JWT.\r\n");
 					return gson.toJson(new Odgovor("Došlo je do greške na serveru. Pokušajte ponovo."));
 				}
 				

@@ -10,21 +10,51 @@
     <body>
         <div id="domacin-app">
             <nav class="navbar navbar-expand navbar-dark bg-dark fixed-top">
-                <h1><a href="#" class="navbar-brand">Ovde treba ime sajta</a></h1>
+                <h1><a class="naslov" href="#" class="navbar-brand">APARTMANI</a></h1>
                 <div class="collapse navbar-collapse">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item"><a href="#" class="nav-link">Početna</a></li>
-                        <li class="nav-item"><a href="#" class="nav-link">Moj profil</a></li>
+                        <li class="nav-item"><a href="javascript:window.localStorage.setItem('uloga', 'DOMACIN');window.location = 'izmena_profila.html';" class="nav-link">Moj profil</a></li>
                         <li class="nav-item"><a href="dodaj_apartman.html" class="nav-link">Dodaj apartman</a></li>
                         <li class="nav-item"><a href="#" class="nav-link">Pregled gostiju</a></li>
                         <li class="nav-item"><a href="javascript:window.localStorage.removeItem('jwt'); window.location = 'login.html';" class="nav-link">Odjavi se</a></li>
                     </ul>
                 </div>
             </nav>
-            <br/><br/><br/>
+            <br/><br/><br/><br/>
+
+            <div style="float: right; position: fixed; margin-left: 150px; margin-top: 100px;">
+                <div v-for="sadrzaj in sadrzaji">
+                    <input type="checkbox" :value="sadrzaj.id" v-model="pretraga_sadrzaji" />
+                    <label>{{ capitalize(sadrzaj.naziv) }}</label>
+                </div>
+            </div>
 
             <div class="container">
                 <h2>Aktivni apartmani</h2>
+
+                <div class="row">
+                    <div class="col-3">
+                        <p>Sortiraj po ceni:</p>
+                        <select v-model:value="sortiranje" class="form-control" @change="sortirajPoCeni">
+                            <option disabled hidden value="">Sortiranje po ceni</option>
+                            <option value="rastuce">Rastuće</option>
+                            <option value="opadajuce">Opadajuće</option>
+                        </select>
+                    </div>
+
+                    <div class="col-3">
+                        <p>Tip:</p>
+                        <select v-model:value="pretraga_tip" class="form-control">
+                            <option disabled hidden value="">Pretraga po tipu</option>
+                            <option value="2">Sve</option>
+                            <option value="0">Apartman</option>
+                            <option value="1">Soba</option>
+                        </select>
+                        <br/>
+                    </div>
+                </div>
+
                 <table class="table table-hover" id="aktivni_apartmani">
                     <thead>
                         <tr>
@@ -40,8 +70,9 @@
                     </thead>
 
                     <tbody>
-                        <tr v-for="apartman in aktivni_apartmani">
-                            <td><img src="" alt="Nema slike" onerror="this.onerror=null;this.src='slike/no_apartment.png';"/></td>
+                        <tr v-for="apartman in filtriraniApartmani">
+                            <!--td><img src="" alt="Nema slike" onerror="this.onerror=null;this.src='slike/no_apartment.png';"/></td-->
+                            <td><img :src="prikaziSliku(apartman.slike[0])" alt="Nema slike" onerror="this.onerror=null;this.src='slike/no_apartment.png';" width="300" height="200"/></td>
                             <td>{{ apartman.tip == 0 ? 'Apartman' : 'Soba' }}</td>
                             <td>{{ apartman.brojSoba }}</td>
                             <td>{{ apartman.brojGostiju }}</td>

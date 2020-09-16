@@ -4,9 +4,18 @@ new Vue({
         //uloga: '',
         korisnici: [],
         backup_korisnici: [],
+        sadrzaji: [],
         pretraga_kor_ime: "",
         pretraga_uloga: 5,
         pretraga_pol: 5,
+
+        pretraga: '',
+        pretraga_tip: '2',
+        pretraga_cena: '0',
+        pretraga_broj_soba: '0',
+        pretraga_broj_gostiju: undefined,
+        pretraga_sadrzaji: [],
+        sortiranje: undefined,
 
         rezervacije: [],
 
@@ -109,6 +118,15 @@ new Vue({
                     window.location = 'login.html';
                 }
             });
+
+        axios
+            .get('app/dobavi_sadrzaj_apartmana')
+            .then(response => {
+                this.sadrzaji = response.data;
+            })
+            .catch(error => {
+                alert(error.response.data.sadrzaj);
+            });
     },
     methods:    {
         obrisiKorisnika: function(korisnik) {
@@ -205,7 +223,7 @@ new Vue({
         izmeniApartman: function(apartman)  {
             window.localStorage.setItem('apartman', JSON.stringify(apartman));
             window.localStorage.setItem('uloga', 'ADMINISTRATOR');
-            window.location = 'http://localhost:8080/izmena_apartmana.html';
+            window.location = 'izmena_apartmana.html';
         },
 
         prikaziStatus: function(status)   {
@@ -232,6 +250,132 @@ new Vue({
         prikaziAdresu: function(apartman)   {
             //return apartman.lokacija.adresa['mesto'] + ", " + apartman.lokacija.adresa['ulica'] + " " + apartman.lokacija.adresa['broj'];
             return apartman.lokacija.adresa['ulica'] + " " + apartman.lokacija.adresa['broj'] + "\n" + apartman.lokacija.adresa['mesto'] + "\n" + apartman.lokacija.adresa['postanskiBroj'];
+        },
+
+        prikaziSliku: function(slika)    {
+            //return atob(slika);
+            if (slika != null)  {
+                return "data:image/jpeg;base64," + slika;
+            } else  {
+                return '';
+            }
+        },
+
+        rastuce: function (a, b) {
+            if ( a.cenaPoNoci < b.cenaPoNoci )  {
+              return -1;
+            }
+            if ( a.cenaPoNoci > b.cenaPoNoci )  {
+              return 1;
+            }
+            return 0;
+        },
+
+        opadajuce: function(a, b)   {
+            if ( a.cenaPoNoci > b.cenaPoNoci )  {
+                return -1;
+              }
+              if ( a.cenaPoNoci < b.cenaPoNoci )  {
+                return 1;
+              }
+              return 0;
+        },
+
+        sortirajPoCeni: function(event)  {
+            if (this.sortiranje == 'rastuce')   {
+                this.aktivni_apartmani.sort(this.rastuce);
+            } else  {
+                this.aktivni_apartmani.sort(this.opadajuce);
+            }
+        },
+
+        capitalize: function(string)    {
+            return string.charAt(0).toUpperCase() + string.slice(1);
         }
-    }
+    },
+
+    computed:   {
+        filtriraniApartmani: function() {
+            return this.aktivni_apartmani.filter((apartman) => {
+                let gornja_granica_cena = 0;
+                let donja_granica_cena = 0;
+                let sve_cene = false;
+                switch (this.pretraga_cena) {
+                    case '0':
+                        sve_cene = true;
+                        break;
+                    case '1':
+                        gornja_granica_cena = 5;
+                        donja_granica_cena = 0;
+                        break;
+                    case '2':
+                        gornja_granica_cena = 10;
+                        donja_granica_cena = 5;
+                        break;
+                    case '3':
+                        gornja_granica_cena = 20;
+                        donja_granica_cena = 10;
+                        break;
+                    case '4':
+                        gornja_granica_cena = 30;
+                        donja_granica_cena = 20;
+                        break;
+                    case '5':
+                        gornja_granica_cena = Number.MAX_SAFE_INTEGER;
+                        donja_granica_cena = 30;
+                        break;
+                    default:
+                        break;
+                }
+
+                let gornja_granica_sobe = 0;
+                let donja_granica_sobe = 0;
+                let sve_sobe = false;
+                switch (this.pretraga_broj_soba) {
+                    case '0':
+                        sve_sobe = true;
+                        break;
+                    case '1':
+                        donja_granica_sobe = 0;
+                        gornja_granica_sobe = 1;
+                        break;
+                    case '2':
+                        donja_granica_sobe = 1;
+                        gornja_granica_sobe = 3;
+                        break;
+                    case '3':
+                        donja_granica_sobe = 3;
+                        gornja_granica_sobe = 5;
+                        break;
+                    case '4':
+                        donja_granica_sobe = 5;
+                        gornja_granica_sobe = Number.MAX_SAFE_INTEGER;
+                        break;
+                    default:
+                        break;
+                }
+
+                var result = this.pretraga_sadrzaji.every(function(val) {
+
+                    return apartman.idSadrzaja.indexOf(val) >= 0;
+                    //return this.pretraga_sadrzaji.some(sadrzaj => sadrzaj.id === val);
+                  
+                });
+
+                return (apartman.lokacija.adresa.mesto.toLowerCase().match(this.pretraga.toLowerCase()) || apartman.lokacija.adresa.ulica.toLowerCase().match(this.pretraga.toLowerCase()))
+                    && (apartman.tip == this.pretraga_tip || this.pretraga_tip == '2')
+                    && ((apartman.cenaPoNoci > donja_granica_cena && apartman.cenaPoNoci <= gornja_granica_cena) || sve_cene)
+                    && ((apartman.brojSoba > donja_granica_sobe && apartman.brojSoba <= gornja_granica_sobe) || sve_sobe)
+                    && (apartman.brojGostiju == this.pretraga_broj_gostiju || this.pretraga_broj_gostiju == undefined || this.pretraga_broj_gostiju == 0)
+                    && result;
+            });
+        }
+    },
+    
+    filters: {
+    	dateFormat: function (value, format) {
+    		var parsed = moment(value);
+    		return parsed.format(format);
+    	}
+   	}
 });

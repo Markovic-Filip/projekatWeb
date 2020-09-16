@@ -10,11 +10,11 @@
     <body>
         <div id="apartmani-app">
             <nav v-if="ulogovanKorisnik()" class="navbar navbar-expand navbar-dark bg-dark fixed-top">
-                <h1><a href="gost_page.html" class="navbar-brand">Ovde treba ime sajta</a></h1>
+                <h1><a class="naslov" href="gost_page.html" class="navbar-brand">APARTMANI</a></h1>
                 <div class="collapse navbar-collapse">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item"><a href="gost_page.html" class="nav-link">Početna</a></li>
-                        <li class="nav-item"><a href="#" class="nav-link">Moj profil</a></li>
+                        <li class="nav-item"><a href="javascript:window.localStorage.setItem('uloga', 'GOST');window.location = 'izmena_profila.html';" class="nav-link">Moj profil</a></li>
                         <li class="nav-item"><a href="#" class="nav-link">Apartmani</a></li>
                         <li class="nav-item"><a href="javascript:window.localStorage.removeItem('jwt'); window.location = 'login.html';" class="nav-link">Odjavi se</a></li>
                     </ul>
@@ -22,7 +22,7 @@
             </nav>
 
             <nav v-else class="navbar navbar-expand navbar-dark bg-dark fixed-top">
-                <h1><a href="index.html" class="navbar-brand">Ovde treba ime sajta</a></h1>
+                <h1><a class="naslov" href="index.html" class="navbar-brand">APARTMANI</a></h1>
                 <div class="collapse navbar-collapse">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item"><a href="index.html" class="nav-link">Početna</a></li>
@@ -32,7 +32,7 @@
                     </ul>
                 </div>
             </nav>
-            <br/><br/><br/>
+            <br/><br/><br/><br/>
 
             <div class="container">
                 <h1>Pregled apartmana</h1>
@@ -70,6 +70,15 @@
                     </div>
 
                     <div class="col">
+                        <p>Sortiraj po ceni:</p>
+                        <select v-model:value="sortiranje" class="form-control" @change="sortirajPoCeni">
+                            <option disabled hidden value="">Sortiranje po ceni</option>
+                            <option value="rastuce">Rastuće</option>
+                            <option value="opadajuce">Opadajuće</option>
+                        </select>
+                    </div>
+
+                    <div class="col">
                         <p>Broj soba:</p>
                         <select v-model:value="pretraga_broj_soba" class="form-control">
                             <option disabled hidden value="">Pretraga po broju soba</option>
@@ -104,7 +113,8 @@
                     <tbody>
                         <!--<tr v-for="apartman in apartmani" v-on:click="rezervisiApartman(apartman)">-->
                         <tr v-for="apartman in filtriraniApartmani" v-on:click="rezervisiApartman(apartman)">
-                            <td><img src="" alt="Nema slike" onerror="this.onerror=null;this.src='slike/no_apartment.png';"/></td>
+                            <!--td><img src="" alt="Nema slike" onerror="this.onerror=null;this.src='slike/no_apartment.png';"/></td-->
+                            <td><img :src="prikaziSliku(apartman.slike[0])" alt="Nema slike" onerror="this.onerror=null;this.src='slike/no_apartment.png';" width="300" height="200"/></td>
                             <td>{{ apartman.tip == 0 ? 'Apartman' : 'Soba' }}</td>
                             <td>{{ apartman.brojSoba }}</td>
                             <td>{{ apartman.brojGostiju }}</td>

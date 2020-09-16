@@ -16,18 +16,14 @@ public class Apartman {
 	protected Lokacija lokacija;
 	//ovo jos nisam siguran kako cemo odraditi 
 	//protected Date date;
-	//protected dostupnost po datumima
 	protected String korisnickoImeDomacina;
-	//protected komentari
-	//protected slike
+	protected ArrayList<String> imenaSlika;
+	protected ArrayList<String> slike;
 	protected double cenaPoNoci;
 	protected int vremeZaPrijavu;
 	protected int vremeZaOdjavu;
 	protected Status status;
-	//protected SadrzajApartmana sadrzajApartmana;
 	protected ArrayList<Integer> idSadrzaja;
-	// TODO: predlazem da polje rezervacije bude lista int-ova i da svaki int predstavlja kljuc (odnosno id) rezervacije koja se nalazi u RezervacijeDAO, isto vazi i za polje Domacin
-	//protected rezervacije
 	protected ArrayList<Integer> idRezervacije;
 	
 	public Apartman() {
@@ -37,12 +33,14 @@ public class Apartman {
 		this.status = Status.NEAKTIVNO;
 		this.idSadrzaja = new ArrayList<Integer>();
 		this.idRezervacije = new ArrayList<Integer>();
+		this.slike = new ArrayList<String>();
+		this.imenaSlika = new ArrayList<String>();
 		
 	}
 	
 	public Apartman(int id, Tip tip, int brojSoba,int brojGostiju, Lokacija lokacija, /*Date date, dostuponost po datumima*/
-			String korisnickoImeDomacina,/*komentari, slike*/ double cenaPoNoci, int vremeZaPrijavu, int vremeZaOdjavu, Status status,
-			ArrayList<Integer> idSadrzaja, ArrayList<Integer> idRezervacije) {
+			String korisnickoImeDomacina, double cenaPoNoci, int vremeZaPrijavu, int vremeZaOdjavu, Status status,
+			ArrayList<Integer> idSadrzaja, ArrayList<Integer> idRezervacije, ArrayList<String> imenaSlika, ArrayList<String> slike) {
 		super();
 		this.id = id;
 		this.tip = tip;
@@ -56,7 +54,8 @@ public class Apartman {
 		this.status = status;
 		this.idSadrzaja = idSadrzaja;
 		this.idRezervacije = idRezervacije;
-		
+		this.imenaSlika = imenaSlika;
+		this.slike = slike;
 		
 		
 	}
@@ -153,11 +152,27 @@ public class Apartman {
 		this.idRezervacije = idRezervacije;
 	}
 
+	public ArrayList<String> getImenaSlika() {
+		return imenaSlika;
+	}
+
+	public void setImenaSlika(ArrayList<String> imenaSlika) {
+		this.imenaSlika = imenaSlika;
+	}
+
+	public ArrayList<String> getSlike() {
+		return slike;
+	}
+
+	public void setSlike(ArrayList<String> slike) {
+		this.slike = slike;
+	}
+
 	@Override
 	public String toString() {
 		String r =  this.id + ";" + this.tip.name() + ";" + this.brojSoba + ";" + this.brojGostiju + ";" + this.lokacija.toString() +
 				";" + this.korisnickoImeDomacina + ";" + this.cenaPoNoci + ";" + this.vremeZaPrijavu +
-				";" + this.vremeZaOdjavu + ";" + this.status.name() + ";"; 
+				";" + this.vremeZaOdjavu + ";" + this.status.name() + ";" + "sadrzaji,"; 
 				
 		int brojac = 0;
 		for (int i : idSadrzaja) {
@@ -171,6 +186,12 @@ public class Apartman {
 			
 			
 		}
+		
+		if (idSadrzaja.size() == 0)
+			r += ";";
+		
+		r += "rezervacije,";
+		
 		brojac = 0;
 		for (int i : idRezervacije) {
 			brojac++;
@@ -178,8 +199,29 @@ public class Apartman {
 			if(brojac < idRezervacije.size()) {
 				r += ",";
 			}else {
+				r += ";"; 
 			}
 		}
+		
+		if (idRezervacije.size() == 0)
+			r += ";";
+		
+		r += "slike,";
+		
+		brojac = 0;
+		for (String ime : imenaSlika)	{
+			brojac++;
+			r += ime;
+			if(brojac < imenaSlika.size())	{
+				r += ",";
+			}else {
+				//r += ";";
+			}
+		}
+		
+		//if (imenaSlika.size() == 0)
+		//	r += ";";
+
 		r+="\n";
 		
 		return r;

@@ -57,11 +57,12 @@
     <body>
         <div id="izmena-apartmana-app">
             <nav v-if="uloga() === 'DOMACIN'" class="navbar navbar-expand navbar-dark bg-dark fixed-top">
-                <h1><a href="domacin_page.html" class="navbar-brand">Ovde treba ime sajta</a></h1>
+                <h1><a class="naslov" href="domacin_page.html" class="navbar-brand">APARTMANI</a></h1>
                 <div class="collapse navbar-collapse">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item"><a href="domacin_page.html" class="nav-link">Početna</a></li>
-                        <li class="nav-item"><a href="#" class="nav-link">Moj profil</a></li>
+                        <li class="nav-item"><a href="javascript:window.localStorage.setItem('uloga', 'DOMACIN');window.location = 'izmena_profila.html';" class="nav-link">Moj profil</a></li>
+                        <li class="nav-item"><a href="dodaj_apartman.html" class="nav-link">Dodaj apartman</a></li>
                         <li class="nav-item"><a href="#" class="nav-link">Pregled gostiju</a></li>
                         <li class="nav-item"><a href="javascript:window.localStorage.removeItem('jwt'); window.location = 'login.html';" class="nav-link">Odjavi se</a></li>
                     </ul>
@@ -69,18 +70,18 @@
             </nav>
 
             <nav v-else-if="uloga() === 'ADMINISTRATOR'" class="navbar navbar-expand navbar-dark bg-dark fixed-top">
-                <h1><a href="admin_page.html" class="navbar-brand">Ovde treba ime sajta</a></h1>
+                <h1><a class="naslov" href="admin_page.html" class="navbar-brand">APARTMANI</a></h1>
                 <div class="collapse navbar-collapse">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item"><a href="admin_page.html" class="nav-link">Početna</a></li>
-                        <li class="nav-item"><a href="#" class="nav-link">Moj profil</a></li>
+                        <li class="nav-item"><a href="javascript:window.localStorage.setItem('uloga', 'ADMINISTRATOR');window.location = 'izmena_profila.html';" class="nav-link">Moj profil</a></li>
                         <li class="nav-item"><a href="registration.html" class="nav-link">Dodaj domaćina</a></li>
                         <li class="nav-item"><a href="javascript:window.localStorage.removeItem('jwt'); window.location = 'login.html';" class="nav-link">Odjavi se</a></li>
                     </ul>
                 </div>
             </nav>
 
-            <br/><br/><br/>
+            <br/><br/><br/><br/>
 
             <div class="container">
 
@@ -145,8 +146,7 @@
 
                 <div class="row" v-if="uloga() === 'ADMINISTRATOR'">
                     <div class="col-4">
-                        <button v-if="apartman.status == 1" v-on:click="promeniStatus()">Aktiviraj</button>
-                        <button v-else v-on:click="promeniStatus()">Deaktiviraj</button>
+                        <label>Status:</label>
                     </div>
 
                     <div class="col-8 podatak">
@@ -154,7 +154,38 @@
                     </div>
                 </div>
 
-                <h3>Lista sadržaja:</h3>
+                <div class="row" v-if="uloga() === 'ADMINISTRATOR'">
+                    <div class="col" style="text-align: right;">
+                        <button style="margin-right: 250px; width: 150px;" v-if="apartman.status == 1" v-on:click="promeniStatus()">Aktiviraj</button>
+                        <button style="margin-right: 250px; width: 150px;" v-else v-on:click="promeniStatus()">Deaktiviraj</button>
+                    </div>
+                </div>
+
+                <h3>Galerija</h3>
+                <div class="row">
+                    <div class="col" v-for="slika in apartman.slike">
+                        <div class="galerija">
+                            <div>
+                                <img :src="prikaziSliku(slika)" alt="Nema slike" onerror="this.onerror=null;this.src='slike/no_apartment.png';" v-on:click="otvoriSliku(slika)" width="600" height="400"/>
+                            </div>
+                            <div class="desc">
+                                <input type="image" src="slike/delete.png" height="20" width="20" title="Obriši" v-on:click.prevent="obrisiSliku(slika)" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <label>Dodaj sliku:</label>
+                        <input type="file" ref="file" accept=".jpg,.png,.jpeg" v-on:change="preuzmiSliku()" />
+                    </div>
+                    <div class="col-8" style="text-align: right;">
+                        <button v-on:click="dodajSliku()" style="margin-right: 200px; margin-top: 30px;">Dodaj</button>
+                    </div>
+                </div>
+
+                <h3>Lista sadržaja</h3>
 
                 <ul>
                     <div class="row" v-for="sadrzaj in sadrzaji">
@@ -180,7 +211,7 @@
                     </div>
                 </div>
 
-                <h3>Komentari gostiju:</h3>
+                <h3>Komentari gostiju</h3>
                 <div class="comments">
                     <div class="row" v-for="komentar in komentari">
                         <div class="comment-box">

@@ -88,6 +88,51 @@ public class RezervacijeDAO {
 		rezervacije.get(id).setStatus(noviStatus);
 		azurirajBazu();
 	}
+	
+	public void obrisiRezervacijeGosta(String korisnickoIme)	{
+		ArrayList<Integer> zaBrisanje = new ArrayList<Integer>();
+		
+		for (Rezervacija rezervacija : rezervacije.values())	{
+			if (rezervacija.getKorisnickoImeGosta().equals(korisnickoIme))	{
+				zaBrisanje.add(rezervacija.getId());
+				System.out.println("RezervacijeDAO: Rezervacija id:" + rezervacija.getId() + " obrisana.\r\n");
+			}
+		}
+		
+		if (!zaBrisanje.isEmpty())	{
+			for (int i : zaBrisanje)	{
+				rezervacije.remove(i);
+			}
+			
+			azurirajBazu();
+		}
+	}
+	
+	public void odbijRezervacijeZaApartmane(ArrayList<Integer> idApartmana)	{
+		for (Rezervacija rezervacija : rezervacije.values())	{
+			if (idApartmana.contains(rezervacija.getApartmanId()))	{
+				if (!rezervacija.getStatus().equals(StatusRezervacije.ZAVRSENA) && !rezervacija.getStatus().equals(StatusRezervacije.ODUSTANAK))	{
+					rezervacija.setStatus(StatusRezervacije.ODBIJENA);
+					System.out.println("RezervacijeDAO: Rezervacija id:" + rezervacija.getId() + " novi status: " + rezervacija.getStatus().name() + "\r\n");
+				}
+			}
+		}
+		
+		azurirajBazu();
+	}
+	
+	public void odustaniOdRezervacija(String korisnickoIme)	{
+		for (Rezervacija rezervacija : rezervacije.values()) {
+			if (rezervacija.getKorisnickoImeGosta().equals(korisnickoIme))	{
+				if (!rezervacija.getStatus().equals(StatusRezervacije.ZAVRSENA) && !rezervacija.getStatus().equals(StatusRezervacije.ODBIJENA)) {
+					rezervacija.setStatus(StatusRezervacije.ODUSTANAK);
+					System.out.println("RezervacijeDAO: Rezervacija id:" + rezervacija.getId() + " novi status: " + rezervacija.getStatus().name() + "\r\n");
+				}
+			}
+		}
+		
+		azurirajBazu();
+	}
 
 	private void upisiNovuRezervaciju(Rezervacija novaRezervacija) {
 		String putanja = "./static/baza/rezervacije.txt";

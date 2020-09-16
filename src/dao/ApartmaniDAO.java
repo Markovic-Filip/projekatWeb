@@ -1,10 +1,13 @@
 package dao;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -123,6 +126,7 @@ public class ApartmaniDAO {
 	
 	public void promeniStatusApartmana(int id, Status noviStatus)	{
 		apartmani.get(id).setStatus(noviStatus);
+		System.out.println("ApartmaniDAO: Apartman id:" + id + " novi status: " + noviStatus.name() + "\r\n");
 		azurirajBazu();
 	}
 
@@ -135,6 +139,52 @@ public class ApartmaniDAO {
 			System.out.println("APARTMANI DAO: Apartman id:" + izmenjenApartman.getId() + " nije pronadjen u bazi.\r\n");
 			return false;
 		}
+	}
+	
+	public ArrayList<Integer> obrisiApartmaneDomacina(String korisnickoIme)	{
+		ArrayList<Integer> zaBrisanje = new ArrayList<Integer>();
+		for (Apartman apartman : apartmani.values())	{
+			if (apartman.getKorisnickoImeDomacina().equals(korisnickoIme)) {
+				zaBrisanje.add(apartman.getId());
+				System.out.println("ApartmaniDAO: Apartman id:" + apartman.getId() + " obrisan.\r\n");
+			}
+		}
+		
+		if (!zaBrisanje.isEmpty()) {
+			for (int i : zaBrisanje)	{
+				apartmani.remove(i);
+			}
+			
+			azurirajBazu();
+		}
+		
+		return zaBrisanje;
+	}
+	
+	public void dodajSliku(int idApartmana, String imeSlike)	{
+		apartmani.get(idApartmana).getImenaSlika().add(imeSlike);
+		apartmani.get(idApartmana).getSlike().add(ucitajSliku("./static/slike/" + imeSlike));
+		azurirajBazu();
+	}
+	
+	public Apartman dobaviApartman(int idApartmana)	{
+		return apartmani.get(idApartmana);
+	}
+	
+	public ArrayList<Integer> deaktivirajApartmaneDomacina(String korisnickoIme)	{
+		ArrayList<Integer> retVal = new ArrayList<Integer>();
+		
+		for (Apartman apartman : apartmani.values())	{
+			if (apartman.getKorisnickoImeDomacina().equals(korisnickoIme))	{
+				apartman.setStatus(Status.NEAKTIVNO);
+				System.out.println("ApartmaniDAO: Apartman id:" + apartman.getId() + " novi status: " + apartman.getStatus().name() + "\r\n");
+				retVal.add(apartman.getId());
+			}
+		}
+		
+		azurirajBazu();
+		
+		return retVal;
 	}
 	
 	private void upisiNoviApartman(Apartman novApartman) {
@@ -151,7 +201,6 @@ public class ApartmaniDAO {
 	
 	
 	
-	// TODO: thread koji poziva azuriranje na svakih 2min npr. ili posebna funkcija koja prima novi status i id rezervacije i menja status pa poziva azuriranje
 	private void azurirajBazu()	{
 		String putanja = "./static/baza/apartmani.txt";
 		try {
@@ -187,28 +236,35 @@ public class ApartmaniDAO {
 				ArrayList<Integer> idSadrzaja = new ArrayList<Integer>();
 				ArrayList<Integer> idRezervacije = new ArrayList<Integer>();
 				
-				// TODO: Moze se desiti da apartman nema sadrzaj i rezervacije, treba prvo proveriti da li ima pa onda nastaviti s ovim kodom ispod
-				if (tokeni.length >= 13)	{
-					String sadrzaj = tokeni[12];
-					String[] sadrzaji = sadrzaj.split(",");
-					for (String s : sadrzaji) {
-						idSadrzaja.add(Integer.parseInt(s));
+				String sadrzaj = tokeni[12];
+				String[] sadrzaji = sadrzaj.split(",");
+				if (sadrzaji[0].equals("sadrzaji"))	{
+					for (int i = 1; i < sadrzaji.length; i++) {
+						idSadrzaja.add(Integer.parseInt(sadrzaji[i]));
 					}
 				}
 				
-				if (tokeni.length >= 14)	{
-					String rezervacija = tokeni[13];
-					if(rezervacija.length()>1) {
-						String[] rezrevacije = rezervacija.split(",");
-						for (String r : rezrevacije) {
-							idRezervacije.add(Integer.parseInt(r));
-						}	
-					}else {
-						idRezervacije.add(Integer.parseInt(rezervacija));
-					}
+				String rezervacija = tokeni[13];
+				String[] rezervacije = rezervacija.split(",");
+				if (rezervacije[0].equals("rezervacije"))	{
+					for (int i = 1; i < rezervacije.length; i++) {
+						idRezervacije.add(Integer.parseInt(rezervacije[i]));
+					}	
 				}
 				
-				apartmani.put(id, new Apartman(id, Tip.valueOf(tokeni[1]), Integer.parseInt(tokeni[2]), Integer.parseInt(tokeni[3]),  lokacija, tokeni[7], Double.parseDouble(tokeni[8]), Integer.parseInt(tokeni[9]), Integer.parseInt(tokeni[10]), Status.valueOf(tokeni[11]),idSadrzaja,idRezervacije ));
+				ArrayList<String> imenaSlika = new ArrayList<String>();
+				ArrayList<String> slike = new ArrayList<String>();
+				String slika = tokeni[14];
+				String[] slikePutanja = slika.split(",");
+				if (slikePutanja[0].equals("slike"))	{
+					for (int i = 1; i < slikePutanja.length; i++)	{
+						slike.add(ucitajSliku("./static/slike/" + slikePutanja[i]));
+						imenaSlika.add(slikePutanja[i]);
+					}
+				}
+				// TODO: ubaciti slike u konstruktor
+				apartmani.put(id, new Apartman(id, Tip.valueOf(tokeni[1]), Integer.parseInt(tokeni[2]), Integer.parseInt(tokeni[3]),  lokacija, tokeni[7], Double.parseDouble(tokeni[8]), Integer.parseInt(tokeni[9]), Integer.parseInt(tokeni[10]), Status.valueOf(tokeni[11]),idSadrzaja,idRezervacije, imenaSlika, slike));
+				//apartmani.put(id, new Apartman(id, Tip.valueOf(tokeni[1]), Integer.parseInt(tokeni[2]), Integer.parseInt(tokeni[3]),  lokacija, tokeni[7], Double.parseDouble(tokeni[8]), Integer.parseInt(tokeni[9]), Integer.parseInt(tokeni[10]), Status.valueOf(tokeni[11]),idSadrzaja,idRezervacije ));
 				System.out.println("ApartmaniDAO: " + apartmani.get(id).toString() + "\r\n");
 			}
 			
@@ -233,6 +289,20 @@ public class ApartmaniDAO {
 		} catch (Exception e)	{
 			e.printStackTrace();
 			System.out.println("Fajl " + putanja + " nije pronadjen.\r\n");
+		}
+	}
+	
+	private String ucitajSliku(String putanja)	{
+		try {
+			//File file = new ClassPathResource(putanja).getFile();
+			File file = new File(putanja);
+	    
+			String encodeImage = Base64.getEncoder().withoutPadding().encodeToString(Files.readAllBytes(file.toPath()));
+			
+			return encodeImage;
+		} catch (Exception e) {
+			System.out.println("ApartmaniDAO: Fajl " + putanja + " nije pronadjen.\r\n");
+			return null;
 		}
 	}
 	

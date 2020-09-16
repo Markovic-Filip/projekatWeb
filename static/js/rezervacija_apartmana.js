@@ -13,7 +13,7 @@ new Vue({
     mounted()   {
         this.apartman = JSON.parse(window.localStorage.getItem('apartman'));
         if (this.apartman == null)   {
-            window.location = 'http://localhost:8080/apartmani.html';
+            window.location = 'apartmani.html';
         }/* else  {
             window.localStorage.removeItem('apartman'); // Premestio sam ovo posle ajax poziva za slanje rezervacije
         }*/
@@ -143,6 +143,25 @@ new Vue({
             return this.apartman.lokacija.adresa['ulica'] + " " + this.apartman.lokacija.adresa['broj'] + ", " + this.apartman.lokacija.adresa['mesto'] + ", " + this.apartman.lokacija.adresa['postanskiBroj'];
         },
         
+        prikaziSliku: function(slika)    {
+            //return atob(slika);
+            return "data:image/jpeg;base64," + slika;
+        },
+
+        /*otvoriSliku: function (slika)    {
+            var newTab = window.open();
+            newTab.document.body.innerHTML = '<img src="data:image/jpeg;base64,' + slika + '" width="600px" height="400px">';
+        },*/
+
+        otvoriSliku: function (slika) {
+            var image = new Image();
+            image.src = "data:image/jpg;base64," + slika;
+    
+            var w = window.open("");
+            w.document.write(image.outerHTML);
+            w.document.close();
+        },
+
         capitalize: function(string)    {
             return string.charAt(0).toUpperCase() + string.slice(1);
         }

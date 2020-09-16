@@ -1,5 +1,5 @@
 1;2;1598943600000;10;50.00;dummy_poruka 1;pera52;ODBIJENA
 2;1;1605020400000;2;20.00;dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2dummy_poruka 2;pera52;KREIRANA
 3;3;1592222400000;5;100.00;dummy_poruka 3;mika8834;ZAVRSENA
-4;2;1600858020000;3;15.0;test poruka 2;pera52;ZAVRSENA
+4;2;1599256800000;3;15.0;test poruka 2;pera52;ZAVRSENA
 5;3;1603108980000;6;120.0;test poruka 3;milicaM;ZAVRSENA
