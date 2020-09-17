@@ -1002,6 +1002,11 @@ public class MainApp {
 							//apartmani.oslobodiDatume(izmenjenaRezervacija.getApartmanId(), izmenjenaRezervacija.getPocetniDatum(), izmenjenaRezervacija.getBrojNocenja());
 							apartmani.dobaviApartman(izmenjenaRezervacija.getApartmanId()).setZauzetiDatumi(rezervacije.zauzetiDatumiApartmana(izmenjenaRezervacija.getApartmanId()));
 						}
+						// TODO: ovo sam dodao sinoc, mozda ne valja
+						else if (izmenjenaRezervacija.getStatus().equals(StatusRezervacije.ZAVRSENA))	{
+							Gost gost = (Gost) korisnici.dobaviKorisnika(izmenjenaRezervacija.getKorisnickoImeGosta());
+							gost.getIznajmljeniApartmani().add(izmenjenaRezervacija.getApartmanId());
+						}
 						System.out.println("IZMENI REZERVACIJU: Rezervacija id:" + izmenjenaRezervacija.getId() + " uspesno izmenjena i sacuvana.\r\n");
 						return gson.toJson(new Odgovor("Status rezervacije promenjen."));
 					} else	{
