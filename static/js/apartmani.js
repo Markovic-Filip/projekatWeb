@@ -135,7 +135,7 @@ new Vue({
                 return (apartman.lokacija.adresa.mesto.toLowerCase().match(this.pretraga.toLowerCase()) || apartman.lokacija.adresa.ulica.toLowerCase().match(this.pretraga.toLowerCase()))
                     && (apartman.tip == this.pretraga_tip || this.pretraga_tip == '2')
                     && ((apartman.cenaPoNoci > donja_granica_cena && apartman.cenaPoNoci <= gornja_granica_cena) || sve_cene)
-                    && ((apartman.brojSoba > donja_granica_sobe && apartman.brojSoba <= gornja_granica_sobe) || sve_sobe)
+                    && ((apartman.brojSoba >= donja_granica_sobe && apartman.brojSoba <= gornja_granica_sobe) || sve_sobe)
                     && (apartman.brojGostiju == this.pretraga_broj_gostiju || this.pretraga_broj_gostiju == undefined || this.pretraga_broj_gostiju == 0);
             });
         }

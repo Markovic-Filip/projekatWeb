@@ -41,6 +41,7 @@ import dao.RezervacijeDAO;
 import dao.SadrzajApartmanaDAO;
 import enums.Status;
 import enums.StatusKorisnika;
+import enums.StatusRezervacije;
 import enums.Uloga;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -352,11 +353,21 @@ public class MainApp {
 					System.out.println("PROMENI STATUS KORISNIKA: " + payload + "\r\n");
 					Korisnik korisnikZaPromenu = gson.fromJson(payload, Korisnik.class);
 					korisnici.promeniStatusKorisnika(korisnikZaPromenu.getKorisnickoIme());
+					korisnikZaPromenu = korisnici.dobaviKorisnika(korisnikZaPromenu.getKorisnickoIme());
 					if (korisnikZaPromenu.getUloga().equals(Uloga.GOST))	{
-						rezervacije.odustaniOdRezervacija(korisnikZaPromenu.getKorisnickoIme());
+						Gost gost = (Gost) korisnikZaPromenu;
+						if (gost.getStatus().equals(StatusKorisnika.BLOKIRAN))	{
+							rezervacije.odustaniOdRezervacija(korisnikZaPromenu.getKorisnickoIme());
+							for(Apartman apartman : apartmani.sviApartmani()) {
+								apartman.setZauzetiDatumi(rezervacije.zauzetiDatumiApartmana(apartman.getId()));
+							}
+						}
 					} else if (korisnikZaPromenu.getUloga().equals(Uloga.DOMACIN))	{
-						ArrayList<Integer> idApartmana = apartmani.deaktivirajApartmaneDomacina(korisnikZaPromenu.getKorisnickoIme());
-						rezervacije.odbijRezervacijeZaApartmane(idApartmana);
+						Domacin domacin = (Domacin) korisnikZaPromenu;
+						if (domacin.getStatus().equals(StatusKorisnika.BLOKIRAN))	{
+							ArrayList<Integer> idApartmana = apartmani.deaktivirajApartmaneDomacina(korisnikZaPromenu.getKorisnickoIme());
+							rezervacije.odbijRezervacijeZaApartmane(idApartmana);							
+						}
 					}
 					return gson.toJson(korisnici.sviKorisnici());
 				} else	{
@@ -440,9 +451,10 @@ public class MainApp {
 					Rezervacija novaRezervacija = gson.fromJson(payload, Rezervacija.class);
 					novaRezervacija.setGost(korisnik.getKorisnickoIme());
 					if (rezervacije.dodajNovuRezervaciju(novaRezervacija))	{
+						apartmani.dobaviApartman(novaRezervacija.getApartmanId()).setZauzetiDatumi(rezervacije.zauzetiDatumiApartmana(novaRezervacija.getApartmanId()));
 						System.out.println("NAPRAVI REZERVACIJU: Nova rezervacija id:" + novaRezervacija.getId() + " uspesno kreirana.\r\n");
 						korisnici.dodajRezervaciju(korisnik.getKorisnickoIme(), novaRezervacija.getId());
-						return gson.toJson(new Odgovor("Uspešno ste rezervisali apartman."));
+						return gson.toJson(new Odgovor("Uspešno ste rezervisali apartman. Ukupna cena: " + novaRezervacija.getCena()));
 					} else	{
 						System.out.println("NAPRAVI REZERVACIJU: Datumi se preklapaju, rezervacija nije napravljena.\r\n");
 						return gson.toJson(new Odgovor("Datumi za izabrani apartman su zauzeti. Pokušajte neki drugi apartman ili datum."));
@@ -482,6 +494,7 @@ public class MainApp {
 						apartmani.dodajNoviApartman(noviApartman);
 						System.out.println("Dodavanje apartmana: Apartman " + noviApartman.getId() + " uspesno dodat.\r\n");
 						korisnici.dodajApartman(korisnik.getKorisnickoIme(), noviApartman.getId());
+						res.header("idnovogapartmana", noviApartman.getId() + "");
 						return gson.toJson(new Odgovor("Apartman uspešno dodat."));
 
 					} else	{
@@ -519,6 +532,11 @@ public class MainApp {
 					Apartman izmenjenApartman = gson.fromJson(payload, Apartman.class);
 					if (apartmani.izmeniApartman(izmenjenApartman))	{
 						System.out.println("IZMENI APARTMAN: Apartman id:" + izmenjenApartman.getId() + " uspesno izmenjen i sacuvan.\r\n");
+						if (izmenjenApartman.getStatus().equals(Status.NEAKTIVNO))	{
+							ArrayList<Integer> idApartmana = new ArrayList<Integer>();
+							idApartmana.add(izmenjenApartman.getId());
+							rezervacije.odbijRezervacijeZaApartmane(idApartmana);
+						}
 						return gson.toJson(new Odgovor("Apartman uspešno izmenjen."));
 					} else	{
 						System.out.println("IZMENI APARTMAN: Greska pri izmeni apartmana. Izmenjen apartman nije sacuvan.\r\n");
@@ -980,6 +998,10 @@ public class MainApp {
 					System.out.println("IZMENI REZERVACIJU: " + payload + "\r\n");
 					Rezervacija izmenjenaRezervacija = gson.fromJson(payload, Rezervacija.class);
 					if (rezervacije.promeniStatusRezervacije(izmenjenaRezervacija.getId(), izmenjenaRezervacija.getStatus()))	{
+						if (izmenjenaRezervacija.getStatus().equals(StatusRezervacije.ODUSTANAK) || izmenjenaRezervacija.getStatus().equals(StatusRezervacije.ODBIJENA))	{
+							//apartmani.oslobodiDatume(izmenjenaRezervacija.getApartmanId(), izmenjenaRezervacija.getPocetniDatum(), izmenjenaRezervacija.getBrojNocenja());
+							apartmani.dobaviApartman(izmenjenaRezervacija.getApartmanId()).setZauzetiDatumi(rezervacije.zauzetiDatumiApartmana(izmenjenaRezervacija.getApartmanId()));
+						}
 						System.out.println("IZMENI REZERVACIJU: Rezervacija id:" + izmenjenaRezervacija.getId() + " uspesno izmenjena i sacuvana.\r\n");
 						return gson.toJson(new Odgovor("Status rezervacije promenjen."));
 					} else	{

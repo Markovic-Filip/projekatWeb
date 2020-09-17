@@ -22,6 +22,8 @@ new Vue({
             }
         }
 
+        this.apartman.zauzetiDatumi = null;
+
         axios
             .get('app/dobavi_sadrzaj_apartmana', {
                 params: {

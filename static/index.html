@@ -11,6 +11,10 @@
                 background-image: url(slike/background.jpg);
                 height: 900px;
             }
+            
+            .sadrzaj    {
+                text-align: center;
+            }
         </style>
     </head>
 
@@ -36,13 +40,12 @@
                 </div>
             </nav>
             <br/><br/><br/><br/>
-
-            <!-- TODO: ovde bi mogla npr. biti lista/tabela 5 najpopularniji apartmana ili lokacija
-                       ili lista/tabela svih apartmana pa bez linka 'Apartmani' u nav-baru -->
         </div>
 
-        <div class="jumbotron welcome">
-
+        <div class="jumbotron welcome sadrzaj">
+            <input type="image" src="slike/get_started.png" style="margin-top: 400px;" onClick="(function(){
+                window.location = 'registration.html';
+            })();return false;" height="100px" width="300px" />
         </div>
     <!-- Zasad nema potrebe za JS aplikacijom
 

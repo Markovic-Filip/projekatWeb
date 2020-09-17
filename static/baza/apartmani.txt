@@ -4,3 +4,4 @@
 4;CEO_APARTMAN;3;5;Karađorđeva,25,Kragujevac - Srbija,34000;44.01;20.91;paja_36;7.0;12;11;AKTIVNO;sadrzaji,1,2,3;rezervacije,1;slike,
 5;CEO_APARTMAN;2;5;Vukovarska ulica,30,Osijek - Hrvatska,31000;45.55;18.69;djura_74;10.0;14;10;NEAKTIVNO;sadrzaji,2,5,7,10;rezervacije,;slike,4.jpg
 6;SOBA;1;1;Halida Kajtaza,22,Sarajevo - Bosna i Hercegovina,71000;43.85;18.4;mima;14.0;14;10;NEAKTIVNO;sadrzaji,7,9,10,13;rezervacije,;slike,
+8;CEO_APARTMAN;4;7;Sebastijan Kavac,56,Maribor - Slovenija,46500;40.0;20.0;mandara;19.5;14;10;AKTIVNO;sadrzaji,2,3,6,11,8,13;rezervacije,;slike,

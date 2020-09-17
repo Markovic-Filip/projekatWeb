@@ -19,6 +19,7 @@ new Vue({
         idSadrzaja: [],
         idRezervacije: [],
         sadrzaj: [],
+        fajl: '',
         
         
         valid: true
@@ -225,6 +226,29 @@ new Vue({
                     this.$refs.msg.classList.remove("error-msg");
                     this.$refs.msg.classList.add("ok-msg");
                     this.$refs.msg.innerHTML = response.data.sadrzaj;
+
+                    if (this.fajl != null)   {
+                        let formData = new FormData();
+                        formData.append('file', this.fajl);
+
+                        let id = response.headers['idnovogapartmana'];
+
+                        axios
+                            .post('app/dodaj_sliku', formData, {
+                                headers: {
+                                    'Content-Type': 'multipart/form-data',
+                                    'Authorization': 'Bearer ' + window.localStorage.getItem('jwt'),
+                                    'IdApartmana': id
+                                }
+                            })
+                            .then(response => {
+                                this.apartman = response.data;
+                            })
+                            .catch(error => {
+                                console.log(error);
+                                alert(error.response.data.sadrzaj);
+                            });
+                    }
                 })
                 .catch(error => {
                     console.log(error);
@@ -237,7 +261,11 @@ new Vue({
     		
     		
     		
-    	},
+        },
+        
+        preuzmiSliku: function() {
+            this.fajl = this.$refs.file.files[0];
+        },
 
         capitalize: function(string)    {
             return string.charAt(0).toUpperCase() + string.slice(1);

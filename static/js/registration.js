@@ -140,7 +140,7 @@ new Vue({
                             //this.$refs.msg.innerHTML = 'Korisnik ' + response.data.korisnickoIme + ' uspešno registrovan!';
                             //document.getElementById('registForma').reset();
                             window.localStorage.setItem('jwt', response.data.JWTToken);
-                            window.location = "index.html";
+                            window.location = "gost_page.html";
                         } else  {
                             console.log(response);
                         }
