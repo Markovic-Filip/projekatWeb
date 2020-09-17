@@ -132,7 +132,16 @@ public class ApartmaniDAO {
 
 	public boolean izmeniApartman(Apartman izmenjenApartman)	{
 		if (apartmani.containsKey(izmenjenApartman.getId()))	{
-			apartmani.put(izmenjenApartman.getId(), izmenjenApartman);
+			//apartmani.put(izmenjenApartman.getId(), izmenjenApartman);
+			Apartman apartmanZaIzmenu = apartmani.get(izmenjenApartman.getId());
+			apartmanZaIzmenu.setTip(izmenjenApartman.getTip());
+			apartmanZaIzmenu.setBrojSoba(izmenjenApartman.getBrojSoba());
+			apartmanZaIzmenu.setBrojGostiju(izmenjenApartman.getBrojGostiju());
+			apartmanZaIzmenu.setCenaPoNoci(izmenjenApartman.getCenaPoNoci());
+			apartmanZaIzmenu.setVremeZaPrijavu(izmenjenApartman.getVremeZaPrijavu());
+			apartmanZaIzmenu.setVremeZaOdjavu(izmenjenApartman.getVremeZaOdjavu());
+			apartmanZaIzmenu.setIdSadrzaja(izmenjenApartman.getIdSadrzaja());
+			apartmanZaIzmenu.setStatus(izmenjenApartman.getStatus());
 			azurirajBazu();
 			return true;
 		} else	{
@@ -198,6 +207,25 @@ public class ApartmaniDAO {
 		
 		return retVal;
 	}
+	
+	/*
+	public void oslobodiDatume(int idApartmana, Date pocetniDatum, int brojNocenja)	{
+		ArrayList<Date> zauzetiDatumi = apartmani.get(idApartmana).getZauzetiDatumi();
+		ArrayList<Date> azuriraniZauzetiDatumi = new ArrayList<Date>();
+		boolean jednaki = false;
+		for (Date datum : zauzetiDatumi)	{
+			for (int i = 0; i < brojNocenja; i++)	{
+				if (datum.compareTo(new Date(pocetniDatum.getTime() + i * brojNocenja * 86400000)) != 0)	{
+					jednaki = true;
+					break;
+				}
+			}
+			
+			if (!jednaki)	{
+				azuriraniZauzetiDatumi.add(datum);
+			}
+		}
+	}*/
 	
 	private void upisiNoviApartman(Apartman novApartman) {
 		String putanja = "./static/baza/apartmani.txt";
@@ -274,7 +302,6 @@ public class ApartmaniDAO {
 						imenaSlika.add(slikePutanja[i]);
 					}
 				}
-				// TODO: ubaciti slike u konstruktor
 				apartmani.put(id, new Apartman(id, Tip.valueOf(tokeni[1]), Integer.parseInt(tokeni[2]), Integer.parseInt(tokeni[3]),  lokacija, tokeni[7], Double.parseDouble(tokeni[8]), Integer.parseInt(tokeni[9]), Integer.parseInt(tokeni[10]), Status.valueOf(tokeni[11]),idSadrzaja,idRezervacije, imenaSlika, slike));
 				//apartmani.put(id, new Apartman(id, Tip.valueOf(tokeni[1]), Integer.parseInt(tokeni[2]), Integer.parseInt(tokeni[3]),  lokacija, tokeni[7], Double.parseDouble(tokeni[8]), Integer.parseInt(tokeni[9]), Integer.parseInt(tokeni[10]), Status.valueOf(tokeni[11]),idSadrzaja,idRezervacije ));
 				System.out.println("ApartmaniDAO: " + apartmani.get(id).toString() + "\r\n");

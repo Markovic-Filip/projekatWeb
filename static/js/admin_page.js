@@ -309,7 +309,7 @@ new Vue({
                         data: sadrzaji
                     })
                     .then(response => {
-                        this.sadrzajApartmana=response.data;
+                        this.sadrzaji=response.data;
                     })
                     .catch(error => {
                         console.log(error);
@@ -353,7 +353,7 @@ new Vue({
         				'id' : -1
         				};
 
-        		this.sadrzajApartmana.push(sadrzajApartmana)
+        		this.sadrzaji.push(sadrzajiApartmana)
         		let putanja = 'app/dodavanje_sadrzaja';
 
                 axios
@@ -365,7 +365,7 @@ new Vue({
                     })
                     .then(response => {
 
-                    	this.sadrzajApartmana=response.data;
+                    	this.sadrzaji=response.data;
 
                     })
                     .catch(error => {
@@ -383,7 +383,7 @@ new Vue({
             
             sacuvajIzmene: function()   {
                 axios
-                .put('app/izmeni_sadrzaj_apartmana', this.sadrzajApartmana, {
+                .put('app/izmeni_sadrzaj_apartmana', this.sadrzaji, {
                     headers:    {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + window.localStorage.getItem('jwt')

@@ -113,11 +113,24 @@ new Vue({
         },
 
         rezervisi: function()   {
+
+            let cena = 0;
+
+            for (let i = 0; i < this.brojNocenja; i++)  {
+                let currentDate = new Date(this.pocetniDatum.getTime() + i * 86400000).getDay();
+                if (currentDate == 0 || currentDate == 5 || currentDate == 6)   {
+                    cena += this.apartman.cenaPoNoci * 0.9;
+                } else  {
+                    cena += this.apartman.cenaPoNoci;
+                }
+            }
+            
             let rezervacija = {
                 'apartmanId': this.apartman.id,
                 'pocetniDatum': this.pocetniDatum.getTime(),
                 'brojNocenja': this.brojNocenja,
-                'cena': this.apartman.cenaPoNoci * this.brojNocenja,
+                /*'cena': this.apartman.cenaPoNoci * this.brojNocenja,*/
+                'cena': cena,
                 'poruka': this.poruka
             }
 

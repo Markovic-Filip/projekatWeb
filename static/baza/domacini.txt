@@ -1,3 +1,5 @@
 mima;mimaPass;Mima;Mimic;ZENSKO;AKTIVAN
+veraVera;veraVera22;Vera;Veric;ZENSKO;BLOKIRAN
 paja_36;pajaPaja;Pavle;Pajic;MUSKO;AKTIVAN
 djura_74;djuraa974;Djura;Djuric;MUSKO;AKTIVAN
+mandara;voliDrvece89;Violeta;Subic;OSTALO;AKTIVAN

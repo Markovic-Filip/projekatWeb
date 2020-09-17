@@ -99,6 +99,17 @@
                     <div class="invalid-feedback">Unesite cenu po noći. Samo brojevi sa .!</div>
                 </div>
                 
+                <br/><br/>
+
+                <div class="row">
+                    <div class="col-4">
+                        <label>Dodaj sliku:</label>
+                        <input type="file" ref="file" accept=".jpg,.png,.jpeg" v-on:change="preuzmiSliku()" />
+                    </div>
+                </div>
+
+                <br/><br/>
+
                 <div class="row">
                     <div class="col">
                         <div class="form-group">
@@ -128,8 +139,9 @@
                 
 
                
-					
-                <button v-on:click.prevent="validacija">Dodaj apartman</button>
+				<div class="row" style="text-align: center;">
+                    <button v-on:click.prevent="validacija">Dodaj apartman</button>
+                </div>	
             </form>
             <div class="row">
                 <div class="col" align="center">

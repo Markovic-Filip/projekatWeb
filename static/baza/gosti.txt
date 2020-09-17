@@ -1,3 +1,5 @@
 milicaM;lozinka64;Milica;Milic;ZENSKO;AKTIVAN
 pera52;peraPeric02;Pera;Peric;MUSKO;AKTIVAN
 mika8834;mikaMikic88;Mika;Mikic;MUSKO;AKTIVAN
+losmi_89;losmi1989;Milos;Jovanovic;OSTALO;AKTIVAN
+vasa_vasic;vasaVasa2;Vasa;Vasic;MUSKO;BLOKIRAN

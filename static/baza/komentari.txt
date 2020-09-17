@@ -2,3 +2,4 @@
 2;pera52;2;bravo;8;true
 3;mika8834;3;odlicna lokacija;9;true
 4;pera52;2;Zasto sam odbijen?;1;false
+5;losmi_89;4;Odbijen sam zasto?;1;true

@@ -99,7 +99,8 @@
 
                     <tbody>
                         <tr v-for="apartman in neaktivni_apartmani">
-                            <td><img src="" alt="Nema slike" onerror="this.onerror=null;this.src='slike/no_apartment.png';"/></td>
+                            <!--td><img src="" alt="Nema slike" onerror="this.onerror=null;this.src='slike/no_apartment.png';"/></td-->
+                            <td><img :src="prikaziSliku(apartman.slike[0])" alt="Nema slike" onerror="this.onerror=null;this.src='slike/no_apartment.png';" width="300" height="200"/></td>
                             <td>{{ apartman.tip == 0 ? 'Apartman' : 'Soba' }}</td>
                             <td>{{ apartman.brojSoba }}</td>
                             <td>{{ apartman.brojGostiju }}</td>

@@ -11,3 +11,4 @@
 11;lift
 12;frizider
 13;kupatilo
+14;garaza
