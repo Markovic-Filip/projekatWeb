@@ -134,5 +134,12 @@ new Vue({
         }
     
 
-    }
+    },
+
+    filters: {
+    	dateFormat: function (value, format) {
+    		var parsed = moment(value);
+    		return parsed.format(format);
+    	}
+   	}
 });

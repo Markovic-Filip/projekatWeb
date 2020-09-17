@@ -44,6 +44,8 @@ table   {
     height: 5em;
     font-family: 'Times New Roman', Times, serif;
     font-size: larger;
+    border: black solid thin;
+    margin: 2px;
 }
 
 #aktivni_apartmani td   {
