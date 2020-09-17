@@ -153,7 +153,8 @@ public class KorisniciDAO {
 	}
 	
 	
-	// TODO: PROVERI DAL TREBA
+	// TODO: PROVERI DA LI TREBA
+	/*
 	public Gost ucitajRezervacije(String korisnickoIme) {
 		String putanja = "./static/baza/korisnici/" + korisnickoIme + "-Rezervacije.txt";
 		Gost gost = (Gost) korisnici.get(korisnickoIme);
@@ -189,7 +190,7 @@ public class KorisniciDAO {
 			System.out.println("Fajl " + putanja + " nije pronadjen.\r\n");
 			return null;
 		}
-	}
+	}*/
 	
 	private void ucitajKorisnike(String putanja, Uloga uloga)	{
 		BufferedReader bafer;

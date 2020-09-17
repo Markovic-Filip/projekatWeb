@@ -317,5 +317,12 @@ new Vue({
                 		&& (rezervacija.status == this.pretraga_status || this.pretraga_status == '5');
             });
         }
-    }
+    },
+
+    filters: {
+    	dateFormat: function (value, format) {
+    		var parsed = moment(value);
+    		return parsed.format(format);
+    	}
+   	}
 });

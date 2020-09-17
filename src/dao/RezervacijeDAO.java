@@ -43,32 +43,35 @@ public class RezervacijeDAO {
 		
 		// Prolaz kroz sve rezervacije u sistemu
 		for (Rezervacija rezervacija : rezervacije.values()) {
-			// Ako se trenutna rezervacija odnosi na isti apartman koji trenutno zelim da rezervisem 
-			if (rezervacija.getApartmanId() == novaRezervacija.getApartmanId())	{
-				// Ako je pocetni datum trenutne rezervacije posle pocetnog datuma nove rezervacije  
-				if (rezervacija.getPocetniDatum().compareTo(novaRezervacija.getPocetniDatum()) > 0)	{
-					// Ako je pocetni datum trenutne rezervacije posle krajnjeg datuma nove rezervacije -> ne preklapaju se
-					if (rezervacija.getPocetniDatum().compareTo(novaRezervacija.getKrajnjiDatum()) >= 0)	{
-						retVal = true;
-					// Inace se preklapaju stoga rezervacija nije validna
+			// Ako je rezervacija kreirana/prihvacena (ako je odbijena, zavrsena ili je odustano od nje, ti datumi nisu zauzeti)
+			if (rezervacija.getStatus().equals(StatusRezervacije.KREIRANA) || rezervacija.getStatus().equals(StatusRezervacije.PRIHVACENA))	{
+				// Ako se trenutna rezervacija odnosi na isti apartman koji trenutno zelim da rezervisem 
+				if (rezervacija.getApartmanId() == novaRezervacija.getApartmanId())	{
+					// Ako je pocetni datum trenutne rezervacije posle pocetnog datuma nove rezervacije  
+					if (rezervacija.getPocetniDatum().compareTo(novaRezervacija.getPocetniDatum()) > 0)	{
+						// Ako je pocetni datum trenutne rezervacije posle krajnjeg datuma nove rezervacije -> ne preklapaju se
+						if (rezervacija.getPocetniDatum().compareTo(novaRezervacija.getKrajnjiDatum()) >= 0)	{
+							retVal = true;
+						// Inace se preklapaju stoga rezervacija nije validna
+						} else	{
+							retVal = false;
+							break;
+						}
+					// Ako je pocetni datum trenutne rezervacije pre pocetnog datuma nove rezervacije
+					} else if (rezervacija.getPocetniDatum().compareTo(novaRezervacija.getPocetniDatum()) < 0)	{
+						// Ako je krajnji datum trenutne rezervacije pre pocetnog datuma nove rezervacije -> nepreklapaju se
+						if (rezervacija.getKrajnjiDatum().compareTo(novaRezervacija.getPocetniDatum()) <= 0)	{
+							retVal = true;
+						// Inace se preklapaju stoga rezervacija nije validna
+						} else	{
+							retVal = false;
+							break;
+						}
+					// Inace se rezervacije odnose na isti datum -> preklapaju se
 					} else	{
 						retVal = false;
 						break;
 					}
-				// Ako je pocetni datum trenutne rezervacije pre pocetnog datuma nove rezervacije
-				} else if (rezervacija.getPocetniDatum().compareTo(novaRezervacija.getPocetniDatum()) < 0)	{
-					// Ako je krajnji datum trenutne rezervacije pre pocetnog datuma nove rezervacije -> nepreklapaju se
-					if (rezervacija.getKrajnjiDatum().compareTo(novaRezervacija.getPocetniDatum()) <= 0)	{
-						retVal = true;
-					// Inace se preklapaju stoga rezervacija nije validna
-					} else	{
-						retVal = false;
-						break;
-					}
-				// Inace se rezervacije odnose na isti datum -> preklapaju se
-				} else	{
-					retVal = false;
-					break;
 				}
 			}
 		}

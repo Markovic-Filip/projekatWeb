@@ -1,5 +1,5 @@
 1;CEO_APARTMAN;2;4;Balzakova,15,Novi Sad - Srbija,21000;15.0;15.0;mima;12.0;13;10;AKTIVNO;sadrzaji,1,2,3;rezervacije,2;slike,1.jpg,3.jpg
-2;CEO_APARTMAN;1;3;Sekspirova,16,Novi Sad - Srbija,21000;20.0;20.0;paja_36;5.0;12;9;AKTIVNO;sadrzaji,1,2,9;rezervacije,1;slike,5.jpg
+2;CEO_APARTMAN;1;3;Šekspirova,16,Novi Sad - Srbija,21000;20.0;20.0;paja_36;5.0;12;9;AKTIVNO;sadrzaji,1,2,9;rezervacije,1;slike,5.jpg
 3;SOBA;1;2;Kneza Miloša,47,Beograd - Srbija,11000;44.8;25.45;djura_74;20.0;14;9;AKTIVNO;sadrzaji,4,7,9;rezervacije,3;slike,2.jpg
 4;CEO_APARTMAN;3;5;Karađorđeva,25,Kragujevac - Srbija,34000;44.01;20.91;paja_36;7.0;12;11;AKTIVNO;sadrzaji,1,2,3;rezervacije,1;slike,
 5;CEO_APARTMAN;2;5;Vukovarska ulica,30,Osijek - Hrvatska,31000;45.55;18.69;djura_74;10.0;14;10;NEAKTIVNO;sadrzaji,2,5,7,10;rezervacije,;slike,4.jpg

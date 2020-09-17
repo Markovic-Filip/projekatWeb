@@ -53,7 +53,7 @@
                     <tbody>
                         <tr v-for="rezervacija in rezervacije">
                             <td>{{ rezervacija.apartmanId }}</td>
-                            <td>{{ rezervacija.pocetniDatum }}</td>
+                            <td>{{ rezervacija.pocetniDatum | dateFormat('DD.MM.YYYY') }}</td>
                             <td>{{ rezervacija.brojNocenja }}</td>
                             <td>{{ rezervacija.cena.toFixed(2) }} €</td>  <!-- toFixed(2) zaokruzuje broj na 2 decimale -->
                             <td>{{ rezervacija.korisnickoImeGosta }}</td>
@@ -98,6 +98,7 @@
 
         <script src="./js/vue.js"></script>
         <script src="./js/axios.js"></script>
+        <script src="./js/moment.min.js"></script>
         <script src="./js/gost_page.js"></script>
     </body>
 </html>

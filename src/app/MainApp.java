@@ -741,7 +741,8 @@ public class MainApp {
 			Korisnik korisnik = proveraOvlascenja(req, res);
 			if (korisnik != null)	{
 				if (korisnik.getUloga().equals(Uloga.GOST))	{
-					Gost gost = korisnici.ucitajRezervacije(korisnik.getKorisnickoIme());
+					//Gost gost = korisnici.ucitajRezervacije(korisnik.getKorisnickoIme());
+					Gost gost = (Gost) korisnik;
 					ArrayList<Rezervacija> rez = rezervacije.sveRezervacijeGosta(gost.getRezervacije());
 					return gson.toJson(rez);
 				} else	{
@@ -767,7 +768,8 @@ public class MainApp {
 			Korisnik korisnik = proveraOvlascenja(req, res);
 			if (korisnik != null)	{
 				if (korisnik.getUloga().equals(Uloga.DOMACIN))	{
-					Domacin domacin = korisnici.ucitajApartmane(korisnik.getKorisnickoIme());
+					//Domacin domacin = korisnici.ucitajApartmane(korisnik.getKorisnickoIme());
+					Domacin domacin = (Domacin) korisnik;
 					ArrayList<Rezervacija> rez = rezervacije.sveRezervacijeDomacin(domacin.getApartmani());
 					return gson.toJson(rez);
 				} else	{
@@ -863,8 +865,8 @@ public class MainApp {
 					if (noviSadrzaj != null)	{
 
 						sadrzaji.dodajNoviSadrzaj(noviSadrzaj);
-						System.out.println("DODAVANJE SADRZAJA: " + noviSadrzaj.getId());
-						System.out.println("Dodavanje sadrzaja: Sadrzaj " + noviSadrzaj.getId() + " uspesno dodat.\r\n");
+						System.out.println("DODAVANJE SADRZAJA: " + noviSadrzaj.getNaziv());
+						System.out.println("Dodavanje sadrzaja: Sadrzaj " + noviSadrzaj.getNaziv() + " uspesno dodat.\r\n");
 						return gson.toJson(sadrzaji.sviSadrzaji());
 
 					} else	{

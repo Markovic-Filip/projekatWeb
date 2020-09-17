@@ -16,7 +16,7 @@
                         <li class="nav-item"><a href="#" class="nav-link">Početna</a></li>
                         <li class="nav-item"><a href="javascript:window.localStorage.setItem('uloga', 'DOMACIN');window.location = 'izmena_profila.html';" class="nav-link">Moj profil</a></li>
                         <li class="nav-item"><a href="dodaj_apartman.html" class="nav-link">Dodaj apartman</a></li>
-                        <li class="nav-item"><a href="#" class="nav-link">Pregled gostiju</a></li>
+                        <li class="nav-item"><a href="pregled_gostiju.html" class="nav-link">Pregled gostiju</a></li>
                         <li class="nav-item"><a href="javascript:window.localStorage.removeItem('jwt'); window.location = 'login.html';" class="nav-link">Odjavi se</a></li>
                     </ul>
                 </div>
@@ -162,7 +162,7 @@
                     <tbody>
                         <tr v-for="rezervacija in filtriraneRezervacije">
                             <td>{{ rezervacija.apartmanId }}</td>
-                            <td>{{ rezervacija.pocetniDatum }}</td>
+                            <td>{{ rezervacija.pocetniDatum | dateFormat('DD.MM.YYYY') }}</td>
                             <td>{{ rezervacija.brojNocenja }}</td>
                             <td>{{ rezervacija.cena.toFixed(2) }} €</td>  <!-- toFixed(2) zaokruzuje broj na 2 decimale -->
                             <td>{{ rezervacija.korisnickoImeGosta }}</td>
@@ -194,6 +194,7 @@
 
         <script src="./js/vue.js"></script>
         <script src="./js/axios.js"></script>
+        <script src="./js/moment.min.js"></script>
         <script src="./js/domacin_page.js"></script>
     </body>
 </html>
