@@ -221,7 +221,7 @@
                             <p class="comment-txt more">
                                 {{ komentar.tekst }}
                             </p>
-                            <div v-if="uloga === 'DOMACIN'" class="comment-meta">
+                            <div v-if="uloga() === 'DOMACIN'" class="comment-meta">
                                 <button v-if="komentar.odobren" v-on:click="promeniStatusKomentara(komentar)">Skloni</button>
                                 <button v-else v-on:click="promeniStatusKomentara(komentar)">Odobri</button>
                             </div>

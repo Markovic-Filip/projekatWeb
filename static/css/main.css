@@ -41,7 +41,7 @@ table   {
 }
 
 .reserv-msg {
-    height: 5em;
+    height: 7em;
     font-family: 'Times New Roman', Times, serif;
     font-size: larger;
     border: black solid thin;
@@ -54,6 +54,11 @@ table   {
 }
 
 #neaktivni_apartmani td   {
+    vertical-align: middle;
+    font-size: large;
+}
+
+.apartmani td   {
     vertical-align: middle;
     font-size: large;
 }
