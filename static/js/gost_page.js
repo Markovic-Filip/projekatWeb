@@ -101,10 +101,21 @@ new Vue({
         prikaziPoruku: function(poruka) {
             this.$refs.poruka.innerText = "Poruka: \n" + poruka;
         },
+
+        prikaziSliku: function(slika)    {
+            //return atob(slika);
+            if (slika != null)  {
+                return "data:image/jpeg;base64," + slika;
+            } else  {
+                return '';
+            }
+        },
+
         dodajKomentar: function(apartman)   {
             window.localStorage.setItem('apartman', JSON.stringify(apartman));
             window.location = 'http://localhost:8080/dodaj_komentar.html';
         },
+        
         rastuce: function (a, b) {
             if ( a.cena < b.cena )  {
               return -1;
